@@ -9,7 +9,7 @@
     <div class="card-body col-sm-6">
         <h5 class="card-title"><?php echo $model->Denumire?></h5>
         <p class="card-text"><?php echo $model->Oras?></p>
-        <a href="" class="btn btn-primary">Go somewhere</a>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
     </div>
     </div>
 </div>
