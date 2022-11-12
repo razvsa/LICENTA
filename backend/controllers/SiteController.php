@@ -79,12 +79,11 @@ class SiteController extends Controller
         $this->layout = 'blank';
 
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+        if ($model->load(Yii::$app->request->post()) && $model->idAdmin() && $model->login() ) {
             return $this->goBack();
         }
-
         $model->password = '';
-
         return $this->render('login', [
             'model' => $model,
         ]);

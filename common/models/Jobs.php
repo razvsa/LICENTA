@@ -3,6 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\FileHelper;
+use yii\web\UploadedFile;
+
 
 /**
  * This is the model class for table "{{%jobs}}".
@@ -18,6 +21,10 @@ use Yii;
  */
 class Jobs extends \yii\db\ActiveRecord
 {
+    /**
+     * @var \yii\web\UploadedFile
+     */
+    public $image;
     /**
      * {@inheritdoc}
      */
@@ -61,5 +68,21 @@ class Jobs extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\JobsQuery(get_called_class());
+    }
+    public function save($runValidation = true, $attributeNames = null)
+    {
+        $isInsert=$this->isNewRecord;
+        $saved= parent::save($runValidation, $attributeNames);
+        if(!$saved){
+            return false;
+        }
+        if($isInsert){
+            $videoPath=Yii::getAlias('@frontend/web/storage/image'.$this->id.'.png');
+            if(!is_dir(dirname($videoPath))){
+                FileHelper::createDirectory(dirname($videoPath));
+            }
+            $this->image->saveAs($videoPath);
+        }
+        return true;
     }
 }

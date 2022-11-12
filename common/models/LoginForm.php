@@ -14,6 +14,7 @@ class LoginForm extends Model
     public $password;
     public $rememberMe = true;
 
+
     private $_user;
 
 
@@ -48,7 +49,6 @@ class LoginForm extends Model
             }
         }
     }
-
     /**
      * Logs in a user using the provided username and password.
      *
@@ -62,7 +62,10 @@ class LoginForm extends Model
         
         return false;
     }
-
+    public function idAdmin()
+    {
+        return $this->getUser()->isAdmin();
+    }
     /**
      * Finds user by [[username]]
      *

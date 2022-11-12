@@ -15,8 +15,6 @@ use yii\bootstrap4\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'id') ?>
-
     <?= $form->field($model, 'Denumire') ?>
 
     <?= $form->field($model, 'Oras') ?>

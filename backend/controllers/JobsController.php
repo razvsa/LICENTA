@@ -7,6 +7,8 @@ use app\models\JobsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
+use yii\filters\AccessControl;
 
 /**
  * JobsController implements the CRUD actions for Jobs model.
@@ -18,17 +20,23 @@ class JobsController extends Controller
      */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
+        return [
+                'access'=>[
+                    'class'=>AccessControl::class,
+                    'rules'=>[
+                        [
+                            'allow'=>true,
+                            'roles'=>['@']
+                        ]
+                    ]
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
                     ],
-                ],
-            ]
-        );
+                ]
+            ];
     }
 
     /**
@@ -68,15 +76,10 @@ class JobsController extends Controller
     public function actionCreate()
     {
         $model = new Jobs();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+        $model->image=UploadedFile::getInstanceByName('image');
+        if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -112,7 +115,7 @@ class JobsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        unlink('D:\xamp\htdocs\eJobs\frontend\web\storage\image'.$id.'.png');
         return $this->redirect(['index']);
     }
 

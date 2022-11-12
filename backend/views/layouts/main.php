@@ -35,13 +35,10 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'Jobs', 'url' => ['/jobs/index']],
-        ['label' => 'Home2', 'url' => ['/site/index']]
+        ['label' => 'Jobs', 'url' => ['/jobs/index'],'class'=>'mx-auto'],
+
     ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    }     
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
         'items' => $menuItems,
