@@ -1,15 +1,15 @@
 <?php
 
-namespace app\models;
+namespace common\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Jobs;
+use common\models\Anunt;
 
 /**
- * JobsSearch represents the model behind the search form of `common\models\Jobs`.
+ * AnuntSearch represents the model behind the search form of `common\models\Anunt`.
  */
-class JobsSearch extends Jobs
+class AnuntSearch extends Anunt
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class JobsSearch extends Jobs
     public function rules()
     {
         return [
-            [['id', 'Salariu'], 'integer'],
-            [['Denumire', 'Oras', 'Departament', 'Tip', 'Nivel_studii', 'Nivel_cariera'], 'safe'],
+            [['id', 'id_user_adaugare'], 'integer'],
+            [['data_postare', 'data_concurs', 'data_depunere_dosar', 'oras', 'departament'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class JobsSearch extends Jobs
      */
     public function search($params)
     {
-        $query = Jobs::find();
+        $query = Anunt::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +59,14 @@ class JobsSearch extends Jobs
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'Salariu' => $this->Salariu,
+            'id_user_adaugare' => $this->id_user_adaugare,
+            'data_postare' => $this->data_postare,
+            'data_concurs' => $this->data_concurs,
+            'data_depunere_dosar' => $this->data_depunere_dosar,
         ]);
 
-        $query->andFilterWhere(['like', 'Denumire', $this->Denumire])
-            ->andFilterWhere(['like', 'Oras', $this->Oras])
-            ->andFilterWhere(['like', 'Departament', $this->Departament])
-            ->andFilterWhere(['like', 'Tip', $this->Tip])
-            ->andFilterWhere(['like', 'Nivel_studii', $this->Nivel_studii])
-            ->andFilterWhere(['like', 'Nivel_cariera', $this->Nivel_cariera]);
+        $query->andFilterWhere(['like', 'oras', $this->oras])
+            ->andFilterWhere(['like', 'departament', $this->departament]);
 
         return $dataProvider;
     }

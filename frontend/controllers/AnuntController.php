@@ -1,52 +1,44 @@
 <?php
 
-namespace backend\controllers;
+namespace frontend\controllers;
 
-use common\models\Jobs;
-use app\models\JobsSearch;
+use common\models\Anunt;
+use common\models\search\AnuntSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
-use yii\filters\AccessControl;
 
 /**
- * JobsController implements the CRUD actions for Jobs model.
+ * AnuntController implements the CRUD actions for Anunt model.
  */
-class JobsController extends Controller
+class AnuntController extends Controller
 {
     /**
      * @inheritDoc
      */
     public function behaviors()
     {
-        return [
-                'access'=>[
-                    'class'=>AccessControl::class,
-                    'rules'=>[
-                        [
-                            'allow'=>true,
-                            'roles'=>['@']
-                        ]
-                    ]
-                ],
+        return array_merge(
+            parent::behaviors(),
+            [
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
                     ],
-                ]
-            ];
+                ],
+            ]
+        );
     }
 
     /**
-     * Lists all Jobs models.
+     * Lists all Anunt models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new JobsSearch();
+        $searchModel = new AnuntSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -56,7 +48,7 @@ class JobsController extends Controller
     }
 
     /**
-     * Displays a single Jobs model.
+     * Displays a single Anunt model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -69,24 +61,29 @@ class JobsController extends Controller
     }
 
     /**
-     * Creates a new Jobs model.
+     * Creates a new Anunt model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Jobs();
-        $model->image=UploadedFile::getInstanceByName('image');
-        if ($model->load($this->request->post()) && $model->save()) {
+        $model = new Anunt();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
+            }
+        } else {
+            $model->loadDefaultValues();
         }
+
         return $this->render('create', [
             'model' => $model,
         ]);
     }
 
     /**
-     * Updates an existing Jobs model.
+     * Updates an existing Anunt model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -106,7 +103,7 @@ class JobsController extends Controller
     }
 
     /**
-     * Deletes an existing Jobs model.
+     * Deletes an existing Anunt model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -115,20 +112,20 @@ class JobsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-        unlink('D:\xamp\htdocs\eJobs\frontend\web\storage\image'.$id.'.png');
+
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Jobs model based on its primary key value.
+     * Finds the Anunt model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Jobs the loaded model
+     * @return Anunt the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Jobs::findOne(['id' => $id])) !== null) {
+        if (($model = Anunt::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

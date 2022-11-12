@@ -35,7 +35,7 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => 'Jobs', 'url' => ['/jobs/index'],'class'=>'mx-auto'],
+        ['label' => 'Anunturi', 'url' => ['/anunt/index'],'class'=>'mx-auto'],
 
     ];
 
