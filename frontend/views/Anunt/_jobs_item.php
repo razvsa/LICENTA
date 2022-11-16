@@ -12,7 +12,7 @@
         </div>
     <div class="card-body col-sm-6">
         <h5 class="card-title"><?php echo $model->departament?></h5>
-        <p class="card-text"><?php echo $model->oras?></p>
+
 
     </div>
     </div>

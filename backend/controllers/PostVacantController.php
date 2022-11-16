@@ -1,17 +1,17 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
-use common\models\Anunt;
-use common\models\search\AnuntSearch;
+use common\models\PostVacant;
+use common\models\search\PostVacantSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * AnuntController implements the CRUD actions for Anunt model.
+ * PostVacantController implements the CRUD actions for PostVacant model.
  */
-class AnuntController extends Controller
+class PostVacantController extends Controller
 {
     /**
      * @inheritDoc
@@ -32,27 +32,23 @@ class AnuntController extends Controller
     }
 
     /**
-     * Lists all Anunt models.
+     * Lists all PostVacant models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new AnuntSearch();
+        $searchModel = new PostVacantSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-       // $localitati=(new \yii\db\Query())->select(['oras'])->from('anunt')->distinct()->all();
-        $localitati="ceva";
-        $departamente=(new \yii\db\Query())->select(['departament'])->from('anunt')->distinct()->all();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'localitati'=>$localitati,
-            'departamente'=>$departamente,
         ]);
     }
 
     /**
-     * Displays a single Anunt model.
+     * Displays a single PostVacant model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,13 +61,13 @@ class AnuntController extends Controller
     }
 
     /**
-     * Creates a new Anunt model.
+     * Creates a new PostVacant model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Anunt();
+        $model = new PostVacant();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -87,7 +83,7 @@ class AnuntController extends Controller
     }
 
     /**
-     * Updates an existing Anunt model.
+     * Updates an existing PostVacant model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -107,7 +103,7 @@ class AnuntController extends Controller
     }
 
     /**
-     * Deletes an existing Anunt model.
+     * Deletes an existing PostVacant model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -121,15 +117,15 @@ class AnuntController extends Controller
     }
 
     /**
-     * Finds the Anunt model based on its primary key value.
+     * Finds the PostVacant model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Anunt the loaded model
+     * @return PostVacant the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Anunt::findOne(['id' => $id])) !== null) {
+        if (($model = PostVacant::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

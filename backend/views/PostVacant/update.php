@@ -3,14 +3,14 @@
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var common\models\Anunt $model */
+/** @var common\models\PostVacant $model */
 
-$this->title = 'Actulizeaza Anunt: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Anunturi', 'url' => ['index']];
+$this->title = 'Update Post Vacant: ' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Post Vacants', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Actualizeaza';
+$this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="anunt-update">
+<div class="post-vacant-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

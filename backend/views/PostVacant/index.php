@@ -1,24 +1,24 @@
 <?php
 
-use common\models\Anunt;
+use common\models\PostVacant;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var common\models\search\AnuntSearch $searchModel */
+/** @var common\models\search\PostVacantSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Anunturi';
+$this->title = 'Post Vacants';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="anunt-index">
+<div class="post-vacant-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Creeaza Anunt', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Post Vacant', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -29,16 +29,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id_user_adaugare',
-            'data_postare',
-            'data_concurs',
-            'data_depunere_dosar',
-            //'id_nom_localitate',
-            //'departament',
-            //'cale_imagine',
+            'id',
+            'id_nom_tip_functie',
+            'pozitie_stat_organizare',
+            'denumire',
+            'cerinte',
+            //'id_nom_judet',
+            //'id_nom_nivel_studii',
+            //'id_nom_nivel_cariera',
+            //'Oras',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Anunt $model, $key, $index, $column) {
+                'urlCreator' => function ($action, PostVacant $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],

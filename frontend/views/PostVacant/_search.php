@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\search\AnuntSearch $model */
+/** @var common\models\search\PostVacantSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="anunt-search">
+<div class="post-vacant-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -17,19 +17,21 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'id_user_adaugare') ?>
+    <?= $form->field($model, 'id_nom_tip_functie') ?>
 
-    <?= $form->field($model, 'data_postare') ?>
+    <?= $form->field($model, 'pozitie_stat_organizare') ?>
 
-    <?= $form->field($model, 'data_concurs') ?>
+    <?= $form->field($model, 'denumire') ?>
 
-    <?= $form->field($model, 'data_depunere_dosar') ?>
+    <?= $form->field($model, 'cerinte') ?>
 
-    <?php // echo $form->field($model, 'id_nom_localitate') ?>
+    <?php // echo $form->field($model, 'id_nom_judet') ?>
 
-    <?php // echo $form->field($model, 'departament') ?>
+    <?php // echo $form->field($model, 'id_nom_nivel_studii') ?>
 
-    <?php // echo $form->field($model, 'cale_imagine') ?>
+    <?php // echo $form->field($model, 'id_nom_nivel_cariera') ?>
+
+    <?php // echo $form->field($model, 'Oras') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

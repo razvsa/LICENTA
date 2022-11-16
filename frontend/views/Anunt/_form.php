@@ -20,9 +20,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'data_depunere_dosar')->textInput() ?>
 
-    <?= $form->field($model, 'oras')->textInput(['maxlength' => true]) ?>
-
     <?= $form->field($model, 'departament')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'cale_imagine')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

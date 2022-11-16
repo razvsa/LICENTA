@@ -4,12 +4,12 @@ namespace common\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Anunt;
+use common\models\PostVacant;
 
 /**
- * AnuntSearch represents the model behind the search form of `common\models\Anunt`.
+ * PostVacantSearch represents the model behind the search form of `common\models\PostVacant`.
  */
-class AnuntSearch extends Anunt
+class PostVacantSearch extends PostVacant
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class AnuntSearch extends Anunt
     public function rules()
     {
         return [
-            [['id', 'id_user_adaugare','id_nom_localitate'], 'integer'],
-            [['data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'cale_imagine'], 'safe'],
+            [['id', 'id_nom_tip_functie', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera'], 'integer'],
+            [['pozitie_stat_organizare', 'denumire', 'cerinte', 'Oras'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class AnuntSearch extends Anunt
      */
     public function search($params)
     {
-        $query = Anunt::find();
+        $query = PostVacant::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +59,16 @@ class AnuntSearch extends Anunt
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'id_user_adaugare' => $this->id_user_adaugare,
-            'data_postare' => $this->data_postare,
-            'data_concurs' => $this->data_concurs,
-            'data_depunere_dosar' => $this->data_depunere_dosar,
+            'id_nom_tip_functie' => $this->id_nom_tip_functie,
+            'id_nom_judet' => $this->id_nom_judet,
+            'id_nom_nivel_studii' => $this->id_nom_nivel_studii,
+            'id_nom_nivel_cariera' => $this->id_nom_nivel_cariera,
         ]);
 
-        $query->andFilterWhere(['like', 'id_nom_localitate', $this->id_nom_localitate])
-            ->andFilterWhere(['like', 'departament', $this->departament])
-            ->andFilterWhere(['like', 'cale_imagine', $this->cale_imagine]);
+        $query->andFilterWhere(['like', 'pozitie_stat_organizare', $this->pozitie_stat_organizare])
+            ->andFilterWhere(['like', 'denumire', $this->denumire])
+            ->andFilterWhere(['like', 'cerinte', $this->cerinte])
+            ->andFilterWhere(['like', 'Oras', $this->Oras]);
 
         return $dataProvider;
     }

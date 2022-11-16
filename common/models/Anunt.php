@@ -3,31 +3,33 @@
 namespace common\models;
 
 use Yii;
-
+use yii\helpers\FileHelper;
 /**
- * This is the model class for table "{{%anunt}}".
+ * This is the model class for table "anunt".
  *
  * @property int $id
  * @property int $id_user_adaugare
  * @property string $data_postare
  * @property string $data_concurs
  * @property string $data_depunere_dosar
- * @property string $oras
+ * @property int $id_nom_localitate
  * @property string $departament
+ * @property string $cale_imagine
  *
- * @property AnuntFisier[] $anuntFisiersg
+ * @property AnuntFisier[] $anuntFisiers
  * @property KeyAnuntPostVacant[] $keyAnuntPostVacants
  * @property KeyAnuntProbaConcurs[] $keyAnuntProbaConcurs
  * @property KeyAnuntTipIncadrare[] $keyAnuntTipIncadrares
  */
 class Anunt extends \yii\db\ActiveRecord
 {
+    public $id_nom_judet;
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%anunt}}';
+        return 'anunt';
     }
 
     /**
@@ -36,11 +38,10 @@ class Anunt extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'oras', 'departament'], 'required'],
-            [['id_user_adaugare'], 'integer'],
+            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'id_nom_localitate', 'departament', 'cale_imagine'], 'required'],
+            [['id_user_adaugare','id_nom_localitate','id_nom_judet'], 'integer'],
             [['data_postare', 'data_concurs', 'data_depunere_dosar'], 'safe'],
-            [['oras'], 'string', 'max' => 50],
-            [['departament'], 'string', 'max' => 100],
+            [['departament', 'cale_imagine'], 'string', 'max' => 100],
         ];
     }
 
@@ -55,15 +56,16 @@ class Anunt extends \yii\db\ActiveRecord
             'data_postare' => 'Data Postare',
             'data_concurs' => 'Data Concurs',
             'data_depunere_dosar' => 'Data Depunere Dosar',
-            'oras' => 'Oras',
+            'id_nom_localitate' => 'Id Nom Localitate',
             'departament' => 'Departament',
+            'cale_imagine' => 'Cale Imagine',
         ];
     }
 
     /**
      * Gets query for [[AnuntFisiers]].
      *
-     * @return \yii\db\ActiveQuery|\common\models\query\AnuntFisierQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getAnuntFisiers()
     {
@@ -73,7 +75,7 @@ class Anunt extends \yii\db\ActiveRecord
     /**
      * Gets query for [[KeyAnuntPostVacants]].
      *
-     * @return \yii\db\ActiveQuery|\common\models\query\KeyAnuntPostVacantQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getKeyAnuntPostVacants()
     {
@@ -83,7 +85,7 @@ class Anunt extends \yii\db\ActiveRecord
     /**
      * Gets query for [[KeyAnuntProbaConcurs]].
      *
-     * @return \yii\db\ActiveQuery|\common\models\query\KeyAnuntProbaConcursQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getKeyAnuntProbaConcurs()
     {
@@ -93,19 +95,26 @@ class Anunt extends \yii\db\ActiveRecord
     /**
      * Gets query for [[KeyAnuntTipIncadrares]].
      *
-     * @return \yii\db\ActiveQuery|\common\models\query\KeyAnuntTipIncadrareQuery
+     * @return \yii\db\ActiveQuery
      */
     public function getKeyAnuntTipIncadrares()
     {
         return $this->hasMany(KeyAnuntTipIncadrare::class, ['id_anunt' => 'id']);
     }
-
-    /**
-     * {@inheritdoc}
-     * @return \common\models\query\AnuntQuery the active query used by this AR class.
-     */
-    public static function find()
-    {
-        return new \common\models\query\AnuntQuery(get_called_class());
-    }
+//    public function save($runValidation = true, $attributeNames = null)
+//    {
+//        $isInsert=$this->isNewRecord;
+//        $saved= parent::save($runValidation, $attributeNames);
+//        if(!$saved){
+//            return false;
+//        }
+//        if($isInsert){
+//            $imagePath=Yii::getAlias('@frontend/web/storage/image'.$this->id.'.png');
+//            if(!is_dir(dirname($imagePath))){
+//                FileHelper::createDirectory(dirname($imagePath));
+//            }
+//            $this->cale_imagine->saveAs($imagePath);
+//        }
+//        return true;
+//    }
 }

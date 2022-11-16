@@ -3,10 +3,14 @@
 namespace backend\controllers;
 
 use common\models\Anunt;
+use common\models\NomLocalitate;
 use common\models\search\AnuntSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
+use Yii;
 
 /**
  * AnuntController implements the CRUD actions for Anunt model.
@@ -68,20 +72,36 @@ class AnuntController extends Controller
     public function actionCreate()
     {
         $model = new Anunt();
+        $model->cale_imagine=UploadedFile::getInstanceByName('image');
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post()) ) {
+//                echo '<pre>';
+//                print_r($model);
+//                echo '</pre>';
+//                die();
+                $model->id_user_adaugare=Yii::$app->user->identity->id;
+                $model->data_postare=date('Y-m-d H:i:s');
+                $model->save();
                 return $this->redirect(['view', 'id' => $model->id]);
             }
-        } else {
-            $model->loadDefaultValues();
-        }
 
         return $this->render('create', [
             'model' => $model,
         ]);
     }
-
+    public function actionGetLocalitate() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $id_judet = $parents[0];
+                $out=NomLocalitate::find()->where(['id_nom_judet'=>$id_judet])->select(['id','nume as name'])->asArray()->all();
+                return ['output'=>$out, 'selected'=>''];
+            }
+        }
+        return ['output'=>'', 'selected'=>''];
+    }
     /**
      * Updates an existing Anunt model.
      * If update is successful, the browser will be redirected to the 'view' page.
