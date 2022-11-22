@@ -2,14 +2,16 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-
+use common\models\KeyAnuntPostVacant;
 /** @var yii\web\View $this */
 /** @var common\models\PostVacant $model */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Post Vacants', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Posturi Vacante', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+
+
 ?>
 <div class="post-vacant-view">
 
@@ -37,8 +39,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'id_nom_judet',
             'id_nom_nivel_studii',
             'id_nom_nivel_cariera',
-            'Oras',
+            'oras',
         ],
-    ]) ?>
+    ]);
+        $info=KeyAnuntPostVacant::find()->where(['id_post_vacant'=>$model->id])->select(['id_anunt'])->asArray()->all();
+//        echo'<pre>';
+//        print_r($info);
+//        echo'</pre>';
+//        die();
+    ?>
+
+    <?php echo Html::a('OK',['/anunt/index'],['class'=>'btn btn-success'])?>
+    <?php echo Html::a('Vizualizeaza celelalte posturi ale anuntului',['post-vacant/index','id'=>$info[0]['id_anunt']],['class'=>'btn btn-success'])?>
 
 </div>

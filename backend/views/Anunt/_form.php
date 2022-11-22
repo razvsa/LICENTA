@@ -17,37 +17,35 @@ use kartik\depdrop\DepDrop;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'data_concurs')->widget(DateTimePicker::className([
-            //limba romana si format ro
-    ]));?>
+    <?= $form->field($model, 'data_concurs')->widget(DateTimePicker::className(),[
+            'language' => 'ro',
+            'pluginOptions' =>[
+            'startDate' => date('Y-m-d H:i:s'),
+            'autoclose'=>true,
+        ],
 
-    <?= $form->field($model, 'data_depunere_dosar')->textInput() ?>
+    ]);?>
 
-    <?= $form->field($model, 'id_nom_judet')->widget(Select2::className(),[
-            'options'=>['id'=>'id_judet'],
-            'bsVersion'=>'4.x',
-            'data'=>\yii\helpers\ArrayHelper::map(\common\models\NomJudet::find()->orderBy('nume')->all(),'id','nume'),
-    ]) ?>
+    <?= $form->field($model, 'data_depunere_dosar')->widget(DateTimePicker::className(),[
+            'language' => 'ro',
+            'pluginOptions' =>['startDate' => date('Y-m-d H:i:s'),
+            'autoclose'=>true,
+        ],
 
-    <?= $form->field($model, 'id_nom_localitate')->widget(DepDrop::classname(), [
-        'options'=>['id'=>'id_localitate'],
-        'type'=>DepDrop::TYPE_SELECT2,
-        'pluginOptions'=>[
-            'depends'=>['id_judet'],
-            'placeholder'=>'',
-            'url'=>Url::to(['/anunt/get-localitate'])
-        ]
-    ]) ?>
+    ]);?>
+    <?= $form->field($model, 'data_limita_inscriere_concurs')->widget(DateTimePicker::className(),[
+            'language' => 'ro',
+            'pluginOptions' =>['startDate' => date('Y-m-d H:i:s'),
+            'autoclose'=>true,
+        ],
+
+
+    ]);?>
+
 
     <?= $form->field($model, 'departament')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'cale_imagine')->textInput(['maxlength' => true]) ?>
-<!---->
-<!--    Imagine-->
-<!--    <br>-->
-<!--    <br>-->
-<!--    <input type="file" id="imageFile" name="image">-->
-<!--    <br>-->
+    <?= $form->field($model, 'descriere')->textarea(['maxlength' => true]) ?>
 
     <div class="form-group">
         <br>

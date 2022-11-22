@@ -2,17 +2,24 @@
 
 namespace backend\controllers;
 
+use common\models\NomLocalitate;
 use common\models\PostVacant;
+use common\models\KeyAnuntPostVacant;
 use common\models\search\PostVacantSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
+use Yii;
+
 
 /**
  * PostVacantController implements the CRUD actions for PostVacant model.
  */
 class PostVacantController extends Controller
 {
+
+
     /**
      * @inheritDoc
      */
@@ -36,14 +43,20 @@ class PostVacantController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
+
         $searchModel = new PostVacantSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $searchModel->id_virtual=$id;
+        $posturi = new ActiveDataProvider([
+            'query'=>PostVacant::find()
+                ->innerJoin(['apv'=>KeyAnuntPostVacant::tableName()],'apv.id_post_vacant=post_vacant.id')
+                ->andWhere(['apv.id_anunt'=>$id])]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'posturi' => $posturi,
+
         ]);
     }
 
@@ -60,17 +73,33 @@ class PostVacantController extends Controller
         ]);
     }
 
+    public function actionGetLocalitate() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $id_judet = $parents[0];
+                $out=NomLocalitate::find()->where(['id_nom_judet'=>$id_judet])->select(['id','nume as name'])->asArray()->all();
+                return ['output'=>$out, 'selected'=>''];
+            }
+        }
+        return ['output'=>'', 'selected'=>''];
+    }
+
     /**
      * Creates a new PostVacant model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
-        $model = new PostVacant();
 
+        $model = new PostVacant();
+        $model_key=new KeyAnuntPostVacant();
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                $model_key->adauga($id,$model->id);
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {

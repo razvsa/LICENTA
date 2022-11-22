@@ -12,8 +12,6 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'id')->textInput() ?>
-
     <?= $form->field($model, 'id_nom_tip_functie')->textInput() ?>
 
     <?= $form->field($model, 'pozitie_stat_organizare')->textInput(['maxlength' => true]) ?>
@@ -28,7 +26,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id_nom_nivel_cariera')->textInput() ?>
 
-    <?= $form->field($model, 'Oras')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'oras')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

@@ -29,12 +29,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id_user_adaugare',
+            //'id_user_adaugare',
             'data_postare',
             'data_concurs',
             'data_depunere_dosar',
             //'id_nom_localitate',
-            //'departament',
+            'departament',
             //'cale_imagine',
             [
                 'class' => ActionColumn::className(),

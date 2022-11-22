@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use yii\filters\AccessControl;
 use Yii;
 
 /**
@@ -25,6 +26,15 @@ class AnuntController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access'=>[
+                    'class'=>AccessControl::class,
+                    'rules'=>[
+                        [
+                            'allow'=>true,
+                            'roles'=>['@']
+                        ]
+                    ]
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -73,15 +83,15 @@ class AnuntController extends Controller
     {
         $model = new Anunt();
         $model->cale_imagine=UploadedFile::getInstanceByName('image');
-
-            if ($model->load($this->request->post()) ) {
+            if ($model->load($this->request->post())) {
+                $model->id_user_adaugare=Yii::$app->user->identity->id;
+                $model->data_postare=date('Y-m-d H:i:s');
+                $model->cale_imagine="o cale";
+                $model->save();
 //                echo '<pre>';
 //                print_r($model);
 //                echo '</pre>';
 //                die();
-                $model->id_user_adaugare=Yii::$app->user->identity->id;
-                $model->data_postare=date('Y-m-d H:i:s');
-                $model->save();
                 return $this->redirect(['view', 'id' => $model->id]);
             }
 

@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\helpers\FileHelper;
+use yii\web\UploadedFile;
 /**
  * This is the model class for table "anunt".
  *
@@ -15,6 +16,8 @@ use yii\helpers\FileHelper;
  * @property int $id_nom_localitate
  * @property string $departament
  * @property string $cale_imagine
+ * @property string $descriere
+ * @property string $data_limita_inscriere_concurs
  *
  * @property AnuntFisier[] $anuntFisiers
  * @property KeyAnuntPostVacant[] $keyAnuntPostVacants
@@ -24,6 +27,10 @@ use yii\helpers\FileHelper;
 class Anunt extends \yii\db\ActiveRecord
 {
     public $id_nom_judet;
+    public $id_nom_tip_functie;
+    public $id_nom_nivel_cariera;
+    public $id_nom_nivel_studii;
+    public $oras;
     /**
      * {@inheritdoc}
      */
@@ -40,8 +47,10 @@ class Anunt extends \yii\db\ActiveRecord
         return [
             [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'id_nom_localitate', 'departament', 'cale_imagine'], 'required'],
             [['id_user_adaugare','id_nom_localitate','id_nom_judet'], 'integer'],
-            [['data_postare', 'data_concurs', 'data_depunere_dosar'], 'safe'],
+            [['data_postare', 'data_concurs', 'data_depunere_dosar','data_limita_inscriere_concurs'], 'safe'],
             [['departament', 'cale_imagine'], 'string', 'max' => 100],
+            [['descriere'], 'string'],
+
         ];
     }
 
@@ -59,6 +68,13 @@ class Anunt extends \yii\db\ActiveRecord
             'id_nom_localitate' => 'Id Nom Localitate',
             'departament' => 'Departament',
             'cale_imagine' => 'Cale Imagine',
+            'id_nom_judet'=>'Judet',
+            'id_nom_tip_functie'=>'Functie',
+            'id_nom_nivel_cariera'=>'Nivel Cariera',
+            'id_nom_nivel_studii'=>'Nivel Studii',
+            'oras'=>'Localitate',
+            'descriere'=>'Descriere'
+
         ];
     }
 
@@ -103,18 +119,18 @@ class Anunt extends \yii\db\ActiveRecord
     }
 //    public function save($runValidation = true, $attributeNames = null)
 //    {
-//        $isInsert=$this->isNewRecord;
-//        $saved= parent::save($runValidation, $attributeNames);
+//       $isInsert=$this->isNewRecord;
+//       $saved= parent::save($runValidation, $attributeNames);
 //        if(!$saved){
-//            return false;
-//        }
-//        if($isInsert){
-//            $imagePath=Yii::getAlias('@frontend/web/storage/image'.$this->id.'.png');
-//            if(!is_dir(dirname($imagePath))){
-//                FileHelper::createDirectory(dirname($imagePath));
-//            }
-//            $this->cale_imagine->saveAs($imagePath);
-//        }
-//        return true;
+//          return false;
+//       }
+//       if($isInsert){
+//           $imagePath=Yii::getAlias('@frontend/web/storage/image'.$this->id.'.png');
+//          if(!is_dir(dirname($imagePath))){
+//              FileHelper::createDirectory(dirname($imagePath));
+//          }
+//           $this->cale_imagine->saveAs($imagePath);
+//      }
+//     return true;
 //    }
 }

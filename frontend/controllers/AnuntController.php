@@ -3,10 +3,14 @@
 namespace frontend\controllers;
 
 use common\models\Anunt;
+use common\models\PostVacant;
 use common\models\search\AnuntSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
+use common\models\NomLocalitate;
+use function Sodium\add;
 
 /**
  * AnuntController implements the CRUD actions for Anunt model.
@@ -40,14 +44,21 @@ class AnuntController extends Controller
     {
         $searchModel = new AnuntSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-       // $localitati=(new \yii\db\Query())->select(['oras'])->from('anunt')->distinct()->all();
-        $localitati="ceva";
-        $departamente=(new \yii\db\Query())->select(['departament'])->from('anunt')->distinct()->all();
+        $localitati=(new \yii\db\Query())->select(['oras'])->from('post_vacant')->distinct()->all();
+        $nivel_studii=(new \yii\db\Query())->select(['id','nume'])->from('nom_nivel_studii')->distinct()->all();
+        $functie=(new \yii\db\Query())->select(['id','nume'])->from('nom_tip_incadrare')->distinct()->all();
+        $nivel_cariera=(new \yii\db\Query())->select(['id','nume'])->from('nom_nivel_cariera')->distinct()->all();
+        if($searchModel->load(Yii::$app->request->get()))
+        {
+            $dataProvider = $searchModel->search($this->request->queryParams);
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'localitati'=>$localitati,
-            'departamente'=>$departamente,
+            'functie'=>$functie,
+            'nivel_studii'=>$nivel_studii,
+            'nivel_cariera'=>$nivel_cariera,
         ]);
     }
 
@@ -84,6 +95,26 @@ class AnuntController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+
+    public function actionGetLocalitate() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $id_judet = $parents[0];
+                $out=NomLocalitate::find()
+                    ->innerJoin(['post'=>PostVacant::tableName()],'post.oras=nom_localitate.id')
+                    ->where(['nom_localitate.id_nom_judet'=>$id_judet])->select(['nom_localitate.id','nom_localitate.nume as name'])->asArray()->all();
+//                        echo '<pre>';
+//        print_r($out);
+//        echo '</pre>';
+//        die();
+                return ['output'=>$out, 'selected'=>''];
+            }
+        }
+        return ['output'=>'', 'selected'=>''];
     }
 
     /**

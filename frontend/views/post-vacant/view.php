@@ -37,8 +37,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'id_nom_judet',
             'id_nom_nivel_studii',
             'id_nom_nivel_cariera',
-            'Oras',
+            'oras',
         ],
     ]) ?>
-
+    <?php
+    if (Yii::$app->user->isGuest) {
+        echo "<p>Trebuie sa fii autentificat pentru a aplica pentru acest post</p>";
+        echo Html::a("Conecteaza-te",['site/login'],['class'=>'btn btn-primary']);
+    } else {
+        echo Html::a("Aplica pentru acest post",[''],['class'=>'btn btn-primary']);
+    }
+    ?>
 </div>

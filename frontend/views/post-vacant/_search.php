@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'id_nom_nivel_cariera') ?>
 
-    <?php // echo $form->field($model, 'Oras') ?>
+    <?php // echo $form->field($model, 'oras') ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

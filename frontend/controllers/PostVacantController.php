@@ -2,8 +2,10 @@
 
 namespace frontend\controllers;
 
+use common\models\KeyAnuntPostVacant;
 use common\models\PostVacant;
 use common\models\search\PostVacantSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -13,6 +15,7 @@ use yii\filters\VerbFilter;
  */
 class PostVacantController extends Controller
 {
+    public $id_anunt;
     /**
      * @inheritDoc
      */
@@ -36,14 +39,18 @@ class PostVacantController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id)
     {
         $searchModel = new PostVacantSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $posturi = new ActiveDataProvider([
+        'query'=>PostVacant::find()
+            ->innerJoin(['apv'=>KeyAnuntPostVacant::tableName()],'apv.id_post_vacant=post_vacant.id')
+            ->andWhere(['apv.id_anunt'=>$id])]);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'posturi' => $posturi,
+
         ]);
     }
 

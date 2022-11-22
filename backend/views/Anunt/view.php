@@ -5,11 +5,13 @@ use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var common\models\Anunt $model */
+/** @var \common\models\PostVacant $mod */
 
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Anunturi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+
 ?>
 <div class="anunt-view">
 
@@ -30,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'id_user_adaugare',
+           'id_user_adaugare',
             'data_postare',
             'data_concurs',
             'data_depunere_dosar',
@@ -40,7 +42,9 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
     <p>
-        <?= Html::a('OK', ['index'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('OK', ['index'], ['class' => 'btn btn-outline-primary']) ?>
+        <?= Html::a('Adauga post', ['post-vacant/create','id'=>$model->id], ['class' => 'btn btn-outline-primary']) ?>
+        <?= Html::a('Vizulizeaza posturi existente', ['post-vacant/index','id'=>$model->id], ['class' => 'btn btn-outline-primary']) ?>
     </p>
 
 </div>

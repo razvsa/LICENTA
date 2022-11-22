@@ -5,11 +5,12 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\PostVacant $model */
 
-$this->title = 'Create Post Vacant';
+$this->title = 'Actualizeaza Post Vacant: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Post Vacants', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="post-vacant-create">
+<div class="post-vacant-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

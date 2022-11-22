@@ -18,7 +18,7 @@ class PostVacantSearch extends PostVacant
     {
         return [
             [['id', 'id_nom_tip_functie', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera'], 'integer'],
-            [['pozitie_stat_organizare', 'denumire', 'cerinte', 'Oras'], 'safe'],
+            [['pozitie_stat_organizare', 'denumire', 'cerinte', 'oras'], 'safe'],
         ];
     }
 
@@ -68,7 +68,7 @@ class PostVacantSearch extends PostVacant
         $query->andFilterWhere(['like', 'pozitie_stat_organizare', $this->pozitie_stat_organizare])
             ->andFilterWhere(['like', 'denumire', $this->denumire])
             ->andFilterWhere(['like', 'cerinte', $this->cerinte])
-            ->andFilterWhere(['like', 'Oras', $this->Oras]);
+            ->andFilterWhere(['like', 'oras', $this->oras]);
 
         return $dataProvider;
     }
