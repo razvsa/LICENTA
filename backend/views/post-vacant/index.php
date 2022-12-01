@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
         echo \yii\widgets\ListView::widget([
 
             'dataProvider'=>$posturi,
-            'itemView'=>'_jobs_item',
+            'itemView'=>'_post_item',
             'summary' =>''
         ])?>
 

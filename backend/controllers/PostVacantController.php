@@ -48,15 +48,8 @@ class PostVacantController extends Controller
 
         $searchModel = new PostVacantSearch();
         $searchModel->id_virtual=$id;
-        $posturi = new ActiveDataProvider([
-            'query'=>PostVacant::find()
-                ->innerJoin(['apv'=>KeyAnuntPostVacant::tableName()],'apv.id_post_vacant=post_vacant.id')
-                ->andWhere(['apv.id_anunt'=>$id])]);
-
         return $this->render('index', [
             'searchModel' => $searchModel,
-            'posturi' => $posturi,
-
         ]);
     }
 

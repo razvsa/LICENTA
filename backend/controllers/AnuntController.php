@@ -3,8 +3,11 @@
 namespace backend\controllers;
 
 use common\models\Anunt;
+use common\models\KeyAnuntPostVacant;
 use common\models\NomLocalitate;
+use common\models\PostVacant;
 use common\models\search\AnuntSearch;
+use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -69,8 +72,13 @@ class AnuntController extends Controller
      */
     public function actionView($id)
     {
+        $posturi = new ActiveDataProvider([
+            'query'=>PostVacant::find()
+                ->innerJoin(['apv'=>KeyAnuntPostVacant::tableName()],'apv.id_post_vacant=post_vacant.id')
+                ->andWhere(['apv.id_anunt'=>$id])]);
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'posturi'=>$posturi,
         ]);
     }
 
