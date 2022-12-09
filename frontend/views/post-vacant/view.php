@@ -2,10 +2,11 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var common\models\PostVacant $model */
-
+/** @var yii\widgets\ActiveForm $form */
 $this->title = $model->denumire;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -45,7 +46,8 @@ $this->title = $model->denumire;
         echo "<p>Trebuie sa fii autentificat pentru a aplica pentru acest post</p>";
         echo Html::a("Conecteaza-te",['site/login'],['class'=>'btn btn-primary']);
     } else {
-        echo Html::a("Aplica pentru acest post",[''],['class'=>'btn btn-outline-primary']);
+        echo Html::a("Aplica pentru acest post",['/documente-user/create','id_post'=>$model->id],['class'=>'btn btn-outline-primary']);
     }
     ?>
+
 </div>

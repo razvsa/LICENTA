@@ -18,6 +18,7 @@ use yii\web\UploadedFile;
  * @property string $cale_imagine
  * @property string $descriere
  * @property string $data_limita_inscriere_concurs
+ * @property int $categorie_fisier
  *
  * @property AnuntFisier[] $anuntFisiers
  * @property KeyAnuntPostVacant[] $keyAnuntPostVacants
@@ -73,7 +74,8 @@ class Anunt extends \yii\db\ActiveRecord
             'id_nom_nivel_cariera'=>'Nivel Cariera',
             'id_nom_nivel_studii'=>'Nivel Studii',
             'oras'=>'Localitate',
-            'descriere'=>'Descriere'
+            'descriere'=>'Descriere',
+            'categorie_fisier'=>'Categorie'
 
         ];
     }

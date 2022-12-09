@@ -6,6 +6,7 @@ use yii\bootstrap4\ActiveForm;
 use kartik\datetime\DateTimePicker;
 use kartik\select2\Select2;
 use kartik\depdrop\DepDrop;
+use common\models\NomDepartament;
 /** @var yii\web\View $this */
 /** @var common\models\Anunt $model */
 /** @var yii\bootstrap4\ActiveForm $form */
@@ -15,7 +16,12 @@ use kartik\depdrop\DepDrop;
 
 <div class="anunt-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php
+    $departamente=NomDepartament::find()->all();
+    $departamente_map=\yii\helpers\ArrayHelper::map($departamente,'id','nume');
+    $categorie=\common\models\NomTipCategorie::find()->all();
+    $categorie_map=\yii\helpers\ArrayHelper::map($categorie,'id','nume');
+    $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'data_concurs')->widget(DateTimePicker::className(),[
             'language' => 'ro',
@@ -43,9 +49,21 @@ use kartik\depdrop\DepDrop;
     ]);?>
 
 
-    <?= $form->field($model, 'departament')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'departament')->widget(Select2::className(),[
+        'bsVersion'=>'4.x',
+        'data'=>$departamente_map,
+        'options'=>[
+            'placeholder' => 'Selecteaza Departamentul'
+        ],
+    ]);?>
+
+    <?= $form->field($model, 'categorie_fisier')->dropdownList($categorie_map,[
+        'prompt'=>'Selecteaza Categoria',
+    ])?>
 
     <?= $form->field($model, 'descriere')->textarea(['maxlength' => true]) ?>
+
+
 
     <div class="form-group">
         <br>

@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /** @var common\models\Anunt $model */
 
 $this->title = 'Creeaza Anunt';
-$this->params['breadcrumbs'][] = ['label' => 'Anunturi', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="anunt-create">
 
