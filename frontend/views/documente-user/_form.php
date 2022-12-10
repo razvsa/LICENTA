@@ -16,30 +16,32 @@ use kartik\file\FileInput;
 
 <?php
     foreach($document as $key=>$d){
-      echo $form->field($d,"[{$key}]fisiere")->textInput()->label($d->nomTipFisierDosar->nume);
-//->widget(FileInput::className(),[
-//
-//                'id'=>$key,
-//                'bsVersion'=>'4.x',
-//                'options'=>[
-//
-//                        'multiple'=>true,
-//                ],
-//                'pluginOptions'=>[
-//                        'required'=>false,
-//                        'browseLabel'=>'Cauta',
-//                        'removeLabel'=>'Sterge',
-//                        'showPreview'=>false,
-//                        'showUpload'=>true,
-//                ]
-//        ])->label($d->nomTipFisierDosar->nume)->hint("Salut hint");
+      echo $form->field($d,"[{$key}]fisiere")
+        //->textInput()->label($d->nomTipFisierDosar->nume);
+    ->widget(FileInput::className(),[
+                'id'=>$key,
+                'bsVersion'=>'4.x',
+                'options'=>[
+                        'multiple'=>true,
+
+                ],
+                'pluginOptions'=>[
+                        'required'=>false,
+                        'showUpload' => false,
+                        'browseLabel'=>'Cauta',
+                        'removeLabel'=>'Sterge',
+                        'showPreview'=>false,
+                        'maxFileSize'=>'3072',
+
+                ],
+
+        ])->label($d->nomTipFisierDosar->nume)->hint("Salut hint");
+        echo $form->field($d, "[$key]id_nom_tip_fisier_dosar")->hiddenInput(['value' => $d->id_nom_tip_fisier_dosar])->label(false);
     }
 
 ?>
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t('app','Save'), ['class' => 'btn btn-success']) ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>
+    <?php ActiveForm::end(); ?>

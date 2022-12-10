@@ -46,6 +46,7 @@ $this->title = $model->denumire;
         echo "<p>Trebuie sa fii autentificat pentru a aplica pentru acest post</p>";
         echo Html::a("Conecteaza-te",['site/login'],['class'=>'btn btn-primary']);
     } else {
+
         echo Html::a("Aplica pentru acest post",['/documente-user/create','id_post'=>$model->id],['class'=>'btn btn-outline-primary']);
     }
     ?>

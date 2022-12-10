@@ -11,11 +11,11 @@ use Yii;
  * @property string|null $data_adaugare
  * @property string|null $descriere
  * @property int $id
- * @property int|null $id_post
  * @property int|null $id_user_adaugare
  * @property string|null $nume_fisier_afisare
  * @property string|null $nume_fisier_adaugare
  * @property int $id_nom_tip_fisier_dosar
+ * @property int $stare
  */
 class CandidatFisier extends \yii\db\ActiveRecord
 {
@@ -35,16 +35,16 @@ class CandidatFisier extends \yii\db\ActiveRecord
     {
         return [
             [['data_adaugare'], 'safe'],
-            [['id_post', 'id_user_adaugare', 'tip'], 'integer'],
-            [['tip'], 'required'],
+            [[ 'id_user_adaugare', 'id_nom_tip_fisier_dosar'], 'integer'],
+            [['id_nom_tip_fisier_dosar'], 'required'],
             [['cale_fisier', 'nume_fisier_afisare', 'nume_fisier_adaugare'], 'string', 'max' => 200],
             [['descriere'], 'string', 'max' => 2000],
-//            [['fisiere'],'file','extensions'=>'png, pdf, jpeg, jpg','maxSize'=>3*1024*1024,
-//                'tooBig'=>'Dimensiunea fisierului este prea mare, max 3MB',
-//                'wrongExtension'=>'Extensia fisierului este gresita, se accepta doar png, pdf, jpeg, jpg',
-//                'maxFiles'=>10,
-//                ],
-        ];
+            [['fisiere'],'file','extensions'=>'png, pdf, jpeg, jpg','maxSize'=>4*1024*1024*0,
+                'tooBig'=>'Dimensiunea fisierului este prea mare, max 4MB',
+                'wrongExtension'=>'Extensia fisierului este gresita, se accepta doar png, pdf, jpeg, jpg',
+                'maxFiles'=>10,
+                ],
+     ];
     }
 
     /**
@@ -57,16 +57,20 @@ class CandidatFisier extends \yii\db\ActiveRecord
             'data_adaugare' => 'Data Adaugare',
             'descriere' => 'Descriere',
             'id' => 'ID',
-            'id_post' => 'Id Post',
             'id_user_adaugare' => 'Id User Adaugare',
             'nume_fisier_afisare' => 'Nume Fisier Afisare',
             'nume_fisier_adaugare' => 'Nume Fisier Adaugare',
             'id_nom_tip_fisier_dosar' => 'Tip fisier dosar',
+            'stare'=>'Stare',
         ];
     }
     public function getNomTipFisierDosar()
     {
         return $this->hasOne(NomTipFisierDosar::class, ['id' => 'id_nom_tip_fisier_dosar']);
+    }
+    public function getNomTipStare()
+    {
+        return $this->hasOne(NomTipStare::class, ['id' => 'stare']);
     }
 
 }
