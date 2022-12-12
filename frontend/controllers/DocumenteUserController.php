@@ -13,6 +13,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Yii;
 use yii\base\Model;
+use yii\web\UploadedFile;
 /**
  * DocumenteUserController implements the CRUD actions for DocumenteUser model.
 
@@ -71,11 +72,13 @@ class DocumenteUserController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+
     public function actionCreate($id_post)
     {
 
 
         $model = new DocumenteUser();
+        $rez=false;
 
         $tip_fisier=NomTipFisierDosar::find()->all();
         $document=[];
@@ -83,74 +86,48 @@ class DocumenteUserController extends Controller
             $document[]=new CandidatFisier();
         }
         if(Model::loadMultiple($document,Yii::$app->request->post())&& Model::validateMultiple($document))
-        {   $rez=false;
+        {
             $nume_utilizator= User::find()->where(['id'=>Yii::$app->user->identity->id])->asArray()->all()[0]["username"];
             for($i=0;$i<count($_FILES["CandidatFisier"]["name"]);$i++) {
 
-                for ($j = 0; $j < count($_FILES["CandidatFisier"]["name"][0]["fisiere"]); $j++) {
+                for ($j = 0; $j < count($_FILES["CandidatFisier"]["name"][$i]["fisiere"]); $j++) {
 
-                    if($_FILES["CandidatFisier"]["name"][0]["fisiere"][$j]!='') {
+                    if (strlen($_FILES["CandidatFisier"]["name"][$i]["fisiere"][$j]) > 3) {
+                        $doc = new CandidatFisier();
                         $extensie = explode("/", $_FILES["CandidatFisier"]["type"][$i]["fisiere"][$j]);
                         $nume_document = NomTipFisierDosar::find()->where(['id' => $_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"]])->asArray()->all()[0]["nume"];
                         $nume_document = preg_replace('/\s+/', '_', $nume_document);
-                        $doc = new CandidatFisier();
-                        $doc->nume_fisier_afisare = $_FILES["CandidatFisier"]["name"][0]["fisiere"][$j];
-                        $doc->cale_fisier = "@frontend/web/storage/document_" . Yii::$app->user->identity->id . "_" . $document[$i]->id_nom_tip_fisier_dosar . "_" . $nume_utilizator . "_" . $nume_document . "." . $extensie[0];
+                        $doc->nume_fisier_afisare = $_FILES["CandidatFisier"]["name"][$i]["fisiere"][$j];
+                        $doc->cale_fisier = "@frontend/web/storage/document_" . Yii::$app->user->identity->id . "_" . $document[$i]->id_nom_tip_fisier_dosar . "_" . $nume_utilizator . "_" . $nume_document . "." . $extensie[1];
                         $doc->data_adaugare = date('Y-m-d H:i:s');
                         $doc->descriere = "descriere";
                         $doc->id_user_adaugare = Yii::$app->user->identity->id;
-                        $doc->nume_fisier_adaugare = "document_" . Yii::$app->user->identity->id . "_" . $document[$i]->id_nom_tip_fisier_dosar . "_" . $nume_utilizator . "_" . $nume_document . "." . $extensie[0];
+                        $doc->nume_fisier_adaugare = "document_" . Yii::$app->user->identity->id . "_" . $document[$i]->id_nom_tip_fisier_dosar . "_" . $nume_utilizator . "_" . $nume_document . "(".$j.")." . $extensie[1];
                         $doc->id_nom_tip_fisier_dosar = $_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"];
                         $doc->stare = 1;
+                        $doc->save();
+                        $doc->fisiere = UploadedFile::getInstances($doc, "[{$i}]fisiere[{$j}]");
+                        $id_user=Yii::$app->user->identity->id;
+                        if (!file_exists(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\")) {
+                            mkdir(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\", 0777, true);
+                        }
+                        $doc->fisiere[0]->saveAs(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\" . $doc->nume_fisier_adaugare);
 
-                        $rez = $doc->save();
+
                     }
                 }
             }
-            if($rez==true)
-            {
-                $inscriere=new KeyInscrierePostUser();
-                $inscriere->id_post=$id_post;
-                $inscriere->id_user=Yii::$app->user->identity->id;
-                $inscriere->save();
-
-            }
-
-
-           // echo '<pre>';
-          //  print_r($extensie[1]);
-           // print_r(count($_FILES["CandidatFisier"]["name"][0]["fisiere"]));
-           // echo '</pre>';
-           // die();
-           // $doc=new CandidatFisier();
-           // $doc->cale_fisier="@frontend/web/storage/document_".Yii::$app->user->identity->id."_".$document[0]->id_nom_tip_fisier_dosar.".".$extensie[1];
-           // $doc->data_adaugare;
-           // $doc->descriere="descriere";
-            //$doc->id_post=$id_post;
-        //   $doc->nume_fisier_afisare=;
-//         //   $doc->nume_fisier_adaugare=;
-     // /      $doc->id_nom_tip_fisier_dosar=;
-            //$doc->stare=1;
-            //$doc->save();
-            //($_FILES['CandidatFisier']['name'][0]['fisiere'])
-
 
         }
-//        if ($document[0]->load($this->request->post())) {
-//            //CV//
-//            echo '<pre>';
-//            print_r($document[0]->id_nom_tip_fisier_dosar);
-//            echo '</pre>';
-//            die();
-//            $fis->cale_fisier=$model->CV;
-//            $fis->data_adaugare=date('Y-m-d H:i:s');
-//            $fis->descriere="desc";
-//            $fis->id_post=$id_post;
-//            $fis->id_user_adaugare=Yii::$app->user->identity->id;;
-//            $fis->nume_fisier_afisare="afisareCV";
-//            $fis->nume_fisier_adaugare="adaugareCV";
-//            $fis->save();
-//            }
+        $exista=KeyInscrierePostUser::find()->where(['id_post'=>$id_post,'id_user'=>Yii::$app->user->identity->id])->asArray()->all();
+        if(empty($exista)) {
+            $inscriere=new KeyInscrierePostUser();
+            $inscriere->id_post=$id_post;
+            $inscriere->id_user=Yii::$app->user->identity->id;
+            $inscriere->save();
+
+        }
+
         foreach ($tip_fisier as $key=>$tf){
             $document[$key]->id_nom_tip_fisier_dosar=$tf->id;
 

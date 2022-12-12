@@ -6,6 +6,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var common\models\Anunt $model */
 
+
 $this->title = $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Anunturi', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;

@@ -17,16 +17,14 @@ use kartik\file\FileInput;
 <?php
     foreach($document as $key=>$d){
       echo $form->field($d,"[{$key}]fisiere")
-        //->textInput()->label($d->nomTipFisierDosar->nume);
     ->widget(FileInput::className(),[
                 'id'=>$key,
-                'bsVersion'=>'4.x',
                 'options'=>[
                         'multiple'=>true,
 
                 ],
                 'pluginOptions'=>[
-                        'required'=>false,
+                        'required'=>true,
                         'showUpload' => false,
                         'browseLabel'=>'Cauta',
                         'removeLabel'=>'Sterge',
@@ -35,7 +33,7 @@ use kartik\file\FileInput;
 
                 ],
 
-        ])->label($d->nomTipFisierDosar->nume)->hint("Salut hint");
+        ])->label($d->nomTipFisierDosar->nume)->hint("Pentru incarcare multipla se selecteaza toate fisierele odata prin mentinerea tastei Ctrl");
         echo $form->field($d, "[$key]id_nom_tip_fisier_dosar")->hiddenInput(['value' => $d->id_nom_tip_fisier_dosar])->label(false);
     }
 

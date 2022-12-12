@@ -7,6 +7,7 @@ use yii\widgets\ActiveForm;
 /** @var yii\web\View $this */
 /** @var common\models\PostVacant $model */
 /** @var yii\widgets\ActiveForm $form */
+/** @var \frontend\controllers\PostVacantController $id_anunt */
 $this->title = $model->denumire;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -42,13 +43,33 @@ $this->title = $model->denumire;
     </div>
 
     <?php
+    $id_anunt_post_curent=\common\models\KeyAnuntPostVacant::find()->where(['id_post_vacant'=>$model->id])->asArray()->all();
+    $verificare=\common\models\KeyInscrierePostUser::find()->where(['id_user'=>Yii::$app->user->identity->id,'id_post'=>$model->id])->asArray()->all();
     if (Yii::$app->user->isGuest) {
         echo "<p>Trebuie sa fii autentificat pentru a aplica pentru acest post</p>";
         echo Html::a("Conecteaza-te",['site/login'],['class'=>'btn btn-primary']);
-    } else {
-
-        echo Html::a("Aplica pentru acest post",['/documente-user/create','id_post'=>$model->id],['class'=>'btn btn-outline-primary']);
     }
-    ?>
+    else {
+        $gasit=0;
+        if(empty($verificare)) {
+            $anunturi=\common\models\KeyInscrierePostUser::find()
+               ->innerJoin(['kap'=>\common\models\KeyAnuntPostVacant::tableName()],'kap.id_post_vacant=key_inscriere_post_user.id_post')
+               ->where(['key_inscriere_post_user.id_user'=>Yii::$app->user->identity->id])->select(['kap.id_anunt'])->asArray()->all();
+           for($i=0;$i<count($anunturi);$i++)
+           {
+               if($anunturi[$i]['id_anunt']==$id_anunt_post_curent[0]['id_anunt'])
+                   $gasit=1;
+           }
+            if($gasit==1){
+                echo '<p class="bg-warning">Ai aplicat deja pentru un post din anuntul curent</p>';
+            }
+            else
+                echo Html::a("Aplica pentru acest post",['/documente-user/create','id_post'=>$model->id],['class'=>'btn btn-outline-primary']);
+        }
+       else{
+           echo '<p class="bg-success">Ai aplicat deja pentru acest post</p>';
+       }
+    }
+?>
 
 </div>

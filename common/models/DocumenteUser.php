@@ -80,4 +80,5 @@ class DocumenteUser extends \yii\db\ActiveRecord
             'declaratie_de_conformitate' => 'Declaratie De Conformitate',
         ];
     }
+
 }

@@ -73,4 +73,5 @@ class CandidatFisier extends \yii\db\ActiveRecord
         return $this->hasOne(NomTipStare::class, ['id' => 'stare']);
     }
 
+
 }

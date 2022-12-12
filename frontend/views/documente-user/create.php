@@ -18,5 +18,4 @@ $this->title = 'Create Documente User';
         'tip_fisier'=>$tip_fisier,
     ]) ?>
 
-    ?>
 </div>
