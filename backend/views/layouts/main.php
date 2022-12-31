@@ -36,6 +36,8 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Anunturi', 'url' => ['/anunt/index'],'class'=>'mx-auto'],
+        ['label' => 'Documente-Candidati', 'url' => ['/candidat-fisier/index'],'class'=>'mx-auto'],
+
 
     ];
 

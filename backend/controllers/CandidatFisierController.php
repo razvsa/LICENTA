@@ -1,14 +1,12 @@
 <?php
 
-namespace frontend\controllers;
+namespace backend\controllers;
 
 use common\models\CandidatFisier;
-use common\models\KeyInscrierePostUser;
 use common\models\search\CandidatFisierSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use Yii;
 
 /**
  * CandidatFisierController implements the CRUD actions for CandidatFisier model.
@@ -42,12 +40,10 @@ class CandidatFisierController extends Controller
     {
         $searchModel = new CandidatFisierSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
-        //$dataProvider=CandidatFisier::find()->where(['id_user_adaugare'=>Yii::$app->user->identity->id])->asArray();
-        $id_user=Yii::$app->user->identity->id;
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'id_user'=>$id_user,
         ]);
     }
 
@@ -119,6 +115,19 @@ class CandidatFisierController extends Controller
 
         return $this->redirect(['index']);
     }
+    public function actionAproba($id)
+    {
+        $model=$this->findModel($id);
+        $model->aproba();
+        return $this->redirect(['view','id'=>$id]);
+    }
+    public function actionRespinge($id)
+    {
+        $model=$this->findModel($id);
+        $model->respinge();
+        return $this->redirect(['view','id'=>$id]);
+    }
+
 
     /**
      * Finds the CandidatFisier model based on its primary key value.
@@ -135,4 +144,5 @@ class CandidatFisierController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

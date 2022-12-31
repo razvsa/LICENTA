@@ -19,8 +19,10 @@ use kartik\file\FileInput;
       echo $form->field($d,"[{$key}]fisiere")
     ->widget(FileInput::className(),[
                 'id'=>$key,
+                'bsVersion'=>'4.x',
                 'options'=>[
                         'multiple'=>true,
+                    'bsVersion'=>'4.x',
 
                 ],
                 'pluginOptions'=>[
@@ -33,7 +35,7 @@ use kartik\file\FileInput;
 
                 ],
 
-        ])->label($d->nomTipFisierDosar->nume)->hint("Pentru incarcare multipla se selecteaza toate fisierele odata prin mentinerea tastei Ctrl");
+        ])->label( ucfirst($d->nomTipFisierDosar->nume))->hint("Pentru incarcare multipla se selecteaza toate fisierele odata prin mentinerea tastei Ctrl");
         echo $form->field($d, "[$key]id_nom_tip_fisier_dosar")->hiddenInput(['value' => $d->id_nom_tip_fisier_dosar])->label(false);
     }
 

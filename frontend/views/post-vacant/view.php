@@ -44,12 +44,13 @@ $this->title = $model->denumire;
 
     <?php
     $id_anunt_post_curent=\common\models\KeyAnuntPostVacant::find()->where(['id_post_vacant'=>$model->id])->asArray()->all();
-    $verificare=\common\models\KeyInscrierePostUser::find()->where(['id_user'=>Yii::$app->user->identity->id,'id_post'=>$model->id])->asArray()->all();
+
     if (Yii::$app->user->isGuest) {
         echo "<p>Trebuie sa fii autentificat pentru a aplica pentru acest post</p>";
         echo Html::a("Conecteaza-te",['site/login'],['class'=>'btn btn-primary']);
     }
     else {
+        $verificare=\common\models\KeyInscrierePostUser::find()->where(['id_user'=>Yii::$app->user->identity->id,'id_post'=>$model->id])->asArray()->all();
         $gasit=0;
         if(empty($verificare)) {
             $anunturi=\common\models\KeyInscrierePostUser::find()
@@ -64,7 +65,7 @@ $this->title = $model->denumire;
                 echo '<p class="bg-warning">Ai aplicat deja pentru un post din anuntul curent</p>';
             }
             else
-                echo Html::a("Aplica pentru acest post",['/documente-user/create','id_post'=>$model->id],['class'=>'btn btn-outline-primary']);
+                echo Html::a("Aplica pentru acest post",['/documente-user/verifica','id_post'=>$model->id],['class'=>'btn btn-outline-primary']);
         }
        else{
            echo '<p class="bg-success">Ai aplicat deja pentru acest post</p>';

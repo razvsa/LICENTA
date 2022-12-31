@@ -38,7 +38,7 @@ class NomTipFisierDosar extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'nume' => 'Nume',
+            'nume' => '',
         ];
     }
 }

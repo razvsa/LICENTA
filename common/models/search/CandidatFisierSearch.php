@@ -5,6 +5,7 @@ namespace common\models\search;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\CandidatFisier;
+use Yii;
 
 /**
  * CandidatFisierSearch represents the model behind the search form of `common\models\CandidatFisier`.
@@ -18,7 +19,7 @@ class CandidatFisierSearch extends CandidatFisier
     {
         return [
             [['cale_fisier', 'data_adaugare', 'descriere', 'nume_fisier_afisare', 'nume_fisier_adaugare'], 'safe'],
-            [['id', 'id_post', 'id_user_adaugare', 'id_nom_tip_fisier_dosar'], 'integer'],
+            [['id', 'id_user_adaugare', 'id_nom_tip_fisier_dosar'], 'integer'],
         ];
     }
 
@@ -40,7 +41,7 @@ class CandidatFisierSearch extends CandidatFisier
      */
     public function search($params)
     {
-        $query = CandidatFisier::find();
+        $query = CandidatFisier::find()->where(['id_user_adaugare'=>Yii::$app->user->identity->id]);;
 
         // add conditions that should always apply here
 
@@ -60,7 +61,6 @@ class CandidatFisierSearch extends CandidatFisier
         $query->andFilterWhere([
             'data_adaugare' => $this->data_adaugare,
             'id' => $this->id,
-            'id_post' => $this->id_post,
             'id_user_adaugare' => $this->id_user_adaugare,
             'id_nom_tip_fisier_dosar' => $this->id_nom_tip_fisier_dosar,
         ]);

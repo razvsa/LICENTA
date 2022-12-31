@@ -73,5 +73,15 @@ class CandidatFisier extends \yii\db\ActiveRecord
         return $this->hasOne(NomTipStare::class, ['id' => 'stare']);
     }
 
+    public function respinge(){
+        Yii::$app->db->createCommand()->update(CandidatFisier::tableName(),['stare'=>2],['id'=>$this->id])->execute();
+    }
+
+    public function aproba(){
+        Yii::$app->db->createCommand()->update(CandidatFisier::tableName(),['stare'=>3],['id'=>$this->id])->execute();
+    }
+
+
+
 
 }
