@@ -4,7 +4,9 @@ namespace frontend\controllers;
 
 use common\models\CandidatFisier;
 use common\models\KeyInscrierePostUser;
+use common\models\NomTipFisierDosar;
 use common\models\search\CandidatFisierSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -40,13 +42,13 @@ class CandidatFisierController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CandidatFisierSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-        //$dataProvider=CandidatFisier::find()->where(['id_user_adaugare'=>Yii::$app->user->identity->id])->asArray();
+        $tip_fisier=NomTipFisierDosar::find()
+            ->innerJoin(['c'=>CandidatFisier::tableName()],'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
+            ->where(['c.id_user_adaugare'=>Yii::$app->user->identity->id])->asArray()->all();
+
         $id_user=Yii::$app->user->identity->id;
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'tip_fisier'=>$tip_fisier,
             'id_user'=>$id_user,
         ]);
     }

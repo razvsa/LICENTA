@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var common\models\search\CandidatFisierSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Documente de aprobat';
+$this->title = 'Documente aprobate';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="candidat-fisier-index">

@@ -2,6 +2,7 @@
 
 namespace common\models\search;
 
+use common\models\NomTipFisierDosar;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\CandidatFisier;
@@ -39,9 +40,10 @@ class CandidatFisierSearch extends CandidatFisier
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+
+    public function search_tip($params)
     {
-        $query = CandidatFisier::find()->where(['id_user_adaugare'=>Yii::$app->user->identity->id]);;
+        $query = NomTipFisierDosar::find();
 
         // add conditions that should always apply here
 
@@ -72,4 +74,74 @@ class CandidatFisierSearch extends CandidatFisier
 
         return $dataProvider;
     }
+
+
+    public function search($params)
+    {
+        $query = CandidatFisier::find()->where(['stare'=>2]);
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'data_adaugare' => $this->data_adaugare,
+            'id' => $this->id,
+            'id_user_adaugare' => $this->id_user_adaugare,
+            'id_nom_tip_fisier_dosar' => $this->id_nom_tip_fisier_dosar,
+        ]);
+
+        $query->andFilterWhere(['like', 'cale_fisier', $this->cale_fisier])
+            ->andFilterWhere(['like', 'descriere', $this->descriere])
+            ->andFilterWhere(['like', 'nume_fisier_afisare', $this->nume_fisier_afisare])
+            ->andFilterWhere(['like', 'nume_fisier_adaugare', $this->nume_fisier_adaugare]);
+
+        return $dataProvider;
+    }
+
+    public function search_aprobate($params)
+    {
+        $query = CandidatFisier::find()->where(['stare'=>3]);;
+
+        // add conditions that should always apply here
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            'data_adaugare' => $this->data_adaugare,
+            'id' => $this->id,
+            'id_user_adaugare' => $this->id_user_adaugare,
+            'id_nom_tip_fisier_dosar' => $this->id_nom_tip_fisier_dosar,
+        ]);
+
+        $query->andFilterWhere(['like', 'cale_fisier', $this->cale_fisier])
+            ->andFilterWhere(['like', 'descriere', $this->descriere])
+            ->andFilterWhere(['like', 'nume_fisier_afisare', $this->nume_fisier_afisare])
+            ->andFilterWhere(['like', 'nume_fisier_adaugare', $this->nume_fisier_adaugare]);
+
+        return $dataProvider;
+    }
+
 }

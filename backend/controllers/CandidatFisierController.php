@@ -7,6 +7,7 @@ use common\models\search\CandidatFisierSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * CandidatFisierController implements the CRUD actions for CandidatFisier model.
@@ -42,6 +43,17 @@ class CandidatFisierController extends Controller
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionAprobate()
+    {
+        $searchModel = new CandidatFisierSearch();
+        $dataProvider = $searchModel->search_aprobate($this->request->queryParams);
+
+        return $this->render('aprobate', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -123,9 +135,12 @@ class CandidatFisierController extends Controller
     }
     public function actionRespinge($id)
     {
+
         $model=$this->findModel($id);
         $model->respinge();
-        return $this->redirect(['view','id'=>$id]);
+        unlink(\Yii::getAlias("@frontend") . "\web\storage\user_{$model->id_user_adaugare}\\" . $model->nume_fisier_adaugare);
+        $model->delete();
+        return $this->redirect(['index']);
     }
 
 

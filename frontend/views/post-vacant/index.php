@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <div >
         <?php
+
         echo \yii\widgets\ListView::widget([
 
             'dataProvider'=>$posturi,

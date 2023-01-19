@@ -74,7 +74,7 @@ class CandidatFisier extends \yii\db\ActiveRecord
     }
 
     public function respinge(){
-        Yii::$app->db->createCommand()->update(CandidatFisier::tableName(),['stare'=>2],['id'=>$this->id])->execute();
+        Yii::$app->db->createCommand()->update(CandidatFisier::tableName(),['stare'=>1],['id'=>$this->id])->execute();
     }
 
     public function aproba(){

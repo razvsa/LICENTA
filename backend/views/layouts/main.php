@@ -36,7 +36,8 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Anunturi', 'url' => ['/anunt/index'],'class'=>'mx-auto'],
-        ['label' => 'Documente-Candidati', 'url' => ['/candidat-fisier/index'],'class'=>'mx-auto'],
+        ['label' => 'Documentele de aprobat', 'url' => ['/candidat-fisier/index']],
+        ['label' => 'Documentele aprobate', 'url' => ['/candidat-fisier/aprobate']],
 
 
     ];

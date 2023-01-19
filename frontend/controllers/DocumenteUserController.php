@@ -122,7 +122,16 @@ class DocumenteUserController extends Controller
                 }
                 $var=0;
             }
-            Yii::$app->response->redirect(['/documente-user/create', 'id_post' => $id_post, 'fisiere' => $rezultate]);
+            if(empty($rezultate)){
+                $inscriere=new KeyInscrierePostUser();
+                $inscriere->id_post=$id_post;
+                $inscriere->id_user=Yii::$app->user->identity->id;
+                $inscriere->save();
+                Yii::$app->response->redirect(['/anunt/index']);
+            }
+            else{
+                Yii::$app->response->redirect(['/documente-user/create', 'id_post' => $id_post, 'fisiere' => $rezultate]);
+            }
         }
         for($i=0;$i<count($fisiere_form);$i++) {
             $document[$i]->nume = $fisiere_form[$i]['nume'];
@@ -137,6 +146,7 @@ class DocumenteUserController extends Controller
 
 
     public function actionSamedoc($id_post){
+
         $fisiere_necesare=NomTipFisierDosar::find()
             ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
             ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
@@ -200,11 +210,15 @@ class DocumenteUserController extends Controller
         foreach($tip_fisier as $tf){
             $document[]=new CandidatFisier();
         }
+        $id_user=Yii::$app->user->identity->id;
         if(Model::loadMultiple($document,Yii::$app->request->post())&& Model::validateMultiple($document))
         {
             $nume_utilizator= User::find()->where(['id'=>Yii::$app->user->identity->id])->asArray()->all()[0]["username"];
             for($i=0;$i<count($_FILES["CandidatFisier"]["name"]);$i++) {
 
+                $old_doc=CandidatFisier::find()
+                    ->where(['id_nom_tip_fisier_dosar'=>$_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"]])
+                    ->all();
 
                 for ($j = 0; $j < count($_FILES["CandidatFisier"]["name"][$i]["fisiere"]); $j++) {
 
@@ -220,16 +234,17 @@ class DocumenteUserController extends Controller
                         $doc->id_user_adaugare = Yii::$app->user->identity->id;
                         $doc->nume_fisier_adaugare = "document_" . Yii::$app->user->identity->id . "_" . $document[$i]->id_nom_tip_fisier_dosar . "_" . $nume_utilizator . "_" . $nume_document . "(".$j.")." . $extensie[1];
                         $doc->id_nom_tip_fisier_dosar = $_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"];
-                        $doc->stare = 1;
+                        $doc->stare = 2;
 
-                        $old_doc=CandidatFisier::find()
-                            ->where(['id_nom_tip_fisier_dosar'=>$_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"]])
-                            ->all();
 
                         if($doc->save())
                         {
-                            foreach($old_doc as $od)
+                            foreach($old_doc as $od) {
+                                if(file_exists(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\" . $od->nume_fisier_adaugare)==true)
+                                    unlink(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\" . $od->nume_fisier_adaugare);
                                 $od->delete();
+
+                            }
                             $exista=KeyInscrierePostUser::find()->where(['id_post'=>$id_post,'id_user'=>Yii::$app->user->identity->id])->asArray()->all();
                             if(empty($exista)) {
                                 $inscriere=new KeyInscrierePostUser();
@@ -240,7 +255,7 @@ class DocumenteUserController extends Controller
                             }
                         }
                         $doc->fisiere = UploadedFile::getInstances($doc, "[{$i}]fisiere[{$j}]");
-                        $id_user=Yii::$app->user->identity->id;
+
                         if (!file_exists(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\")) {
                             mkdir(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\", 0777, true);
                         }
