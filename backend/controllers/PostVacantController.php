@@ -2,16 +2,19 @@
 
 namespace backend\controllers;
 
+use common\models\KeyInscrierePostUser;
 use common\models\NomLocalitate;
 use common\models\PostVacant;
 use common\models\KeyAnuntPostVacant;
 use common\models\search\PostVacantSearch;
+use common\models\User;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use Yii;
-
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
  * PostVacantController implements the CRUD actions for PostVacant model.
@@ -99,9 +102,59 @@ class PostVacantController extends Controller
             $model->loadDefaultValues();
         }
 
-        return $this->render('create', [
+    return $this->render('create', [
             'model' => $model,
         ]);
+    }
+    public function downloadFile($fullpath){
+        if(!empty($fullpath)){
+            header("Content-type:application/xlsx");
+            header('Content-Disposition: attachment; filename="'.basename($fullpath).'"');
+            header('Content-Length: ' . filesize($fullpath));
+            readfile($fullpath);
+            unlink($fullpath);
+            Yii::$app->end();
+        }
+    }
+    public function actionListacandidati($id_post){
+
+        $spreadsheet = new Spreadsheet();
+        $post=PostVacant::findOne(['id' => $id_post]);
+
+
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Index');
+        $sheet->setCellValue('B1', 'Username');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('E1', 'Nota');
+
+        $header = User::find()->select(['username','email'])
+            ->innerJoin(['kip'=>KeyInscrierePostUser::tableName()],'kip.id_user=user.id')
+            ->where(['kip.id_post'=>$id_post])
+            ->asArray()->all();
+        $denumire_fisier='Candidati_post_'.$post->denumire.'.xlsx';
+
+
+        $cou=count($header);
+        $matrice=[];
+        $vector=[];
+        for($i=0;$i<$cou;$i++)
+        {
+            $valoare=$i+1;
+            $vector[0]=$valoare;
+            array_push($matrice,$vector);
+        }
+
+        $sheet->fromArray($matrice,NULL,'A3');
+        $sheet->fromArray($header,NULL,'B3');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($denumire_fisier);
+
+        $path=\Yii::getAlias("@backend") . "\web\\";
+        $this->downloadFile($path.$denumire_fisier);
+
     }
 
     /**

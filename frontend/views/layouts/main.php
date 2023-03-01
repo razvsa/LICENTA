@@ -38,6 +38,7 @@ AppAsset::register($this);
         ['label' => 'About', 'url' => ['/site/about']],
         ['label' => 'Anunturi', 'url' => ['/anunt/index']],
         ['label' => 'Documentele mele', 'url' => ['/candidat-fisier/index']],
+        ['label' => 'Posturile mele', 'url' => ['/post-vacant/posturilemele']],
 
     ];
     if (Yii::$app->user->isGuest) {

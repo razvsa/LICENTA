@@ -62,13 +62,14 @@ $this->title = $model->denumire;
                    $gasit=1;
            }
             if($gasit==1){
-                echo '<p class="bg-warning">Ai aplicat deja pentru un post din anuntul curent</p>';
+                echo '<p class="alert alert-warning" role="alert">Ai aplicat deja pentru un post din anuntul curent</p>';
             }
             else
                 echo Html::a("Aplica pentru acest post",['/documente-user/verifica','id_post'=>$model->id],['class'=>'btn btn-outline-primary']);
         }
        else{
-           echo '<p class="bg-success">Ai aplicat deja pentru acest post</p>';
+           echo '<p class="alert alert-success" role="alert">Ai aplicat deja pentru acest post</p>';
+           echo Html::a('Renunta la acest post',['/post-vacant/renunta','id_post'=>$model->id,'id_user'=>Yii::$app->user->identity->id],['class'=>'btn btn-outline-danger']);
        }
     }
 ?>

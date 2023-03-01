@@ -20,7 +20,7 @@ class AnuntSearch extends Anunt
     public function rules()
     {
         return [
-            [['id', 'id_user_adaugare','id_nom_localitate'], 'integer'],
+            [['id', 'id_user_adaugare'], 'integer'],
             [['data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'cale_imagine'], 'safe'],
         ];
     }

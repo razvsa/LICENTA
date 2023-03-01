@@ -10,13 +10,15 @@ use yii\grid\GridView;
 /** @var common\models\search\PostVacantSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var \frontend\controllers\AnuntController $posturi  */
+/** @var \frontend\controllers\PostVacantController $titlu */
 
-$this->title = 'Posturile anuntului';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = $titlu;
+
 ?>
 <div class="post-vacant-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
+    <br>
     <div >
         <?php
 

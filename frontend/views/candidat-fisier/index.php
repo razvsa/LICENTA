@@ -24,7 +24,9 @@ use yii\grid\GridView;
             foreach($tip_fisier as $tf){
                 $nume=$tf['nume'];
                 echo '<h4>'.ucfirst($nume).'</h4>';
-
+                echo '<br>';
+                echo \yii\helpers\Html::a("Descarca", [''], ['class' => 'btn btn-success']) ;
+                echo '<br>';
                 $fisiere =  new \yii\data\ActiveDataProvider([
                     'query'=>CandidatFisier::find()->where(['id_user_adaugare'=>Yii::$app->user->identity->id,'id_nom_tip_fisier_dosar'=>$tf['id']])]);
                 echo '<br>';

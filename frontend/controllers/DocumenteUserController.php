@@ -211,11 +211,11 @@ class DocumenteUserController extends Controller
             $document[]=new CandidatFisier();
         }
         $id_user=Yii::$app->user->identity->id;
-        if(Model::loadMultiple($document,Yii::$app->request->post())&& Model::validateMultiple($document))
-        {
+        if(Model::loadMultiple($document,Yii::$app->request->post())&& Model::validateMultiple($document)) {
+
             $nume_utilizator= User::find()->where(['id'=>Yii::$app->user->identity->id])->asArray()->all()[0]["username"];
             for($i=0;$i<count($_FILES["CandidatFisier"]["name"]);$i++) {
-
+                $sters=0;
                 $old_doc=CandidatFisier::find()
                     ->where(['id_nom_tip_fisier_dosar'=>$_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"]])
                     ->all();
@@ -228,7 +228,7 @@ class DocumenteUserController extends Controller
                         $nume_document = NomTipFisierDosar::find()->where(['id' => $_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"]])->asArray()->all()[0]["nume"];
                         $nume_document = preg_replace('/\s+/', '_', $nume_document);
                         $doc->nume_fisier_afisare = $_FILES["CandidatFisier"]["name"][$i]["fisiere"][$j];
-                        $doc->cale_fisier = "@frontend/web/storage/document_" . Yii::$app->user->identity->id . "_" . $document[$i]->id_nom_tip_fisier_dosar . "_" . $nume_utilizator . "_" . $nume_document . "(".$j.")." . $extensie[1];
+                        $doc->cale_fisier = "\web\storage\user_".Yii::$app->user->identity->id."\document_" . Yii::$app->user->identity->id . "_" . $document[$i]->id_nom_tip_fisier_dosar . "_" . $nume_utilizator . "_" . $nume_document . "(".$j.")." . $extensie[1];
                         $doc->data_adaugare = date('Y-m-d H:i:s');
                         $doc->descriere = "descriere";
                         $doc->id_user_adaugare = Yii::$app->user->identity->id;
@@ -237,13 +237,16 @@ class DocumenteUserController extends Controller
                         $doc->stare = 2;
 
 
-                        if($doc->save())
-                        {
-                            foreach($old_doc as $od) {
-                                if(file_exists(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\" . $od->nume_fisier_adaugare)==true)
-                                    unlink(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\" . $od->nume_fisier_adaugare);
-                                $od->delete();
+                        if($doc->save()) {
 
+                            if($sters==0){
+                                foreach($old_doc as $od) {
+                                    if(file_exists(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\" . $od->nume_fisier_adaugare)==true)
+                                        unlink(\Yii::getAlias("@frontend") . "\web\storage\user_{$id_user}\\" . $od->nume_fisier_adaugare);
+                                    $od->delete();
+
+                                }
+                                $sters=1;
                             }
                             $exista=KeyInscrierePostUser::find()->where(['id_post'=>$id_post,'id_user'=>Yii::$app->user->identity->id])->asArray()->all();
                             if(empty($exista)) {
@@ -263,6 +266,9 @@ class DocumenteUserController extends Controller
                     }
                 }
             }
+
+            Yii::$app->response->redirect(['/candidat-fisier/index']);
+
         }
 
         foreach ($tip_fisier as $key=>$tf){

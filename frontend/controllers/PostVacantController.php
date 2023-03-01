@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\KeyAnuntPostVacant;
+use common\models\KeyInscrierePostUser;
 use common\models\PostVacant;
 use common\models\search\PostVacantSearch;
 use yii\data\ActiveDataProvider;
@@ -41,6 +42,7 @@ class PostVacantController extends Controller
      */
     public function actionIndex($id)
     {
+        $titlu='Posturile Anuntului';
         $searchModel = new PostVacantSearch();
         $posturi = new ActiveDataProvider([
         'query'=>PostVacant::find()
@@ -50,6 +52,7 @@ class PostVacantController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'posturi' => $posturi,
+            'titlu'=>$titlu,
 
         ]);
     }
@@ -110,6 +113,17 @@ class PostVacantController extends Controller
         ]);
     }
 
+
+    public function actionRenunta($id_post,$id_user){
+
+        $model=KeyInscrierePostUser::find()
+            ->where(['id_user'=>$id_user,'id_post'=>$id_post])->all();
+        foreach($model as $m){
+            $m->delete();
+        }
+
+        return $this->redirect('/anunt/index');
+    }
     /**
      * Deletes an existing PostVacant model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -122,6 +136,24 @@ class PostVacantController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionPosturilemele(){
+
+        $titlu='Posturile mele';
+        $searchModel = new PostVacantSearch();
+        $posturi=new ActiveDataProvider([
+           'query'=>PostVacant::find()
+            ->innerJoin(['kip'=>KeyInscrierePostUser::tableName()],'kip.id_post=post_vacant.id')
+            ->where(['kip.id_user'=>\Yii::$app->user->identity->id])
+        ]);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'posturi' => $posturi,
+            'titlu'=>$titlu,
+
+        ]);
     }
 
     /**

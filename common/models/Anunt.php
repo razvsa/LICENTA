@@ -13,7 +13,6 @@ use yii\web\UploadedFile;
  * @property string $data_postare
  * @property string $data_concurs
  * @property string $data_depunere_dosar
- * @property int $id_nom_localitate
  * @property string $departament
  * @property string $cale_imagine
  * @property string $descriere
@@ -46,8 +45,8 @@ class Anunt extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'id_nom_localitate', 'departament', 'cale_imagine'], 'required'],
-            [['id_user_adaugare','id_nom_localitate','id_nom_judet'], 'integer'],
+            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'cale_imagine'], 'required'],
+            [['id_user_adaugare','id_nom_judet'], 'integer'],
             [['data_postare', 'data_concurs', 'data_depunere_dosar','data_limita_inscriere_concurs'], 'safe'],
             [['departament', 'cale_imagine'], 'string', 'max' => 100],
             [['descriere'], 'string'],

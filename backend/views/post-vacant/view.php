@@ -61,5 +61,8 @@ $this->title = $model->denumire;
 
     <?php echo Html::a('OK',['/anunt/index'],['class'=>'btn btn-success'])?>
     <?php echo Html::a('Vizualizeaza celelalte posturi ale anuntului',['post-vacant/index','id'=>$info[0]['id_anunt']],['class'=>'btn btn-success'])?>
+    <br>
+    <br>
+    <?= Html::a('Descarca lista candidati',['post-vacant/listacandidati','id_post'=>$model->id],['class'=>'btn btn-outline-info'])?>
 
 </div>

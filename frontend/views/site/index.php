@@ -4,6 +4,6 @@
 
 $this->title = 'My Yii Application';
 
-fvvffvfdadfaafabadfb
-?>
 
+?>
+Bun venit

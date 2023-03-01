@@ -90,17 +90,16 @@ class AnuntController extends Controller
     public function actionCreate()
     {
         $model = new Anunt();
-        $model->cale_imagine=UploadedFile::getInstanceByName('image');
+        //$model->cale_imagine=UploadedFile::getInstanceByName('image');
             if ($model->load($this->request->post())) {
+
                 $model->id_user_adaugare=Yii::$app->user->identity->id;
                 $model->data_postare=date('Y-m-d H:i:s');
                 $model->cale_imagine="o cale";
+
+
                 $model->save();
-//                echo '<pre>';
-//                print_r($model);
-//                echo '</pre>';
-//                die();
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view','id'=>$model->id]);
             }
 
         return $this->render('create', [

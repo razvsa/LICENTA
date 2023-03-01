@@ -43,6 +43,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'categorii' => 'candidat-fisier/categorii'
             ],
         ],
 
