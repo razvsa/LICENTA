@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Anunt;
 use common\models\KeyAnuntPostVacant;
 use common\models\KeyInscrierePostUser;
 use common\models\PostVacant;
@@ -48,11 +49,12 @@ class PostVacantController extends Controller
         'query'=>PostVacant::find()
             ->innerJoin(['apv'=>KeyAnuntPostVacant::tableName()],'apv.id_post_vacant=post_vacant.id')
             ->andWhere(['apv.id_anunt'=>$id])]);
-
+        $anunt=Anunt::findOne(['id'=>$id]);
         return $this->render('index', [
             'searchModel' => $searchModel,
             'posturi' => $posturi,
             'titlu'=>$titlu,
+            'anunt'=>$anunt
 
         ]);
     }

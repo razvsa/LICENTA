@@ -218,4 +218,33 @@ class User extends ActiveRecord implements IdentityInterface
     public function isAdmin(){
         return $this->admin;
     }
+
+    public function getInscrierePost($id){
+        $exista=KeyInscrierePostUser::find()->where(['id_user'=>$this->id,'id_post'=>$id])->exists();
+        if($exista==0)
+            return 0;
+        else{
+            $data=KeyInscrierePostUser::find()->where(['id_user'=>$this->id,'id_post'=>$id])->asArray()->all();
+            return $data[0]['data_inscriere'];
+        }
+    }
+
+    public function getValidareDocumente($id){
+        $validat=1;
+        $fisiere_necesare=NomTipFisierDosar::find()
+            ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
+            ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
+            ->innerJoin(['kk'=>KeyAnuntPostVacant::tableName()],'kk.id_anunt=a.id')
+            ->where(['kk.id_post_vacant'=>$id])
+            ->asArray()->all();
+        foreach ($fisiere_necesare as $fn){
+            $documente=CandidatFisier::find()->where(['id_nom_tip_fisier_dosar'=>$fn['id'],'id_user_adaugare'=>$this->id])->asArray()->all();
+            foreach($documente as $doc){
+                if($doc['stare']!=3)
+                    $validat=0;
+
+            }
+        }
+        return $validat;
+    }
 }

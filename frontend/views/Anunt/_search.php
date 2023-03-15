@@ -33,23 +33,31 @@ use kartik\depdrop\DepDrop;
     ?>
 
     <?php  echo $form->field($model, 'id_nom_tip_functie')->dropDownList($functie_map,[
+            'id'=>'tip_functie',
             'prompt'=>"",
     ]);?>
 
     <?php echo $form->field($model, 'id_nom_nivel_studii')->dropDownList($nivel_studii_map,[
         'prompt'=>"",
+        'id'=>'nivel_studii',
     ]); ?>
 
     <?php  echo $form->field($model, 'id_nom_nivel_cariera')->dropDownList($nivel_cariera_map,[
         'prompt'=>"",
+        'id'=>'nivel_cariera',
     ]);?>
+
+
 
     <?php  echo $form->field($model, 'id_nom_judet')->widget(Select2::className(),[
         'options'=>[
             'id'=>'id_judet',
-            'placeholder' => 'Alege Judetul'
+            'placeholder' => 'Alege Judetul',
+
         ],
         'bsVersion'=>'4.x',
+        'theme' => Select2::THEME_KRAJEE,
+
         'data'=>\yii\helpers\ArrayHelper::map(\common\models\NomJudet::find()
             ->innerJoin(['post'=>\common\models\PostVacant::tableName()],'post.id_nom_judet=nom_judet.id')
             ->orderBy('nume')->all(),'id','nume'),
@@ -61,6 +69,7 @@ use kartik\depdrop\DepDrop;
         'pluginOptions'=>[
             'depends'=>['id_judet'],
             'placeholder'=>'Tot Judetul',
+
             'url'=>Url::to(['/anunt/get-localitate'])
         ]
     ]);?>
@@ -68,9 +77,35 @@ use kartik\depdrop\DepDrop;
 
     <div class="form-group">
         <?= Html::submitButton('Cauta', ['class' => 'btn btn-primary']) ?>
-        <?php //echoHtml::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+        <?= Html::button('Reseteaza', ['class' => 'btn btn-outline-secondary', 'id' => 'reset-button']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
 
+    <?php
+    $date=Yii::$app->session->get('form');
+    if(count($date)==0)
+        $autoc=false;
+    else
+        $autoc=true;
+    $this->registerJs("
+$('#reset-button').click(function() {
+    $('#tip_functie').val('').trigger('change');
+    $('#id_localitate').val('').trigger('change');
+    $('#nivel_studii').val('').trigger('change');
+    $('#nivel_cariera').val('').trigger('change');
+    $('#id_judet').val('').trigger('change');
+    $('#anunt_search').submit();
+    
+});
+
+    var verifica=" . json_encode($autoc) . ";
+    if(verifica==true){
+        var anuntSearch = " . json_encode($date) . ";
+        $('#tip_functie').val(anuntSearch.AnuntSearch.id_nom_tip_functie);
+        $('#nivel_studii').val(anuntSearch.AnuntSearch.id_nom_nivel_studii);
+        $('#nivel_cariera').val(anuntSearch.AnuntSearch.id_nom_nivel_cariera);
+   }
+");
+    ?>
 </div>

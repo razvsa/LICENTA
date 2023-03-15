@@ -6,6 +6,8 @@ use yii\helpers\Html;
 
 $this->title = 'About';
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerCssFile('D:\xamp\htdocs\eJobs\frontend\web\css\site.css');
+$data='07/30/2024';
 ?>
 <div class="site-about">
     <h1><?= Html::encode($this->title) ?></h1>
@@ -14,3 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <code><?= __FILE__ ?></code>
 </div>
+
+
+

@@ -94,7 +94,9 @@ class PostVacantController extends Controller
         $model = new PostVacant();
         $model_key=new KeyAnuntPostVacant();
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+            if ($model->load($this->request->post())) {
+                $model->data_postare=date('Y-m-d H:i:s');
+                $model->save();
                 $model_key->adauga($id,$model->id);
                 return $this->redirect(['view', 'id' => $model->id]);
             }

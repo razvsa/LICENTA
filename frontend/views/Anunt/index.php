@@ -44,21 +44,22 @@ $this->title = 'Anunturi';
 JS;
         $this->registerJs($script,\yii\web\View::POS_READY);
         ?>
-<div class="anunt-index">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<div >
+
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 
     <!-- Sidebar -->
-    <div class="w3-sidebar" style="width:18%" >
-        <h3 class="w3-bar-item">Filtreaza</h3>
+    <div class="mysidebar"  >
+        <h3 >Filtreaza</h3>
         <?php echo $this->render('_search', ['model' => $searchModel,'functie'=>$functie,'nivel_studii'=>$nivel_studii,'nivel_cariera'=>$nivel_cariera]); ?>
     </div>
 
     <!-- Page Content -->
-    <div style="margin-left:25%">
+    <div class="mypgcontent" >
         <?php
         Pjax::begin(['id'=>'anunt_search_pjax']);
+        echo '<br><h5>Au fost gasite <b>'.$dataProvider->count.'</b> anunturi  </h5><br>';
         echo \yii\widgets\ListView::widget([
 
             'dataProvider'=>$dataProvider,
@@ -70,3 +71,29 @@ JS;
     </div>
 
 </div>
+<style>
+    @media only screen and (min-width: 800px) {
+        .mysidebar{
+            margin-right:80%;
+            height:100%;
+            width:200px;
+            background-color:#fff;
+            position:fixed!important;
+            z-index:1;
+            overflow:auto}
+
+        .mypgcontent{
+            margin-left:30%
+
+
+        }
+    }
+    @media only screen and (max-width: 800px) {
+        .mysidebar {
+            margin-left:20%
+        }
+        .mypgcontent{
+            margin-left:0%
+        }
+    }
+</style>

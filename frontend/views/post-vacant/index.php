@@ -11,6 +11,7 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var \frontend\controllers\AnuntController $posturi  */
 /** @var \frontend\controllers\PostVacantController $titlu */
+/** @var \frontend\controllers\PostVacantController $anunt */
 
 $this->title = $titlu;
 
@@ -22,9 +23,12 @@ $this->title = $titlu;
     <div >
         <?php
 
+       //$diferanta_date=strtotime($anunt->data_concurs)-time();
+
         echo \yii\widgets\ListView::widget([
 
             'dataProvider'=>$posturi,
+            //'viewParams' => ['diferanta' => $diferanta_date],
             'itemView'=>'_jobs_item',
             'summary' =>''
         ])?>

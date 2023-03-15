@@ -26,7 +26,10 @@
         "kartik-v/bootstrap-fileinput": "dev-master",
         "kartik-v/yii2-widget-fileinput": "dev-master",
         "phpoffice/phpspreadsheet": "^1.28",
-        "ext-zip": "^1.19"
+        "ext-zip": "^1.19",
+        "aneeshikmat/yii2-time-down-counter": "v1.1.0-stable",
+        "sjaakp/yii2-timeline": "*",
+        "kartik-v/yii2-widget-typeahead": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

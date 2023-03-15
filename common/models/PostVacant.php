@@ -12,6 +12,7 @@ use Yii;
  * @property string $pozitie_stat_organizare
  * @property string $denumire
  * @property string $cerinte
+ * @property string $data_postare
  * @property int $id_nom_judet
  * @property int $id_nom_nivel_studii
  * @property int $id_nom_nivel_cariera
@@ -41,7 +42,7 @@ class PostVacant extends \yii\db\ActiveRecord
         return [
             [['id_nom_tip_functie', 'pozitie_stat_organizare', 'denumire', 'cerinte', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera', 'oras'], 'required'],
             [['id_nom_tip_functie', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera'], 'integer'],
-            [['pozitie_stat_organizare', 'denumire'], 'string', 'max' => 100],
+            [['pozitie_stat_organizare', 'denumire','data_postare'], 'string', 'max' => 100],
             [['cerinte'], 'string', 'max' => 2000],
             [['oras'], 'string', 'max' => 50],
             [['id_nom_judet'], 'exist', 'skipOnError' => true, 'targetClass' => NomJudet::class, 'targetAttribute' => ['id_nom_judet' => 'id']],
@@ -65,6 +66,7 @@ class PostVacant extends \yii\db\ActiveRecord
             'id_nom_nivel_studii' => 'Nivel Studii',
             'id_nom_nivel_cariera' => 'Nivel Cariera',
             'oras' => 'Localitate',
+            'data_postare'=>'Data Postare'
         ];
     }
 
@@ -106,4 +108,53 @@ class PostVacant extends \yii\db\ActiveRecord
     {
         return new \common\models\query\PostVacantQuery(get_called_class());
     }
+
+    public function getDataConcurs(){
+        $anunt=Anunt::find()
+            ->innerJoin(['kap'=>KeyAnuntPostVacant::tableName()],'kap.id_anunt=anunt.id')
+            ->innerJoin(['p'=>PostVacant::tableName()],'p.id=kap.id_post_vacant')
+            ->where(['p.id'=>$this->id])->asArray()->all();
+        return $anunt[0]['data_concurs'];
+    }
+
+    public function getInscriereConcurs(){
+                $anunt=Anunt::find()
+            ->innerJoin(['kap'=>KeyAnuntPostVacant::tableName()],'kap.id_anunt=anunt.id')
+            ->innerJoin(['p'=>PostVacant::tableName()],'p.id=kap.id_post_vacant')
+            ->where(['p.id'=>$this->id])->asArray()->all();
+        return $anunt[0]['data_limita_inscriere_concurs'];
+    }
+    public function getLocalitate(){
+        $localitate=NomLocalitate::findOne(['id'=>$this->oras]);
+        return $localitate['nume'];
+    }
+
+    public function getJudet(){
+        $localitate=NomLocalitate::findOne(['id'=>$this->oras]);
+        return $localitate['judet'];
+    }
+    public function getCariera(){
+        $cariera=NomNivelCariera::findOne(['id'=>$this->id_nom_nivel_cariera]);
+        return $cariera['nume'];
+    }
+    public function getStudii(){
+        $cariera=NomNivelStudii::findOne(['id'=>$this->id_nom_nivel_studii]);
+        return $cariera['nume'];
+    }
+    public function getFunctie(){
+        $functie=NomTipIncadrare::findOne(['id'=>$this->id_nom_tip_functie]);
+        return $functie['nume'];
+    }
+    public function getDepartament(){
+        $departament=NomDepartament::find()
+            ->innerJoin(['a'=>Anunt::tableName()],'a.departament= nom_departament.id')
+            ->innerJoin(['kap'=>KeyAnuntPostVacant::tableName()],'kap.id_anunt=a.id')
+            ->innerJoin(['p'=>PostVacant::tableName()],'p.id=kap.id_post_vacant')
+            ->where(['p.id'=>$this->id])->asArray()->all();
+
+        return $departament[0]['nume'];
+    }
+
+
+
 }

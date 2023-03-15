@@ -9,6 +9,7 @@
         echo '<h3>Documente de aprobat</h3>';
     else
         echo '<h3>Documente aprobate</h3>';
+    echo '<br>';
 ?>
 
 

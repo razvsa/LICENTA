@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property int $id_post
  * @property int $id_user
+ * @property string $data_inscriere
  */
 class KeyInscrierePostUser extends \yii\db\ActiveRecord
 {
@@ -27,7 +28,7 @@ class KeyInscrierePostUser extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_post', 'id_user'], 'required'],
+            [['id_post', 'id_user','data_inscriere'], 'required'],
             [['id_post', 'id_user'], 'integer'],
         ];
     }
@@ -41,6 +42,7 @@ class KeyInscrierePostUser extends \yii\db\ActiveRecord
             'id' => 'ID',
             'id_post' => 'Id Post',
             'id_user' => 'Id User',
+            'data_inscriere'=>'Data Inscriere'
         ];
     }
 }

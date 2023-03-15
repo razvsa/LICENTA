@@ -175,6 +175,7 @@ class DocumenteUserController extends Controller
             $inscriere=new KeyInscrierePostUser();
             $inscriere->id_post=$id_post;
             $inscriere->id_user=Yii::$app->user->identity->id;
+            $inscriere->data_inscriere=date('Y-m-d H:i:s');
             $inscriere->save();
             Yii::$app->response->redirect(['/anunt/index']);
         }
@@ -253,6 +254,7 @@ class DocumenteUserController extends Controller
                                 $inscriere=new KeyInscrierePostUser();
                                 $inscriere->id_post=$id_post;
                                 $inscriere->id_user=Yii::$app->user->identity->id;
+                                $inscriere->data_inscriere=date('Y-m-d H:i:s');
                                 $inscriere->save();
 
                             }

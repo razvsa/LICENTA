@@ -52,6 +52,14 @@ class AnuntController extends Controller
         {
             $dataProvider = $searchModel->search($this->request->queryParams);
         }
+        Yii::$app->session->set('form', $this->request->queryParams);
+
+//        echo '<pre>';
+//        print_r($this->request->queryParams);
+//        echo '</pre>';
+//        die();
+
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
