@@ -17,15 +17,36 @@ use yii\grid\GridView;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php
-    $verificare=CandidatFisier::find()->where(['id_user_adaugare'=>$id_user])->asArray()->all();
-        if(empty($verificare))
-            echo "Nu aveti documente inregistrate";
+    if(\Yii::$app->user->isGuest)
+    {
+        echo '<p class="alert alert-danger" role="alert">Nu aveti acces la aceasta pagina</p>';
+    }
+    else{
+
+        $verificare=CandidatFisier::find()->where(['id_user_adaugare'=>$id_user])->asArray()->all();
+        if(empty($verificare)) {
+            echo "Nu aveti documente inregistrate<br><br>";
+            echo Html::a('Inregistreaza documente', ['/documente-user/inregistreazadoc'], ['class' => 'btn btn-outline-info']);
+        }
         else {
+            echo "<h2>Lista cu documentele:</h2>";
+            echo "<br>";
+            echo \yii\helpers\Html::a('Descarcati toate documentele',['/candidat-fisier/descarcatot','id_user'=>$id_user],['class'=>'btn btn-outline-success']);
+            echo "<br><br>";
+            echo "<h5>Pentru actualizarea mai multor documente sau adaugarea de documente noi apasa aici:</h5>";
+
+            echo \yii\helpers\Html::a('Acutualizeaza sau adauga',['/documente-user/actualizeazatot'],['class'=>'btn btn-outline-info']);
+            echo "<br>";
+            echo "<br>";
             foreach($tip_fisier as $tf){
                 $nume=$tf['nume'];
                 echo '<h4>'.ucfirst($nume).'</h4>';
                 echo '<br>';
-                echo \yii\helpers\Html::a("Descarca", [''], ['class' => 'btn btn-success']) ;
+                echo \yii\helpers\Html::a("Descarca", ['/candidat-fisier/descarcapartial','tip_fisier'=>$tf['id'],'nume'=>$tf['nume']], ['class' => 'btn btn-success']) ;
+                echo "\t";
+                echo \yii\helpers\Html::a("Actualizeaza", ['/documente-user/actualizeazadoc','tip_fisier'=>$tf], ['class' => 'btn btn-info']) ;
+                echo "\t";
+                echo \yii\helpers\Html::a("Sterge", ['/candidat-fisier/stergedoc','tip_fisier'=>$tf['id']], ['class' => 'btn btn-danger']) ;
                 echo '<br>';
                 $fisiere =  new \yii\data\ActiveDataProvider([
                     'query'=>CandidatFisier::find()->where(['id_user_adaugare'=>Yii::$app->user->identity->id,'id_nom_tip_fisier_dosar'=>$tf['id']])]);
@@ -39,7 +60,7 @@ use yii\grid\GridView;
             }
 
         }
-
+    }
     ?>
 
 

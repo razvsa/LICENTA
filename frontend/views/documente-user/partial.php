@@ -18,11 +18,7 @@ use yii\widgets\ActiveForm;
         <?php
 
             foreach($document as $key=>$d) {
-//                        echo '<pre>';
-//        print_r($d);
-//        echo '</pre>';
-//        die();
-                echo $form->field($d, "[{$key}]nume")->checkbox()->label($d->nume);
+                echo $form->field($d, "[{$key}]nume")->checkbox([], false)->label($d->nume);
                 echo $form->field($d, "[$key]id")->hiddenInput(['value' => $d->id])->label(false);
             }
         ?>

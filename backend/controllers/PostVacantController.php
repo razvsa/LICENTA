@@ -3,18 +3,30 @@
 namespace backend\controllers;
 
 use common\models\KeyInscrierePostUser;
+use common\models\NomJudet;
 use common\models\NomLocalitate;
+use common\models\NomNivelStudii;
+use common\models\NomTipIncadrare;
+use common\models\PostFisier;
 use common\models\PostVacant;
 use common\models\KeyAnuntPostVacant;
 use common\models\search\PostVacantSearch;
 use common\models\User;
+use Elasticsearch\Endpoints\License\Post;
+use kartik\dialog\Dialog;
+use yii\base\Model;
 use yii\web\Controller;
+use yii\web\JsExpression;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use Yii;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use yii\elasticsearch\Connection;
+use yii\elasticsearch\Query;
+use yii\web\UploadedFile;
+use yii\web\View;
 
 /**
  * PostVacantController implements the CRUD actions for PostVacant model.
@@ -64,9 +76,69 @@ class PostVacantController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model=$this->findModel($id);
+        if(Yii::$app->user->getIdentity()->admin=$model->getIdStructura())
+        {
+            $document=[];
+            $document[0]=new PostFisier();
+            $document[0]['cale_fisier']='0';
+            $document[0]['nume_fisier']='0';
+            $document[0]['data_adaugare']=date('Y-m-d H:i:s');
+            $document[0]['id_user_adaugare']=Yii::$app->user->id;
+            $document[0]['id_post']=$id;
+            $fisiere=new ActiveDataProvider([
+                'query'=>PostFisier::find()->where(['id_post'=>$id])
+            ]);
+
+            if(Model::loadMultiple($document,Yii::$app->request->post())&& Model::validateMultiple($document)) {
+
+                for($i=0;$i<count($_FILES["PostFisier"]["name"]);$i++) {
+                    for ($j = 0; $j < count($_FILES["PostFisier"]["name"][$i]["fisiere"]); $j++) {
+                        if (strlen($_FILES["PostFisier"]["name"][$i]["fisiere"][$j]) > 3) {
+                            $doc=new PostFisier();
+                            if (!file_exists(\Yii::getAlias("@frontend") . "\web\storage\posturi\post_{$id}\\")) {
+                                mkdir(\Yii::getAlias("@frontend") . "\web\storage\posturi\post_{$id}\\", 0777, true);
+                            }
+                            $doc->id_user_adaugare=Yii::$app->user->id;
+                            $doc->data_adaugare=date('Y-m-d H:i:s');
+                            $doc->id_post=$id;
+                            $doc->nume_fisier=$_FILES["PostFisier"]["name"][$i]["fisiere"][$j];
+                            $index=1;
+                            while (file_exists(\Yii::getAlias("@frontend") . "\web\storage\posturi\post_{$id}\\".$doc->nume_fisier))
+                            {
+                                $info=pathinfo($_FILES["PostFisier"]["name"][$i]["fisiere"][$j]);
+                                $filename=$info['filename']."(".$index.").";
+                                $doc->nume_fisier=$filename.$info['extension'];
+                                $index++;
+                            }
+                            $doc->cale_fisier="\web\storage\posturi\post_".$id."\\".$doc->nume_fisier;
+                            $doc->save();
+                            $doc->fisiere = UploadedFile::getInstances($doc, "[{$i}]fisiere[{$j}]");
+                            $doc->fisiere[0]->saveAs(\Yii::getAlias("@frontend") . $doc->cale_fisier);
+
+
+
+                        }
+                    }
+                }
+                return $this->render('view', [
+                    'model' => $model,
+                    'document'=>$document,
+                    'fisiere'=>$fisiere,
+                    'id_post'=>$id,
+                ]);
+            }
+
+            return $this->render('view', [
+                'model' => $model,
+                'document'=>$document,
+                'fisiere'=>$fisiere,
+                'id_post'=>$id,
+            ]);
+        }
+        else{
+            return "Nu ai acces la acest post";
+        }
     }
 
     public function actionGetLocalitate() {
@@ -98,6 +170,25 @@ class PostVacantController extends Controller
                 $model->data_postare=date('Y-m-d H:i:s');
                 $model->save();
                 $model_key->adauga($id,$model->id);
+
+                $post=array();
+                $atribute=$model->attributes;
+
+                $post['id']=$atribute['id'];
+                $post['tip_functie']=NomTipIncadrare::findOne(['id'=>$atribute['id_nom_tip_functie']])['nume'];
+                $post['denumire']=$atribute['denumire'];
+                $post['cerinte']=$atribute['cerinte'];
+                $post['tematica']=$atribute['tematica'];
+                $post['bibliografie']=$atribute['bibliografie'];
+                $post['judet']=NomJudet::findOne(['id'=>$atribute['id_nom_judet']])['nume'];
+                $post['nivel_studii']=NomNivelStudii::findOne(['id'=>$atribute['id_nom_nivel_studii']])['nume'];
+                $post['nivel_cariera']=NomNivelStudii::findOne(['id'=>$atribute['id_nom_nivel_cariera']])['nume'];
+                $post['oras']=NomLocalitate::findOne(['id'=>$atribute['oras']])['nume'];
+
+                $connection = new Connection();
+                $command = $connection->createCommand();
+                $command->insert('post', '_doc', $post);
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -115,6 +206,15 @@ class PostVacantController extends Controller
             header('Content-Length: ' . filesize($fullpath));
             readfile($fullpath);
             unlink($fullpath);
+            Yii::$app->end();
+        }
+    }
+    public function downloadFileFaraStergere($fullpath){
+        if(!empty($fullpath)){
+            header("Content-type:application/zip");
+            header('Content-Disposition: attachment; filename="'.basename($fullpath).'"');
+            header('Content-Length: ' . filesize($fullpath));
+            readfile($fullpath);
             Yii::$app->end();
         }
     }
@@ -207,5 +307,37 @@ class PostVacantController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionStergefisier($id,$id_post){
+        $model=PostFisier::findOne(['id'=>$id]);
+        $fullpath=\Yii::getAlias("@frontend") . $model->cale_fisier;
+        $model->delete();
+        unlink($fullpath);
+
+        $document=[];
+        $document[0]=new PostFisier();
+        $document[0]['cale_fisier']='0';
+        $document[0]['nume_fisier']='0';
+        $document[0]['data_adaugare']=date('Y-m-d H:i:s');
+        $document[0]['id_user_adaugare']=Yii::$app->user->id;
+        $document[0]['id_post']=$id;
+        $fisiere=new ActiveDataProvider([
+            'query'=>PostFisier::find()->where(['id_post'=>$id])
+        ]);
+        return $this->redirect(['view',
+            'id'=>$id_post,
+        ]);
+    }
+
+    public function actionDescarca($id){
+        $fisier=PostFisier::findOne(['id'=>$id]);
+        $cale_completa=Yii::getAlias('@frontend').$fisier->cale_fisier;
+        $this->downloadFileFaraStergere($cale_completa);
+    }
+    public function actionStergePost($id){
+        $post=PostVacant::findOne(['id'=>$id]);
+        $id_anunt=$post->getIdAnunt();
+        $post->delete();
+        $this->redirect(['/anunt/view','id'=>$id_anunt]);
     }
 }

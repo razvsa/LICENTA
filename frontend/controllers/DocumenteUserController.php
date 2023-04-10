@@ -11,12 +11,16 @@ use common\models\KeyTipFisierDosarTipCategorie;
 use common\models\NomTipFisierDosar;
 use common\models\search\DocumnteUserSearch;
 use common\models\User;
+use kartik\dialog\Dialog;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\JsExpression;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Yii;
 use yii\base\Model;
 use yii\web\UploadedFile;
+use yii\web\View;
 /**
  * DocumenteUserController implements the CRUD actions for DocumenteUser model.
 
@@ -184,6 +188,110 @@ class DocumenteUserController extends Controller
         }
     }
 
+    public function actionActualizeazadoc(){
+        $tip_fisier = Yii::$app->request->get('tip_fisier');
+        $tip_fisier_array=[$tip_fisier];
+        Yii::$app->response->redirect(['/documente-user/create', 'id_post' => -1, 'fisiere' => $tip_fisier_array]);
+    }
+
+    public function actionInregistreazadoc(){
+        $model=new DocumenteUser();
+        $documente=[];
+        $fisiere=NomTipFisierDosar::find()->asArray()->all();
+        foreach ($fisiere as $f)
+            $documente[]=new NomTipFisierDosar();
+
+        if(Model::loadMultiple($documente,Yii::$app->request->post())&& Model::validateMultiple($documente)){
+            $rezultate=array();
+            for($i=0;$i<count($fisiere);$i++)
+            {
+                if($documente[$i]['nume']==1)
+                {
+                    array_push($rezultate,$fisiere[$i]);
+                }
+            }
+
+            Yii::$app->response->redirect(['/documente-user/create', 'id_post' => -1, 'fisiere' => $rezultate]);
+        }
+        for($i=0;$i<count($fisiere);$i++) {
+            $documente[$i]->nume = $fisiere[$i]['nume'];
+            $documente[$i]->id = $fisiere[$i]['id'];
+        }
+
+
+        return $this->render('inregistreazadoc',[
+            'model'=>$model,
+            'documente'=>$documente,
+        ]);
+
+
+    }
+    public function actionActualizeazatot(){
+        $model=new DocumenteUser();
+        $documente=[];
+
+        $fisiere_existente=NomTipFisierDosar::find()
+            ->innerJoin(['c'=>CandidatFisier::tableName()],'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
+            ->where(['c.id_user_adaugare'=>Yii::$app->user->identity->id])
+            ->asArray()->all();
+        $toate_fisierele=NomTipFisierDosar::find()->asArray()->all();
+        $fisier_existent=0;
+        $restul_fisierelor=array();
+        foreach ($toate_fisierele as $tf) {
+            foreach ($fisiere_existente as $fe) {
+                if($tf['id']==$fe['id'] && $tf['nume']==$fe['nume'])
+                    $fisier_existent=1;
+            }
+            if($fisier_existent==0)
+                array_push($restul_fisierelor,$tf);
+            else
+                $fisier_existent=0;
+
+        }
+
+        $total_fisier=array();
+        foreach ($fisiere_existente as $fe)
+            array_push($total_fisier,$fe);
+        foreach ($restul_fisierelor as $rf)
+            array_push($total_fisier,$rf);
+
+
+        foreach($toate_fisierele as $tf){
+            $documente[]=new NomTipFisierDosar();
+        }
+
+        if (Model::loadMultiple($documente,Yii::$app->request->post())&& Model::validateMultiple($documente)) {
+           $rezultate=array();
+
+            for($i=0;$i<count($toate_fisierele);$i++)
+            {
+                if($documente[$i]['nume']==1)
+                {
+                    array_push($rezultate,$total_fisier[$i]);
+                }
+            }
+
+
+            Yii::$app->response->redirect(['/documente-user/create', 'id_post' => -1, 'fisiere' => $rezultate]);
+        }
+
+
+
+        for($i=0;$i<count($total_fisier);$i++) {
+            $documente[$i]->nume = $total_fisier[$i]['nume'];
+            $documente[$i]->id = $total_fisier[$i]['id'];
+        }
+        $nr_existente=count($fisiere_existente);
+
+
+        return $this->render('actualizeazatot',[
+            'model'=>$model,
+            'documente'=>$documente,
+            'nr_existente'=>$nr_existente,
+
+        ]);
+    }
+
     /**
      * Creates a new DocumenteUser model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -192,24 +300,69 @@ class DocumenteUserController extends Controller
 
     public function actionCreate()
     {
-        $a = Yii::$app->request->get('fisiere');
+        $tip_fisier = Yii::$app->request->get('fisiere');
         $id_post=Yii::$app->request->get('id_post');
         $model = new DocumenteUser();
         $rez=false;
-        $tip_fisier=$a;
-//        $tip_fisier=NomTipFisierDosar::find()
-//            ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
-//            ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
-//            ->innerJoin(['kk'=>KeyAnuntPostVacant::tableName()],'kk.id_anunt=a.id')
-//            ->where(['kk.id_post_vacant'=>$id_post])
-//            ->asArray()->all();
-//        echo '<pre>';
-//        print_r($tip_fisier);
-//        echo '</pre>';
-//        die();
+        Yii::$app->params['bsDependencyEnabled'] = false;
+        echo Dialog::widget([
+            'libName' => 'krajeeDialogInscriere',
+            'dialogDefaults' => [
+                Dialog::DIALOG_OTHER => [
+                    'buttons' => ''
+                ]
+            ] ,
+            'options' => [
+                'size' => Dialog::SIZE_MEDIUM,
+                'type' => Dialog::TYPE_SUCCESS,
+                'title' => 'Inscriere post',
+                'message' => '',
+                'buttons' => [
+                    [
+                        'id' => 'cust-btn-2',
+                        'label'=>'OK',
+                        'action' => new JsExpression("function(dialog) {
+                    dialog.close();
+                }")
+                    ]
+                ],
+                'buttonsAlign' => 'right',
+                'closeButton' => false,
+            ]
+        ]);
+        echo Dialog::widget([
+            'libName' => 'krajeeDialogIncarcare',
+            'dialogDefaults' => [
+                Dialog::DIALOG_OTHER => [
+                    'buttons' => ''
+                ]
+            ] ,
+            'options' => [
+                'size' => Dialog::SIZE_MEDIUM,
+                'type' => Dialog::TYPE_SUCCESS,
+                'title' => 'Documente incarcate',
+                'message' => '',
+                'buttons' => [
+                    [
+                        'id' => 'cust-btn-2',
+                        'label'=>'OK',
+                        'action' => new JsExpression("function(dialog) {
+                    dialog.close();
+                }")
+                    ]
+                ],
+                'buttonsAlign' => 'right',
+                'closeButton' => false,
+            ]
+        ]);
+
         $document=[];
-        foreach($tip_fisier as $tf){
-            $document[]=new CandidatFisier();
+        if(!is_null($tip_fisier))
+            foreach($tip_fisier as $tf){
+                $document[]=new CandidatFisier();
+            }
+        else{
+            Yii::$app->response->redirect(['/candidat-fisier/index']);
         }
         $id_user=Yii::$app->user->identity->id;
         if(Model::loadMultiple($document,Yii::$app->request->post())&& Model::validateMultiple($document)) {
@@ -249,14 +402,16 @@ class DocumenteUserController extends Controller
                                 }
                                 $sters=1;
                             }
-                            $exista=KeyInscrierePostUser::find()->where(['id_post'=>$id_post,'id_user'=>Yii::$app->user->identity->id])->asArray()->all();
-                            if(empty($exista)) {
-                                $inscriere=new KeyInscrierePostUser();
-                                $inscriere->id_post=$id_post;
-                                $inscriere->id_user=Yii::$app->user->identity->id;
-                                $inscriere->data_inscriere=date('Y-m-d H:i:s');
-                                $inscriere->save();
+                            if($id_post!=-1) {
+                                $exista = KeyInscrierePostUser::find()->where(['id_post' => $id_post, 'id_user' => Yii::$app->user->identity->id])->asArray()->all();
+                                if (empty($exista)) {
+                                    $inscriere = new KeyInscrierePostUser();
+                                    $inscriere->id_post = $id_post;
+                                    $inscriere->id_user = Yii::$app->user->identity->id;
+                                    $inscriere->data_inscriere = date('Y-m-d H:i:s');
+                                    $inscriere->save();
 
+                                }
                             }
                         }
                         $doc->fisiere = UploadedFile::getInstances($doc, "[{$i}]fisiere[{$j}]");
@@ -268,17 +423,38 @@ class DocumenteUserController extends Controller
                     }
                 }
             }
-
+//            if($id_post==-1){
+//                $js = <<< JS
+//                krajeeDialogIncarcare.dialog(
+//                "Documente incarcate cu succes",
+//                function() {}
+//                 );
+//                JS;
+//                $this->getView()->registerJs($js, View::POS_READY, '_form');
+//            }
+//            else{
+//                $js = <<< JS
+//                krajeeDialogInscriere.dialog(
+//                "Inscriere realizata cu succes!",
+//                function() {}
+//                 );
+//                JS;
+//                $this->getView()->registerJs($js, View::POS_READY, '_form');
+//            }
             Yii::$app->response->redirect(['/candidat-fisier/index']);
 
         }
-
-        foreach ($tip_fisier as $key=>$tf){
-            $document[$key]->id_nom_tip_fisier_dosar=$tip_fisier[$key]['id'];
-
+        if(!is_null($tip_fisier)) {
+            foreach ($tip_fisier as $key => $tf) {
+                $document[$key]->id_nom_tip_fisier_dosar = $tip_fisier[$key]['id'];
+            }
+        }
+        else{
+                Yii::$app->response->redirect(['/candidat-fisier/index']);
+            }
 //            for($i=0;$i<count($tip_fisier);$i++){
 //                $document[$i]->id_nom_tip_fisier_dosar=$tip_fisier[$i]['id'];
-        }
+
         return $this->render('create', [
             'model' => $model,
             'document'=>$document,

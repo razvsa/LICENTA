@@ -50,6 +50,7 @@ class SignupForm extends Model
         }
         
         $user = new User();
+        $user->admin=-1;
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);

@@ -37,6 +37,10 @@ use kartik\depdrop\DepDrop;
 
     <?= $form->field($model, 'cerinte')->textarea(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'tematica')->textarea(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'bibliografie')->textarea(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'id_nom_judet')->widget(Select2::className(),[
         'options'=>[
             'id'=>'id_judet',

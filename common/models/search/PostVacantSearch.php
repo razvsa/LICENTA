@@ -18,7 +18,7 @@ class PostVacantSearch extends PostVacant
     {
         return [
             [['id', 'id_nom_tip_functie', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera'], 'integer'],
-            [['pozitie_stat_organizare', 'denumire', 'cerinte', 'oras'], 'safe'],
+            [['pozitie_stat_organizare', 'denumire', 'cerinte', 'oras','tematica','bibliografie'], 'safe'],
         ];
     }
 

@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\Anunt;
 use common\models\KeyAnuntPostVacant;
 use common\models\KeyInscrierePostUser;
+use common\models\PostFisier;
 use common\models\PostVacant;
 use common\models\search\PostVacantSearch;
 use yii\data\ActiveDataProvider;
@@ -54,7 +55,8 @@ class PostVacantController extends Controller
             'searchModel' => $searchModel,
             'posturi' => $posturi,
             'titlu'=>$titlu,
-            'anunt'=>$anunt
+            'anunt'=>$anunt,
+            'posturilemele'=>0
 
         ]);
     }
@@ -67,9 +69,14 @@ class PostVacantController extends Controller
      */
     public function actionView($id)
     {
+
+        $fisiere=new ActiveDataProvider([
+            'query'=>PostFisier::find()->where(['id_post'=>$id])
+        ]);
         return $this->render('view', [
             'model' => $this->findModel($id),
             'id_anunt'=>$id,
+            'fisiere'=>$fisiere,
         ]);
     }
 
@@ -143,17 +150,21 @@ class PostVacantController extends Controller
     public function actionPosturilemele(){
 
         $titlu='Posturile mele';
-        $searchModel = new PostVacantSearch();
-        $posturi=new ActiveDataProvider([
-           'query'=>PostVacant::find()
-            ->innerJoin(['kip'=>KeyInscrierePostUser::tableName()],'kip.id_post=post_vacant.id')
-            ->where(['kip.id_user'=>\Yii::$app->user->identity->id])
-        ]);
 
+        $searchModel = new PostVacantSearch();
+        $posturi=0;
+        if(!\Yii::$app->user->isGuest)
+        {
+            $posturi=new ActiveDataProvider([
+                'query'=>PostVacant::find()
+                    ->innerJoin(['kip'=>KeyInscrierePostUser::tableName()],'kip.id_post=post_vacant.id')
+                    ->where(['kip.id_user'=>\Yii::$app->user->identity->id])]);
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'posturi' => $posturi,
             'titlu'=>$titlu,
+            'posturilemele'=>1,
 
         ]);
     }
@@ -172,5 +183,19 @@ class PostVacantController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function downloadFileFaraStergere($fullpath){
+        if(!empty($fullpath)){
+            header("Content-type:application/zip");
+            header('Content-Disposition: attachment; filename="'.basename($fullpath).'"');
+            header('Content-Length: ' . filesize($fullpath));
+            readfile($fullpath);
+            \Yii::$app->end();
+        }
+    }
+    public function actionDescarca($id){
+        $fisier=PostFisier::findOne(['id'=>$id]);
+        $cale_completa=\Yii::getAlias('@frontend').$fisier->cale_fisier;
+        $this->downloadFileFaraStergere($cale_completa);
     }
 }

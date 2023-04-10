@@ -23,7 +23,7 @@ class m221112_190834_create_anunt_table extends Migration
             'data_concurs' => $this->datetime(),
             'data_depunere_dosar' => $this->string(),
             'id_user_adaugare' => $this->integer(),
-            'cale_imagine'=>$this->string()
+            'titlu'=>$this->string()
         ]);
 
         // creates index for column `id_user_adaugare`

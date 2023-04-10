@@ -216,7 +216,10 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public function isAdmin(){
-        return $this->admin;
+        if($this->admin!=-1)
+            return true;
+        else
+            return false;
     }
 
     public function getInscrierePost($id){

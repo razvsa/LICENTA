@@ -26,12 +26,9 @@ use yii\widgets\DetailView;
         <!-- Portfolio Item Row -->
         <div class="row">
 
-            <div class="col-md-6">
-               <?php echo $data_img=Html::img('D:/xamp/htdocs/eJobs/frontend/web/storage/image34.png');
-               ?>
-            </div>
 
-            <div class="col-md-5">
+
+            <div class="col-md-12">
                 <h3 class="my-3">Detalii anunt:</h3>
                 <?php
                     $ddata_concurs=strtotime($model->data_concurs);
@@ -52,7 +49,7 @@ use yii\widgets\DetailView;
     <br>
     <p>
         <?= Html::a('Actualizeaza anunt', ['update', 'id' => $model->id], ['class' => 'btn btn-outline-primary']) ?>
-        <?= Html::a('Sterge anunt', ['delete', 'id' => $model->id], [
+        <?= Html::a('Sterge anunt', ['sterge-anunt', 'id' => $model->id], [
             'class' => 'btn btn-outline-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',

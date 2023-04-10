@@ -193,6 +193,15 @@ class CandidatFisierController extends Controller
         return $this->redirect(['categorii','id_user'=>$id_user,'stare'=>$stare]);
     }
 
+    public function downloadFileFaraStergere($fullpath){
+        if(!empty($fullpath)){
+            header("Content-type:application/zip");
+            header('Content-Disposition: attachment; filename="'.basename($fullpath).'"');
+            header('Content-Length: ' . filesize($fullpath));
+            readfile($fullpath);
+            Yii::$app->end();
+        }
+    }
     public function downloadFile($fullpath){
         if(!empty($fullpath)){
             header("Content-type:application/zip");
@@ -240,7 +249,33 @@ class CandidatFisierController extends Controller
         $zip->close();
         $this->downloadFile(\Yii::getAlias('@backend').'\web\\'.$file);
     }
+    public function actionDescarcapartial($tip_fisier,$id_user){
 
+        $id_tip_fisier=NomTipFisierDosar::findOne(['nume'=>$tip_fisier]);
+
+        $documente=CandidatFisier::find()
+            ->where(['id_user_adaugare'=>$id_user,'stare'=>3,'id_nom_tip_fisier_dosar'=>$id_tip_fisier['id']])->asArray()->all();
+
+        if(count($documente)==1){
+            $this->downloadFileFaraStergere(\Yii::getAlias('@frontend') .$documente[0]['cale_fisier']);
+        }
+        else {
+            $nume_utilizator = User::findOne(['id' => $id_user])->username;
+            $file = $tip_fisier . '_' . $nume_utilizator . '.zip';
+            $rootfolder = $tip_fisier . '_' . $nume_utilizator;
+
+            $zip = new ZipArchive();
+            if ($zip->open($file, ZipArchive::CREATE) !== TRUE) {
+                throw new \Exception('Cannot create a zip file');
+            }
+            foreach ($documente as $document) {
+                $zip->addFile(\Yii::getAlias("@frontend") . $document['cale_fisier'], $rootfolder . '\\' . $document['nume_fisier_adaugare']);
+
+            }
+            $zip->close();
+            $this->downloadFile(\Yii::getAlias('@backend') . '\web\\' . $file);
+        }
+    }
     /**
      * Finds the CandidatFisier model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

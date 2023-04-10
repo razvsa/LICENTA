@@ -29,7 +29,11 @@
         "ext-zip": "^1.19",
         "aneeshikmat/yii2-time-down-counter": "v1.1.0-stable",
         "sjaakp/yii2-timeline": "*",
-        "kartik-v/yii2-widget-typeahead": "^1.0"
+        "kartik-v/yii2-widget-typeahead": "^1.0",
+        "elasticsearch/elasticsearch": "^7.0",
+        "yiisoft/yii2-elasticsearch": "^2.1",
+        "kartik-v/yii2-dialog": "dev-master",
+        "thiagoalessio/tesseract_ocr": "^2.12"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

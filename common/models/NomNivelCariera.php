@@ -42,7 +42,7 @@ class NomNivelCariera extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'nume' => 'Nume',
+            'nume' => 'Nivel Cariera',
         ];
     }
 

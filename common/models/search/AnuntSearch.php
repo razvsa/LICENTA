@@ -3,11 +3,18 @@
 namespace common\models\search;
 
 use common\models\KeyAnuntPostVacant;
+use common\models\NomJudet;
 use common\models\NomLocalitate;
+use common\models\NomNivelCariera;
+use common\models\NomNivelStudii;
+use common\models\NomTipIncadrare;
 use common\models\PostVacant;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Anunt;
+use yii\elasticsearch\Connection;
+use yii\elasticsearch\Query;
+use function React\Promise\all;
 
 /**
  * AnuntSearch represents the model behind the search form of `common\models\Anunt`.
@@ -21,7 +28,7 @@ class AnuntSearch extends Anunt
     {
         return [
             [['id', 'id_user_adaugare'], 'integer'],
-            [['data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'cale_imagine'], 'safe'],
+            [['data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'titlu'], 'safe'],
         ];
     }
 
@@ -43,27 +50,91 @@ class AnuntSearch extends Anunt
      */
     public function search($params)
     {
-//        echo '<pre>';
-//        print_r($params);
-//        echo '</pre>';
-//        die();
-        if(empty($params))
-             $query = Anunt::find();
+
+        if(empty($params['AnuntSearch']['cuvant']) &&
+            empty($params['AnuntSearch']['id_nom_tip_functie']) &&
+            empty($params['AnuntSearch']['id_nom_nivel_studii']) &&
+            empty($params['AnuntSearch']['id_nom_nivel_cariera']) &&
+            empty($params['AnuntSearch']['id_nom_judet'])) {
+
+            if(\Yii::$app->user->getIdentity()->admin==0)
+                $query = Anunt::find();
+            else
+                $query=Anunt::find()
+                    ->where(['id_structura'=>\Yii::$app->user->getIdentity()->admin]);
+        }
         else {
-            $query = Anunt::find()
-                ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_anunt=anunt.id')
-                ->innerJoin(['post' => PostVacant::tableName()], 'post.id=kapv.id_post_vacant');
+            $lista_id_posturi=-1;
+            if(!empty($params)) {
+                if ($params['AnuntSearch']['cuvant'] != "") {
+
+                    $connection = new Connection();
+                    //$id_anunturi = array_column($query->asArray()->all(), 'id');
+//                $posturi = PostVacant::find()
+//                    ->select(['post_vacant.id', 'fct.nume AS tip_functie', 'post_vacant.denumire', 'post_vacant.cerinte','post_vacant.bibliografie','post_vacant.tematica', 'judet.nume AS judet', 'studii.nume AS nivel_studii', 'cariera.nume AS nivel_cariera', 'oras.nume AS oras'])
+//                    ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_post_vacant=post_vacant.id')
+//                    ->innerJoin(['anunt' => Anunt::tableName()], 'anunt.id=kapv.id_anunt')
+//                    ->innerJoin(['fct' => NomTipIncadrare::tableName()], 'fct.id=post_vacant.id_nom_tip_functie')
+//                    ->innerJoin(['judet' => NomJudet::tableName()], 'judet.id=post_vacant.id_nom_judet')
+//                    ->innerJoin(['studii' => NomNivelStudii::tableName()], 'studii.id=post_vacant.id_nom_nivel_studii')
+//                    ->innerJoin(['cariera' => NomNivelCariera::tableName()], 'cariera.id=post_vacant.id_nom_nivel_cariera')
+//                    ->innerJoin(['oras' => NomLocalitate::tableName()], 'oras.id=post_vacant.oras')
+//                    ->asArray()->all();
+                    //                    foreach($posturi as $post)
+//                        $command->insert('post', '_doc', $post);
+
+
+                    $query_elastic = new Query();
+                    $command = $connection->createCommand();
+
+
+                    $query_elastic->from('post')
+                        ->query([
+                            'multi_match' => [
+                                'query' =>$params['AnuntSearch']['cuvant'] ,
+                                'fields' => ['*'],
+                                'fuzziness' => 2,
+                                'prefix_length' => 2,
+                            ]
+                        ]);
+                    $results = $query_elastic->all();
+                    $rezultate = array_column($results, '_source');
+                    $lista_id_posturi = array_column($rezultate,'id');
+
+                    $query = Anunt::find()
+                        ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_anunt=anunt.id')
+                        ->innerJoin(['post' => PostVacant::tableName()], 'post.id=kapv.id_post_vacant')
+                        ->where(['post.id' => $lista_id_posturi]);
+
+
+                }
+            }
+
+            if(\Yii::$app->user->getIdentity()->admin==0)
+                $query = Anunt::find()
+                    ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_anunt=anunt.id')
+                    ->innerJoin(['post' => PostVacant::tableName()], 'post.id=kapv.id_post_vacant');
+            else
+                $query = Anunt::find()
+                    ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_anunt=anunt.id')
+                    ->innerJoin(['post' => PostVacant::tableName()], 'post.id=kapv.id_post_vacant')
+                    ->where(['id_structura'=>\Yii::$app->user->getIdentity()->admin]);
+
+            if($lista_id_posturi!=-1)
+                $query->andWhere(['post.id' => $lista_id_posturi]);
             if ($params['AnuntSearch']['id_nom_tip_functie'] != "")
                 $query->andWhere(['post.id_nom_tip_functie' => $params['AnuntSearch']['id_nom_tip_functie']]);
             if ($params['AnuntSearch']['id_nom_nivel_studii'] != "")
                 $query->andWhere(['post.id_nom_nivel_studii' => $params['AnuntSearch']['id_nom_nivel_studii']]);
-
+            if ($params['AnuntSearch']['id_nom_nivel_cariera'] != "")
+                $query->andWhere(['post.id_nom_nivel_cariera' => $params['AnuntSearch']['id_nom_nivel_cariera']]);
             if ($params['AnuntSearch']['id_nom_judet'] != "") {
                 if ($params['AnuntSearch']['oras'] == "")
                     $query->andWhere(['post.id_nom_judet' => $params['AnuntSearch']['id_nom_judet']]);
-                else if ($params['AnuntSearch']['oras'] != "")
+                else
                     $query->andWhere(['post.oras' => $params['AnuntSearch']['oras']]);
             }
+
         }
 
         $dataProvider = new ActiveDataProvider([

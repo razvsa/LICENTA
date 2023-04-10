@@ -22,9 +22,10 @@ use common\models\KeyAnuntPostVacant;
         Yii::$app->response->redirect(['/documente-user/create','id_post'=>$id_post,'fisiere'=>$fis]);
     }
     else {
-        echo '<p>S-au gasit documente inregistrate de dvs</p>';
-        echo Html::a('Foloseste aceleasi documente', ['/documente-user/samedoc','id_post'=>$id_post], ['class' => 'btn btn-primary']);
-        echo "*In caz ca nu exista toate documentele necesare se va deschide un formular unde inregistrati documentmele lipsa";
+        echo '<h4>S-au gasit documente inregistrate de dvs</h4><br>';
+        echo Html::a('Foloseste aceleasi documente', ['/documente-user/samedoc','id_post'=>$id_post], ['class' => 'btn btn-info']);
+        echo '<br>';
+        echo "*In caz ca nu exista toate documentele necesare se va deschide un formular unde inregistrati documentele lipsa";
         echo '<br>';
         echo '<br>';
 
@@ -36,24 +37,24 @@ use common\models\KeyAnuntPostVacant;
                 ->innerJoin(['kk'=>KeyAnuntPostVacant::tableName()],'kk.id_anunt=a.id')
                 ->where(['kk.id_post_vacant'=>$id_post])
                 ->asArray()->all()
-        ], ['class' => 'btn btn-primary']);
+        ], ['class' => 'btn btn-info']);
         echo '<br>';
         echo '<br>';
 
 
-        echo Html::a('Actualizeaza doar o parte din documente', ['/documente-user/partial','id_post'=>$id_post], ['class' => 'btn btn-primary']);
+        echo Html::a('Actualizeaza doar o parte din documente', ['/documente-user/partial','id_post'=>$id_post], ['class' => 'btn btn-info']);
         echo '<br>';
         echo '<br>';
 
-        echo '<h4> Aveti incarcate documentele urmatoare:</h4>';
+        echo '<h4> Aveti incarcate urmatoarele documente:</h4>';
         $fisiere_incarcate = common\models\NomTipFisierDosar::find()->select('nom_tip_fisier_dosar.nume')->distinct()
             ->innerJoin(['c' => CandidatFisier::tableName()], 'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
-            ->where(['c.id_user_adaugare' => 2])->asArray()->all();
-        echo '<br>';
+            ->where(['c.id_user_adaugare' => Yii::$app->user->identity->id])->asArray()->all();
+        echo '<br><ul>';
         for($i=0;$i<count($fisiere_incarcate);$i++){
-            echo "<h5>\t- {$fisiere_incarcate[$i]['nume']}</h5>";
-            echo '<br>';
+            echo "<h5><li class='bulina'>\t{$fisiere_incarcate[$i]['nume']}</li></h5><br>";
         }
+        echo '</ul>';
 
         echo '<h4> Pentru aplicare sunt necesare urmatoarele documente:</h4>';
         $fisiere_necesare=NomTipFisierDosar::find()
@@ -62,12 +63,20 @@ use common\models\KeyAnuntPostVacant;
             ->innerJoin(['kk'=>KeyAnuntPostVacant::tableName()],'kk.id_anunt=a.id')
             ->where(['kk.id_post_vacant'=>$id_post])
             ->asArray()->all();
-        echo '<br>';
+
+        echo '<br><ul>';
         for($i=0;$i<count($fisiere_necesare);$i++){
-            echo "<h5>\t- {$fisiere_necesare[$i]['nume']}</h5>";
-            echo '<br>';
+            echo "<h5><li class='bulina'>\t{$fisiere_necesare[$i]['nume']}</li></h5><br>";
+
         }
+        echo '</ul>';
 
     }
 ?>
+<style>
+    ul.bulina {
+        list-style-type: circle;
+    }
+
+</style>
 

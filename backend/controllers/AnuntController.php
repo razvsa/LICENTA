@@ -57,10 +57,29 @@ class AnuntController extends Controller
     {
         $searchModel = new AnuntSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+        $localitati=(new \yii\db\Query())->select(['oras'])->from('post_vacant')->distinct()->all();
+        $nivel_studii=(new \yii\db\Query())->select(['id','nume'])->from('nom_nivel_studii')->distinct()->all();
+        $functie=(new \yii\db\Query())->select(['id','nume'])->from('nom_tip_incadrare')->distinct()->all();
+        $nivel_cariera=(new \yii\db\Query())->select(['id','nume'])->from('nom_nivel_cariera')->distinct()->all();
+        if($searchModel->load(Yii::$app->request->get()))
+        {
+            $dataProvider = $searchModel->search($this->request->queryParams);
+        }
+        Yii::$app->session->set('form', $this->request->queryParams);
+
+//        echo '<pre>';
+//        print_r($this->request->queryParams);
+//        echo '</pre>';
+//        die();
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'localitati'=>$localitati,
+            'functie'=>$functie,
+            'nivel_studii'=>$nivel_studii,
+            'nivel_cariera'=>$nivel_cariera,
         ]);
     }
 
@@ -72,10 +91,13 @@ class AnuntController extends Controller
      */
     public function actionView($id)
     {
+        $anunt=Anunt::findOne(['id'=>$id]);
         $posturi = new ActiveDataProvider([
             'query'=>PostVacant::find()
                 ->innerJoin(['apv'=>KeyAnuntPostVacant::tableName()],'apv.id_post_vacant=post_vacant.id')
                 ->andWhere(['apv.id_anunt'=>$id])]);
+        if($anunt->id_structura!=Yii::$app->user->getIdentity()->admin)
+            return "Nu ai drepturi pentru acest post";
         return $this->render('view', [
             'model' => $this->findModel($id),
             'posturi'=>$posturi,
@@ -90,14 +112,13 @@ class AnuntController extends Controller
     public function actionCreate()
     {
         $model = new Anunt();
-        //$model->cale_imagine=UploadedFile::getInstanceByName('image');
+
             if ($model->load($this->request->post())) {
 
                 $model->id_user_adaugare=Yii::$app->user->identity->id;
                 $model->data_postare=date('Y-m-d H:i:s');
-                $model->cale_imagine="o cale";
-
-
+                if(Yii::$app->user->getIdentity()->admin!=0)
+                    $model->id_structura=Yii::$app->user->getIdentity()->admin;
                 $model->save();
                 return $this->redirect(['view','id'=>$model->id]);
             }
@@ -167,5 +188,18 @@ class AnuntController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionStergeAnunt($id){
+        $anunt=Anunt::findOne(['id'=>$id]);
+        $anunt->delete();
+        $posturi=PostVacant::find()->select('post_vacant.id')
+            ->innerJoin(['key'=>KeyAnuntPostVacant::tableName()],'post_vacant.id=key.id_post_vacant')
+            ->innerJoin(['anunt'=>Anunt::tableName()],'anunt.id=key.id_anunt')
+            ->where(['anunt.id'=>$id])->all();
+
+        foreach($posturi as $post){
+            $post->delete();
+        }
+        return $this->redirect(['index']);
     }
 }

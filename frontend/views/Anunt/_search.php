@@ -14,6 +14,7 @@ use kartik\depdrop\DepDrop;
 /** @var \frontend\controllers\AnuntController $functie*/
 /** @var \frontend\controllers\AnuntController $nivel_studii */
 /** @var \frontend\controllers\AnuntController $nivel_cariera */
+
 ?>
 <?php
     $functie_map=ArrayHelper::map($functie,'id','nume');
@@ -31,6 +32,13 @@ use kartik\depdrop\DepDrop;
     ]);
     $model->oras="Tot Judetul";
     ?>
+    <div class="form-group">
+        <?= Html::submitButton('Cauta', ['class' => 'btn btn-primary']) ?>
+        <?= Html::button('Reseteaza', ['class' => 'btn btn-outline-secondary', 'id' => 'reset-button']) ?>
+    </div>
+    <?php  echo $form->field($model, 'cuvant')->textInput([
+        'id'=>'cuvant',
+    ])->label('Cauta...');?>
 
     <?php  echo $form->field($model, 'id_nom_tip_functie')->dropDownList($functie_map,[
             'id'=>'tip_functie',
@@ -75,10 +83,7 @@ use kartik\depdrop\DepDrop;
     ]);?>
 
 
-    <div class="form-group">
-        <?= Html::submitButton('Cauta', ['class' => 'btn btn-primary']) ?>
-        <?= Html::button('Reseteaza', ['class' => 'btn btn-outline-secondary', 'id' => 'reset-button']) ?>
-    </div>
+
 
     <?php ActiveForm::end(); ?>
 
@@ -90,6 +95,7 @@ use kartik\depdrop\DepDrop;
         $autoc=true;
     $this->registerJs("
 $('#reset-button').click(function() {
+    $('#cuvant').val('').trigger('change');
     $('#tip_functie').val('').trigger('change');
     $('#id_localitate').val('').trigger('change');
     $('#nivel_studii').val('').trigger('change');
@@ -103,6 +109,7 @@ $('#reset-button').click(function() {
     if(verifica==true){
         var anuntSearch = " . json_encode($date) . ";
         $('#tip_functie').val(anuntSearch.AnuntSearch.id_nom_tip_functie);
+        $('#cuvant').val(anuntSearch.AnuntSearch.cuvant);
         $('#nivel_studii').val(anuntSearch.AnuntSearch.id_nom_nivel_studii);
         $('#nivel_cariera').val(anuntSearch.AnuntSearch.id_nom_nivel_cariera);
    }

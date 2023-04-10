@@ -17,6 +17,8 @@ use Yii;
  * @property int $id_nom_nivel_studii
  * @property int $id_nom_nivel_cariera
  * @property string $oras
+ * @property string $tematica
+ * @property string $bibliografie
  *
  * @property NomJudet $nomJudet
  * @property NomNivelCariera $nomNivelCariera
@@ -40,10 +42,10 @@ class PostVacant extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_nom_tip_functie', 'pozitie_stat_organizare', 'denumire', 'cerinte', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera', 'oras'], 'required'],
+            [['id_nom_tip_functie', 'pozitie_stat_organizare', 'denumire', 'cerinte', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera', 'oras','tematica','bibliografie'], 'required'],
             [['id_nom_tip_functie', 'id_nom_judet', 'id_nom_nivel_studii', 'id_nom_nivel_cariera'], 'integer'],
             [['pozitie_stat_organizare', 'denumire','data_postare'], 'string', 'max' => 100],
-            [['cerinte'], 'string', 'max' => 2000],
+            [['cerinte','tematica','bibliografie'], 'string', 'max' => 2000],
             [['oras'], 'string', 'max' => 50],
             [['id_nom_judet'], 'exist', 'skipOnError' => true, 'targetClass' => NomJudet::class, 'targetAttribute' => ['id_nom_judet' => 'id']],
             [['id_nom_nivel_cariera'], 'exist', 'skipOnError' => true, 'targetClass' => NomNivelCariera::class, 'targetAttribute' => ['id_nom_nivel_cariera' => 'id']],
@@ -66,7 +68,9 @@ class PostVacant extends \yii\db\ActiveRecord
             'id_nom_nivel_studii' => 'Nivel Studii',
             'id_nom_nivel_cariera' => 'Nivel Cariera',
             'oras' => 'Localitate',
-            'data_postare'=>'Data Postare'
+            'data_postare'=>'Data Postare',
+            'tematica'=>'Tematica',
+            'bibliografie'=>'Bibliografie'
         ];
     }
 
@@ -153,6 +157,16 @@ class PostVacant extends \yii\db\ActiveRecord
             ->where(['p.id'=>$this->id])->asArray()->all();
 
         return $departament[0]['nume'];
+    }
+    public function getIdAnunt(){
+        $key=KeyAnuntPostVacant::findOne(['id_post_vacant'=>$this->id]);
+        return $key['id_anunt'];
+    }
+    public function getIdStructura(){
+        $anunt=Anunt::find()
+        ->innerJoin(['k'=>KeyAnuntPostVacant::tableName()],'k.id_anunt=anunt.id')
+        ->where(['k.id_post_vacant'=>$this->id])->one();
+        return $anunt['id_structura'];
     }
 
 

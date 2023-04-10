@@ -21,8 +21,10 @@ use common\models\NomDepartament;
     $departamente_map=\yii\helpers\ArrayHelper::map($departamente,'id','nume');
     $categorie=\common\models\NomTipCategorie::find()->all();
     $categorie_map=\yii\helpers\ArrayHelper::map($categorie,'id','nume');
+    $structura=\common\models\NomStructura::find()->all();
+    $structura_map=\yii\helpers\ArrayHelper::map($structura,'id','nume');
     $form = ActiveForm::begin(); ?>
-
+    <?= $form->field($model, 'titlu')->textInput();?>
     <?= $form->field($model, 'data_concurs')->widget(DateTimePicker::className(),[
             'language' => 'ro',
             'pluginOptions' =>[
@@ -56,6 +58,17 @@ use common\models\NomDepartament;
             'placeholder' => 'Selecteaza Departamentul'
         ],
     ]);?>
+    <?php
+        if(Yii::$app->user->getIdentity()->admin==0)
+            echo $form->field($model,'id_structura')->widget(Select2::className(),[
+                'bsVersion'=>'4.x',
+                'data'=>$structura_map,
+                'options'=>[
+                    'placeholder' => 'Selecteaza Structura'
+                ],
+            ])->label("Structura");
+
+    ?>
 
     <?= $form->field($model, 'categorie_fisier')->dropdownList($categorie_map,[
         'prompt'=>'Selecteaza Categoria',

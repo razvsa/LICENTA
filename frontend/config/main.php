@@ -11,7 +11,7 @@ return [
     'name'=>'eJobs',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
-    'defaultRoute'=>'/jobs/index',
+    'defaultRoute'=>'/site/index',
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
@@ -43,8 +43,18 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'categorii' => 'candidat-fisier/categorii'
+                'index' => 'candidat-fisier/categorii'
             ],
+        ],
+        'elasticsearch' => [
+            'class' => 'yii\elasticsearch\Connection',
+            'nodes' => [
+                [
+                    'http_address' => '127.0.0.1:9200',
+                    //'auth' => ['username' => 'razvan', 'password' => 'razvan']
+                ],
+            ],
+            'auth' => ['username' => 'razvan', 'password' => 'razvan']
         ],
 
     ],

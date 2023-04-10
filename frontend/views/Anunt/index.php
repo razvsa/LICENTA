@@ -19,8 +19,9 @@ use yii\web\JqueryAsset;
 $this->title = 'Anunturi';
 
 ?>
-        <?php
-        $script=<<<JS
+<?php
+Yii::$app->params['bsDependencyEnabled'] = false;
+$script=<<<JS
         $('body').on('beforeSubmit', 'form#anunt_search', function(event) {
             console.log("aici");
             var form = $(this);
@@ -42,8 +43,8 @@ $this->title = 'Anunturi';
             return false;
         });
 JS;
-        $this->registerJs($script,\yii\web\View::POS_READY);
-        ?>
+$this->registerJs($script,\yii\web\View::POS_READY);
+?>
 <div >
 
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -75,7 +76,7 @@ JS;
     @media only screen and (min-width: 800px) {
         .mysidebar{
             margin-right:80%;
-            height:100%;
+            height:80%;
             width:200px;
             background-color:#fff;
             position:fixed!important;
@@ -91,9 +92,12 @@ JS;
     @media only screen and (max-width: 800px) {
         .mysidebar {
             margin-left:20%
+            overflow: auto;
         }
         .mypgcontent{
+
             margin-left:0%
         }
     }
 </style>
+

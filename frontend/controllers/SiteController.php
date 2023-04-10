@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Anunt;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -15,6 +16,11 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use yii\elasticsearch\Connection;
+use yii\elasticsearch\Query;
+use yii\elasticsearch\ActiveRecord;
+use Elasticsearch\ClientBuilder;
+
 
 /**
  * Site controller
@@ -143,6 +149,37 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
+        $connection = new Connection();
+        $query = new Query();
+        $anunturi=Anunt::find()->asArray()->all();
+        $command=$connection->createCommand();
+
+
+
+        foreach ($anunturi as $anunt){
+            $command->insert('anunt','_doc',$anunt);
+        }
+
+        $query->from('anunt')
+            ->query([
+                'multi_match' => [
+                    'query' => 'ani',
+                    'fields' => ['*'],
+                    'fuzziness' => 2,
+                    'prefix_length' => 2,
+                ]
+            ]);
+        $results = $query ->all();
+        $rezultate = array_column($results, '_source');
+        $lista_id=[];
+        $rezultate_finale=[];
+        foreach ($rezultate as $rezultat){
+            if(!in_array($rezultat['id'],$lista_id)) {
+                array_push($rezultate_finale, $rezultat);
+                array_push($lista_id,$rezultat['id']);
+            }
+        }
+
         return $this->render('about');
     }
 

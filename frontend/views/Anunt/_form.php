@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'departament')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'cale_imagine')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'titlu')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

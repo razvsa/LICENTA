@@ -3,7 +3,8 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\file\FileInput;
-
+use kartik\dialog\DialogAsset;
+use kartik\dialog\Dialog;
 /** @var yii\web\View $this */
 /** @var common\models\DocumenteUser $model */
 /** @var yii\widgets\ActiveForm $form */
@@ -15,14 +16,15 @@ use kartik\file\FileInput;
     <?php $form = ActiveForm::begin(); ?>
 
 <?php
+    Yii::$app->params['bsDependencyEnabled'] = false;
+
     foreach($document as $key=>$d){
       echo $form->field($d,"[{$key}]fisiere")
     ->widget(FileInput::className(),[
                 'id'=>$key,
-                'bsVersion'=>'4.x',
                 'options'=>[
                         'multiple'=>true,
-                    'bsVersion'=>'4.x',
+
 
                 ],
                 'pluginOptions'=>[
@@ -41,7 +43,7 @@ use kartik\file\FileInput;
 
 ?>
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app','Save'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t('app','Confirma'), ['class' => 'btn btn-success']) ?>
     </div>
 
 </div>

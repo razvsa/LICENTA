@@ -8,6 +8,7 @@ use yii\widgets\ActiveForm;
 /** @var common\models\PostVacant $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var \frontend\controllers\PostVacantController $id_anunt */
+/** @var \frontend\controllers\PostVacantController $fisiere */
 $this->title = $model->denumire;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -30,14 +31,16 @@ $this->title = $model->denumire;
 
             ?>
 
-            <p style="font-size:17px"><b>Tip functie: </b> <?=$tip_functie[0]['nume']?></p>
             <p style="font-size:17px"><b>Denumire: </b> <?=$model->denumire?></p>
-            <p style="font-size:17px"><b>Cerinte: </b> <?=$model->cerinte?></p>
-            <p style="font-size:17px"><b>Localitate: </b> <?=$localitate[0]['nume']?></p>
             <p style="font-size:17px"><b>Judet:</b> <?= $judet[0]['nume']?></p>
+            <p style="font-size:17px"><b>Localitate: </b> <?=$localitate[0]['nume']?></p>
+            <p style="font-size:17px"><b>Tip functie: </b> <?=$tip_functie[0]['nume']?></p>
             <p style="font-size:17px"><b>Nivel studii: </b> <?=$nivel_studii[0]['nume']?></p>
             <p style="font-size:17px"><b>Nivel cariera: </b> <?=$nivel_cariera[0]['nume']?></p>
             <p style="font-size:17px"><b>Data limita inscriere: </b> <?=$model->getInscriereConcurs()?></p>
+            <p style="font-size:17px"><b>Cerinte: </b> <?=$model->cerinte?></p>
+            <p style="font-size:17px"><b>Tematica: </b> <?=$model->tematica?></p>
+            <p style="font-size:17px"><b>Bibliografie: </b> <?=$model->bibliografie?></p>
         </div>
 
     </div>
@@ -81,7 +84,18 @@ $this->title = $model->denumire;
            echo '<p class="alert alert-success" role="alert">Ai aplicat deja pentru acest post</p>';
            echo Html::a('Renunta la acest post',['/post-vacant/renunta','id_post'=>$model->id,'id_user'=>Yii::$app->user->identity->id],['class'=>'btn btn-outline-danger']);
        }
-    }
+    }?>
+    <br>
+    <br>
+    <h4>Fisierele postului:</h4>
+    <br>
+<?php
+    echo \yii\widgets\ListView::widget([
+
+        'dataProvider'=>$fisiere,
+        'itemView'=>'_fisier_item',
+        'summary' =>''
+    ]);
 
     $class_step_inscriere='timeline-stepp mb-0';
     $class_step_validare='timeline-stepp mb-0';
@@ -225,6 +239,7 @@ $this->title = $model->denumire;
 
 
     </style>
+    <br>
     <div class="container">
         <div class="row text-center justify-content-center mb-5">
             <div class="col-xl-6 col-lg-8">

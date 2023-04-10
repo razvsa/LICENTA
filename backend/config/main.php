@@ -17,6 +17,12 @@ return [
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
+        'modal' => [
+            'class' => 'kartik\modal\Module',
+        ],
+        'bootstrap' => [
+            'class' => 'yii\bootstrap\BootstrapAsset',
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,

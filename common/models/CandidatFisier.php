@@ -39,7 +39,7 @@ class CandidatFisier extends \yii\db\ActiveRecord
             [['id_nom_tip_fisier_dosar'], 'required'],
             [['cale_fisier', 'nume_fisier_afisare', 'nume_fisier_adaugare'], 'string', 'max' => 200],
             [['descriere'], 'string', 'max' => 2000],
-            [['fisiere'],'file','extensions'=>'png, pdf, jpeg, jpg','maxSize'=>4*1024*1024*0,
+            [['fisiere'],'file','extensions'=>'png, pdf, jpeg, jpg','maxSize'=>4*1024*1024,
                 'tooBig'=>'Dimensiunea fisierului este prea mare, max 4MB',
                 'wrongExtension'=>'Extensia fisierului este gresita, se accepta doar png, pdf, jpeg, jpg',
                 'maxFiles'=>10,

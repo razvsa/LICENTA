@@ -14,10 +14,11 @@ use yii\web\UploadedFile;
  * @property string $data_concurs
  * @property string $data_depunere_dosar
  * @property string $departament
- * @property string $cale_imagine
+ * @property string $titlu
  * @property string $descriere
  * @property string $data_limita_inscriere_concurs
  * @property int $categorie_fisier
+ * @property int $id_structura
  *
  * @property AnuntFisier[] $anuntFisiers
  * @property KeyAnuntPostVacant[] $keyAnuntPostVacants
@@ -31,6 +32,7 @@ class Anunt extends \yii\db\ActiveRecord
     public $id_nom_nivel_cariera;
     public $id_nom_nivel_studii;
     public $oras;
+    public $cuvant;
     /**
      * {@inheritdoc}
      */
@@ -45,11 +47,11 @@ class Anunt extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'cale_imagine'], 'required'],
-            [['id_user_adaugare','id_nom_judet'], 'integer'],
+            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'titlu'], 'required'],
+            [['id_user_adaugare','id_nom_judet','id_structura'], 'integer'],
             [['data_postare', 'data_concurs', 'data_depunere_dosar','data_limita_inscriere_concurs'], 'safe'],
-            [['departament', 'cale_imagine'], 'string', 'max' => 100],
-            [['descriere'], 'string'],
+            [['departament', 'titlu'], 'string', 'max' => 100],
+            [['descriere','cuvant'], 'string'],
 
         ];
     }
@@ -67,13 +69,14 @@ class Anunt extends \yii\db\ActiveRecord
             'data_depunere_dosar' => 'Data Depunere Dosar',
             'id_nom_localitate' => 'Id Nom Localitate',
             'departament' => 'Departament',
-            'cale_imagine' => 'Cale Imagine',
+            'Titlu' => 'Titlu',
             'id_nom_judet'=>'Judet',
             'id_nom_tip_functie'=>'Functie',
             'id_nom_nivel_cariera'=>'Nivel Cariera',
             'id_nom_nivel_studii'=>'Nivel Studii',
             'oras'=>'Localitate',
             'descriere'=>'Descriere',
+            'cuvant'=>'Cuvant',
             'categorie_fisier'=>'Categorie'
 
         ];
@@ -130,7 +133,7 @@ class Anunt extends \yii\db\ActiveRecord
 //          if(!is_dir(dirname($imagePath))){
 //              FileHelper::createDirectory(dirname($imagePath));
 //          }
-//           $this->cale_imagine->saveAs($imagePath);
+//
 //      }
 //     return true;
 //    }
