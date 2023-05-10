@@ -1,4 +1,4 @@
-<?php
+ <?php
 /** @var \backend\controllers\CandidatFisierController $id_user */
 /** @var \backend\controllers\CandidatFisierController $tip_fisier */
 /** @var \backend\controllers\CandidatFisierController $stare */

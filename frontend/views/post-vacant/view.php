@@ -3,23 +3,23 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\widgets\ActiveForm;
+use yii\helpers\HtmlPurifier;
 
 /** @var yii\web\View $this */
 /** @var common\models\PostVacant $model */
 /** @var yii\widgets\ActiveForm $form */
 /** @var \frontend\controllers\PostVacantController $id_anunt */
-/** @var \frontend\controllers\PostVacantController $fisiere */
 $this->title = $model->denumire;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="post-vacant-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h2><?= Html::encode($this->title) ?></h2>
     <br>
     <!-- Portfolio Item Row -->
     <div class="row">
 
-        <div class="col-md-5">
+        <div class="col-md-12">
             <?php
             $tip_functie=\common\models\NomTipIncadrare::find()->where(['id'=>$model->id_nom_tip_functie])->asArray()->all();
 
@@ -38,16 +38,11 @@ $this->title = $model->denumire;
             <p style="font-size:17px"><b>Nivel studii: </b> <?=$nivel_studii[0]['nume']?></p>
             <p style="font-size:17px"><b>Nivel cariera: </b> <?=$nivel_cariera[0]['nume']?></p>
             <p style="font-size:17px"><b>Data limita inscriere: </b> <?=$model->getInscriereConcurs()?></p>
-            <p style="font-size:17px"><b>Cerinte: </b> <?=$model->cerinte?></p>
-            <p style="font-size:17px"><b>Tematica: </b> <?=$model->tematica?></p>
-            <p style="font-size:17px"><b>Bibliografie: </b> <?=$model->bibliografie?></p>
         </div>
 
     </div>
 
     <?php
-    $id_anunt_post_curent=\common\models\KeyAnuntPostVacant::find()->where(['id_post_vacant'=>$model->id])->asArray()->all();
-
     if (Yii::$app->user->isGuest) {
         echo "<p>Trebuie sa fii autentificat pentru a aplica pentru acest post</p>";
         echo Html::a("Conecteaza-te",['site/login'],['class'=>'btn btn-primary']);
@@ -56,12 +51,13 @@ $this->title = $model->denumire;
         $verificare=\common\models\KeyInscrierePostUser::find()->where(['id_user'=>Yii::$app->user->identity->id,'id_post'=>$model->id])->asArray()->all();
         $gasit=0;
         if(empty($verificare)) {
+            //editare kap
             $anunturi=\common\models\KeyInscrierePostUser::find()
-               ->innerJoin(['kap'=>\common\models\KeyAnuntPostVacant::tableName()],'kap.id_post_vacant=key_inscriere_post_user.id_post')
-               ->where(['key_inscriere_post_user.id_user'=>Yii::$app->user->identity->id])->select(['kap.id_anunt'])->asArray()->all();
+               ->innerJoin(['p'=>\common\models\PostVacant::tableName()],'p.id=key_inscriere_post_user.id_post')
+               ->where(['key_inscriere_post_user.id_user'=>Yii::$app->user->identity->id])->select(['p.id_anunt'])->asArray()->all();
            for($i=0;$i<count($anunturi);$i++)
            {
-               if($anunturi[$i]['id_anunt']==$id_anunt_post_curent[0]['id_anunt'])
+               if($anunturi[$i]['id_anunt']==$model->id_anunt)
                    $gasit=1;
            }
             if($gasit==1){
@@ -87,15 +83,7 @@ $this->title = $model->denumire;
     }?>
     <br>
     <br>
-    <h4>Fisierele postului:</h4>
-    <br>
 <?php
-    echo \yii\widgets\ListView::widget([
-
-        'dataProvider'=>$fisiere,
-        'itemView'=>'_fisier_item',
-        'summary' =>''
-    ]);
 
     $class_step_inscriere='timeline-stepp mb-0';
     $class_step_validare='timeline-stepp mb-0';
@@ -282,6 +270,12 @@ $this->title = $model->denumire;
                 </div>
             </div>
         </div>
+    </div>
+    <div>
+
+        <h4><b>Cerinte: </b></h4><hr style='border-top: 1px solid black;'><p> <?=HTMLPurifier::process($model->cerinte)?></p><br>
+        <h4><b>Tematica: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->tematica)?></p><br>
+        <h4><b>Bibliografie: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->bibliografie)?></p><br>
     </div>
 </div>
 <script>

@@ -10,9 +10,9 @@ use kartik\dialog\Dialog;
 /** @var \backend\controllers\OperatiuniController $departament */
 ?>
 <br>
-<h2>Departamente</h2>
+<h2>Structura</h2>
 <br>
-<h4>Insereaza un nou departament:</h4>
+<h4>Insereaza o noua Structura:</h4>
 <?php
 Dialog::widget();
 DialogAsset::register($this);

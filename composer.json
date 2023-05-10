@@ -33,7 +33,13 @@
         "elasticsearch/elasticsearch": "^7.0",
         "yiisoft/yii2-elasticsearch": "^2.1",
         "kartik-v/yii2-dialog": "dev-master",
-        "thiagoalessio/tesseract_ocr": "^2.12"
+        "thiagoalessio/tesseract_ocr": "^2.12",
+        "ckeditor/ckeditor": "^4.16.1",
+        "2amigos/yii2-ckeditor-widget": "^2.0",
+        "yiisoft/yii2-swiftmailer": "*",
+        "google/cloud-vision": "*",
+        "ckeditor/ckeditor4-font-size-plugin": "4.0.0"
+
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

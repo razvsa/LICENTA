@@ -1,6 +1,6 @@
 <?php
 /** @var \common\models\User $model */
-/** @var \backend\controllers\CandidatFisierController $stare */
+/** @var \backend\controllers\CandidatFisierController $status */
 
 
 
@@ -11,7 +11,7 @@
     <div class="row">
 
         <div class="col-sm-2 p">
-            <a href="<?= \yii\helpers\Url::to(['/candidat-fisier/categorii','id_user'=>$model->id,'stare'=>$stare])?>">
+            <a href="<?= \yii\helpers\Url::to(['/candidat-fisier/categorii','id_user'=>$model->id,'stare'=>$status])?>">
             <img class="card-img" src="http://studio.ejobs.mai.gov.ro/storage/icon-document.jpg">
             </a>
         </div>
@@ -24,7 +24,7 @@
                 <b>Email:</b>
                 <?=$model->email?>
             </h5>
-            <?=\yii\helpers\Html::a('Vezi documente',['/candidat-fisier/categorii','id_user'=>$model->id,'stare'=>$stare],['class'=>'btn btn-info','data' => ['method' => 'post']])?>
+            <?=\yii\helpers\Html::a('Vezi dosare',['/candidat-fisier/categorii','id_user'=>$model->id,'stare'=>$status],['class'=>'btn btn-info','data' => ['method' => 'post']])?>
 
         </div>
     </div>

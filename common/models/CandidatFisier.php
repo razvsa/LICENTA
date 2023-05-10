@@ -16,6 +16,7 @@ use Yii;
  * @property string|null $nume_fisier_adaugare
  * @property int $id_nom_tip_fisier_dosar
  * @property int $stare
+ * @property int $id_candidat_dosar
  */
 class CandidatFisier extends \yii\db\ActiveRecord
 {
@@ -43,8 +44,8 @@ class CandidatFisier extends \yii\db\ActiveRecord
                 'tooBig'=>'Dimensiunea fisierului este prea mare, max 4MB',
                 'wrongExtension'=>'Extensia fisierului este gresita, se accepta doar png, pdf, jpeg, jpg',
                 'maxFiles'=>10,
-                ],
-     ];
+            ],
+        ];
     }
 
     /**
@@ -79,6 +80,23 @@ class CandidatFisier extends \yii\db\ActiveRecord
 
     public function aproba(){
         Yii::$app->db->createCommand()->update(CandidatFisier::tableName(),['stare'=>3],['id'=>$this->id])->execute();
+    }
+    public function getNumeTip(){
+        $tip=NomTipFisierDosar::findOne(['id'=>$this->id_nom_tip_fisier_dosar]);
+        if($tip) {
+            return $tip['nume'];
+        }
+        else
+            return 0;
+    }
+    public function getNumeTipFaraSpatii(){
+        $tip=NomTipFisierDosar::findOne(['id'=>$this->id_nom_tip_fisier_dosar]);
+        if($tip) {
+            $nume=str_replace(" ","_",$tip['nume']);
+            return $nume;
+        }
+        else
+            return 0;
     }
 
 

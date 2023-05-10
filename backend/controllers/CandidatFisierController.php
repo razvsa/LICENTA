@@ -2,9 +2,12 @@
 
 namespace backend\controllers;
 
+use common\models\Anunt;
+use common\models\CandidatDosar;
 use common\models\CandidatFisier;
 use common\models\NomTipCategorie;
 use common\models\NomTipFisierDosar;
+use common\models\PostVacant;
 use common\models\search\CandidatFisierSearch;
 use common\models\User;
 use yii\data\ActiveDataProvider;
@@ -42,31 +45,44 @@ class CandidatFisierController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+//    public function actionIndex()
+//    {
+//        $searchModel = new CandidatFisierSearch();
+//        $dataProvider = $searchModel->search($this->request->queryParams);
+//
+//        return $this->render('index', [
+//            'searchModel' => $searchModel,
+//            'dataProvider' => $dataProvider,
+//        ]);
+//    }
+    public function actionIndex($id_dosar)
     {
-        $searchModel = new CandidatFisierSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $tip_fisier=0;
+        $id_user=0;
+        $tip_fisier = NomTipFisierDosar::find()
+            ->innerJoin(['c' => CandidatFisier::tableName()], 'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
+            ->where(['c.id_candidat_dosar'=>$id_dosar])
+            ->orderBy('nom_tip_fisier_dosar.id')->asArray()->all();
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'tip_fisier'=>$tip_fisier,
+            'id_dosar'=>$id_dosar,
         ]);
     }
-
-    public function actionUser($stare){
+    public function actionUser($status){
 
         $useri=new ActiveDataProvider([
 
             'query'=>User::find()
             ->select(['username','email','user.id'])->distinct()
-            ->innerJoin(['candidat_fisier'=>CandidatFisier::tableName()],'user.id=candidat_fisier.id_user_adaugare')
-            ->where(['candidat_fisier.stare'=>$stare])
+            ->innerJoin(['candidat_dosar'=>CandidatDosar::tableName()],'user.id=candidat_dosar.id_user')
+            ->where(['candidat_dosar.id_status'=>$status])
         ]);
 
 
         return $this->render('user',[
             'useri'=>$useri,
-            'stare'=>$stare,
+            'status'=>$status,
         ]);
     }
 
@@ -84,6 +100,32 @@ class CandidatFisierController extends Controller
             'stare'=>$stare
             ]);
 
+    }
+
+    public function actionPosturi($status){
+        $posturi=new ActiveDataProvider([
+            'query'=>PostVacant::find()
+                ->innerJoin(['anunt'=>Anunt::tableName()],'post_vacant.id_anunt=anunt.id')
+                ->innerJoin(['cand'=>CandidatDosar::tableName()],'post_vacant.id=cand.id_post_vacant')
+                ->where(['id_status'=>1,'anunt.id_structura'=>Yii::$app->user->getIdentity()->admin])
+        ]);
+
+        return $this->render('posturi',[
+            'posturi'=>$posturi,
+            'status'=>$status,
+        ]);
+    }
+
+    public function actionDosare($id_post,$status){
+
+        $dosare=new ActiveDataProvider([
+            'query'=>CandidatDosar::find()
+                ->where(['id_post_vacant'=>$id_post,'id_status'=>$status])
+        ]);
+        return $this->render('dosare',[
+            'dosare'=>$dosare,
+            'status'=>$status,
+        ]);
     }
 
     public function actionAprobate()
@@ -159,38 +201,75 @@ class CandidatFisierController extends Controller
     }
 
 
-    public function actionAproba($id_user,$tip_fisier,$stare)
+    public function actionAproba($tip_fisier,$id_dosar)
     {
+
         $fisiere=CandidatFisier::find()
             ->innerJoin(['nom'=>NomTipFisierDosar::tableName()],'nom.id=candidat_fisier.id_nom_tip_fisier_dosar')
-            ->where(['candidat_fisier.id_user_adaugare'=>$id_user,'nom.nume'=>$tip_fisier])
+            ->where(['nom.nume'=>$tip_fisier,'id_candidat_dosar'=>$id_dosar])
             ->asArray()->all();
 
         foreach($fisiere as $f) {
             $model = $this->findModel($f['id']);
             $model->aproba();
         }
-        return $this->redirect(['categorii','id_user'=>$id_user,'stare'=>$stare]);
+        $verificare=CandidatFisier::find()
+            ->where(['id_candidat_dosar'=>$id_dosar,'stare'=>[1,2]])
+            ->asArray()->all();
+        if(empty($verificare)==1){
+            $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+            $dosar->id_status=3;
+            $dosar->save();
+        }
+
+        //return $this->redirect(['categorii','id_user'=>$id_user,'stare'=>$stare]);
+    }
+    public function actionAprobatot($id_dosar){
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        $dosar->id_status=3;
+        $dosar->save();
+        $fisiere=CandidatFisier::find()
+            ->where(['id_candidat_dosar'=>$id_dosar])->all();
+        foreach($fisiere as $f){
+            $f->aproba();
+        }
+        return $this->redirect(['index',
+            'id_dosar'=>$id_dosar
+        ]);
     }
 
 
 
-    public function actionRespinge($id_user,$tip_fisier,$stare)
+    public function actionRespinge($tip_fisier,$id_dosar)
     {
         $fisiere=CandidatFisier::find()
             ->innerJoin(['nom'=>NomTipFisierDosar::tableName()],'nom.id=candidat_fisier.id_nom_tip_fisier_dosar')
-            ->where(['candidat_fisier.id_user_adaugare'=>$id_user,'nom.nume'=>$tip_fisier])
+            ->where(['nom.nume'=>$tip_fisier,'id_candidat_dosar'=>$id_dosar])
             ->asArray()->all();
-
 
         foreach($fisiere as $f) {
             $model = $this->findModel($f['id']);
             $model->respinge();
-            unlink(\Yii::getAlias("@frontend") . "\web\storage\user_{$model->id_user_adaugare}\\" . $model->nume_fisier_adaugare);
-            $model->delete();
         }
-
-        return $this->redirect(['categorii','id_user'=>$id_user,'stare'=>$stare]);
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        if($dosar->id_status==3)
+        {
+            $dosar->id_status=1;
+            $dosar->save();
+        }
+//        $fisiere=CandidatFisier::find()
+//            ->innerJoin(['nom'=>NomTipFisierDosar::tableName()],'nom.id=candidat_fisier.id_nom_tip_fisier_dosar')
+//            ->where(['candidat_fisier.id_user_adaugare'=>$id_user,'nom.nume'=>$tip_fisier])
+//            ->asArray()->all();
+//
+//
+//        foreach($fisiere as $f) {
+//            $model = $this->findModel($f['id']);
+//            $model->respinge();
+//            $model->delete();
+//        }
+//
+//        return $this->redirect(['categorii','id_user'=>$id_user,'stare'=>$stare]);
     }
 
     public function downloadFileFaraStergere($fullpath){
@@ -215,8 +294,8 @@ class CandidatFisierController extends Controller
     public function getTipFisierbyId($id){
         return NomTipFisierDosar::findOne(['id'=>$id])->nume;
     }
-    public function actionDescarcatot($id_user){
-
+    public function actionDescarcatot($id_dosar){
+        $id_user=CandidatDosar::findOne(['id'=>$id_dosar])->id_user;
         $nume_utilizator=User::findOne(['id'=>$id_user])->username;
         $file = 'Documente_'.$nume_utilizator.'.zip';
         $rootfolder='Documente_'.$nume_utilizator;
@@ -227,11 +306,11 @@ class CandidatFisierController extends Controller
         }
 
         $documente=CandidatFisier::find()
-            ->where(['id_user_adaugare'=>$id_user,'stare'=>3])->asArray()->all();
-;
+            ->where(['id_user_adaugare'=>$id_user,'id_candidat_dosar'=>$id_dosar])->asArray()->all();
+
         $tip_fisier=NomTipFisierDosar::find()
             ->innerJoin(['cf'=>CandidatFisier::tableName()],'cf.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
-            ->where(['id_user_adaugare'=>$id_user,'stare'=>3])
+            ->where(['id_user_adaugare'=>$id_user,'cf.id_candidat_dosar'=>$id_dosar])
             ->distinct()
             ->select(['nom_tip_fisier_dosar.nume'])
             ->asArray()->all();
@@ -249,12 +328,12 @@ class CandidatFisierController extends Controller
         $zip->close();
         $this->downloadFile(\Yii::getAlias('@backend').'\web\\'.$file);
     }
-    public function actionDescarcapartial($tip_fisier,$id_user){
-
+    public function actionDescarcapartial($tip_fisier,$id_dosar){
+        $id_user=CandidatDosar::findOne(['id'=>$id_dosar])->id_user;
         $id_tip_fisier=NomTipFisierDosar::findOne(['nume'=>$tip_fisier]);
 
         $documente=CandidatFisier::find()
-            ->where(['id_user_adaugare'=>$id_user,'stare'=>3,'id_nom_tip_fisier_dosar'=>$id_tip_fisier['id']])->asArray()->all();
+            ->where(['id_user_adaugare'=>$id_user,'id_nom_tip_fisier_dosar'=>$id_tip_fisier['id'],'id_candidat_dosar'=>$id_dosar])->asArray()->all();
 
         if(count($documente)==1){
             $this->downloadFileFaraStergere(\Yii::getAlias('@frontend') .$documente[0]['cale_fisier']);

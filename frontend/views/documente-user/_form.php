@@ -17,7 +17,10 @@ use kartik\dialog\Dialog;
 
 <?php
     Yii::$app->params['bsDependencyEnabled'] = false;
-
+//echo '<pre>';
+//print_r($document);
+//die;
+//echo '</pre>';
     foreach($document as $key=>$d){
       echo $form->field($d,"[{$key}]fisiere")
     ->widget(FileInput::className(),[
@@ -39,6 +42,7 @@ use kartik\dialog\Dialog;
 
         ])->label( ucfirst($d->nomTipFisierDosar->nume))->hint("Pentru incarcare multipla se selecteaza toate fisierele odata prin mentinerea tastei Ctrl");
         echo $form->field($d, "[$key]id_nom_tip_fisier_dosar")->hiddenInput(['value' => $d->id_nom_tip_fisier_dosar])->label(false);
+
     }
 
 ?>

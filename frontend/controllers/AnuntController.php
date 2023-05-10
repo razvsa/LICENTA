@@ -3,14 +3,19 @@
 namespace frontend\controllers;
 
 use common\models\Anunt;
+use common\models\AnuntFisier;
+use common\models\KeyInscrierePostUser;
+use common\models\PostFisier;
 use common\models\PostVacant;
 use common\models\search\AnuntSearch;
+use common\models\search\PostVacantSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use Yii;
 use common\models\NomLocalitate;
-use function Sodium\add;
+//use function Sodium\add;
 
 /**
  * AnuntController implements the CRUD actions for Anunt model.
@@ -43,14 +48,14 @@ class AnuntController extends Controller
     public function actionIndex()
     {
         $searchModel = new AnuntSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->search_user($this->request->queryParams);
         $localitati=(new \yii\db\Query())->select(['oras'])->from('post_vacant')->distinct()->all();
         $nivel_studii=(new \yii\db\Query())->select(['id','nume'])->from('nom_nivel_studii')->distinct()->all();
         $functie=(new \yii\db\Query())->select(['id','nume'])->from('nom_tip_incadrare')->distinct()->all();
         $nivel_cariera=(new \yii\db\Query())->select(['id','nume'])->from('nom_nivel_cariera')->distinct()->all();
         if($searchModel->load(Yii::$app->request->get()))
         {
-            $dataProvider = $searchModel->search($this->request->queryParams);
+            $dataProvider = $searchModel->search_user($this->request->queryParams);
         }
         Yii::$app->session->set('form', $this->request->queryParams);
 
@@ -78,8 +83,39 @@ class AnuntController extends Controller
      */
     public function actionView($id)
     {
+        $titlu='Posturile Anuntului';
+        $searchModel = new PostVacantSearch();
+        $fisiere=new ActiveDataProvider([
+            'query'=>AnuntFisier::find()->where(['id_anunt'=>$id])
+        ]);
+        $posturi = new ActiveDataProvider([
+            'query'=>PostVacant::find()
+                ->where(['id_anunt'=>$id])]);
+        $nr_posturi=$posturi->getTotalCount();
+        $model=Anunt::findOne(['id'=>$id]);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'searchModel' => $searchModel,
+            'posturi' => $posturi,
+            'titlu'=>$titlu,
+            'model'=>$model,
+            'posturilemele'=>0,
+            'fisiere'=>$fisiere,
+            'nr_posturi'=>$nr_posturi,
+
+        ]);
+
+    }
+
+    public function actionAnunturilemele(){
+        $anunturi=new ActiveDataProvider([
+            'query'=>Anunt::find()
+                ->innerJoin(['post'=>PostVacant::tableName()],'anunt.id=post.id_anunt')
+                ->innerJoin(['key'=>KeyInscrierePostUser::tableName()],'post.id=key.id_post')
+                ->where(['key.id_user'=>Yii::$app->user->id])
+        ]);
+
+        return $this->render('anunturilemele',[
+            'anunturi'=>$anunturi
         ]);
     }
 
@@ -173,5 +209,19 @@ class AnuntController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function downloadFileFaraStergere($fullpath){
+        if(!empty($fullpath)){
+            header("Content-type:application/zip");
+            header('Content-Disposition: attachment; filename="'.basename($fullpath).'"');
+            header('Content-Length: ' . filesize($fullpath));
+            readfile($fullpath);
+            \Yii::$app->end();
+        }
+    }
+    public function actionDescarca($id){
+        $fisier=AnuntFisier::findOne(['id'=>$id]);
+        $cale_completa=\Yii::getAlias('@frontend').$fisier->cale_fisier;
+        $this->downloadFileFaraStergere($cale_completa);
     }
 }

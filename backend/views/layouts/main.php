@@ -37,10 +37,10 @@ AppAsset::register($this);
     $menuItems = [
         ['label' => 'Anunturi', 'url' => ['/anunt/index'],'class'=>'mx-auto'],
         [
-            'label' => 'Documente',
+            'label' => 'Dosare',
             'items' => [
-                ['label' => 'De aprobat', 'url' => ['/candidat-fisier/user','stare'=>2]],
-                ['label' => 'Aprobate', 'url' => ['/candidat-fisier/user','stare'=>3]],
+                ['label' => 'De aprobat', 'url' => ['/candidat-fisier/posturi','status'=>1]],
+                ['label' => 'Aprobate', 'url' => ['/candidat-fisier/posturi','status'=>3]],
             ],
         ],
         [
@@ -48,7 +48,6 @@ AppAsset::register($this);
             'items' => [
                 ['label' => 'Nivel Cariera', 'url' => ['/operatiuni/nivel-cariera']],
                 ['label' => 'Categorie Posturi', 'url' => ['/operatiuni/categorie']],
-                ['label' => 'Departamente', 'url' => ['/operatiuni/departament']],
                 ['label' => 'Nivel Studii', 'url' => ['/operatiuni/nivel-studii']],
                 ['label' => 'Documente dosar', 'url' => ['/operatiuni/fisier-dosar']],
                 ['label' => 'Tip Incadrare', 'url' => ['/operatiuni/tip-incadrare']],

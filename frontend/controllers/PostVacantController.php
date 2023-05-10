@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\models\Anunt;
-use common\models\KeyAnuntPostVacant;
 use common\models\KeyInscrierePostUser;
 use common\models\PostFisier;
 use common\models\PostVacant;
@@ -48,8 +47,7 @@ class PostVacantController extends Controller
         $searchModel = new PostVacantSearch();
         $posturi = new ActiveDataProvider([
         'query'=>PostVacant::find()
-            ->innerJoin(['apv'=>KeyAnuntPostVacant::tableName()],'apv.id_post_vacant=post_vacant.id')
-            ->andWhere(['apv.id_anunt'=>$id])]);
+            ->where(['id_anunt'=>$id])]);
         $anunt=Anunt::findOne(['id'=>$id]);
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -59,6 +57,7 @@ class PostVacantController extends Controller
             'posturilemele'=>0
 
         ]);
+        return 0;
     }
 
     /**
@@ -70,13 +69,9 @@ class PostVacantController extends Controller
     public function actionView($id)
     {
 
-        $fisiere=new ActiveDataProvider([
-            'query'=>PostFisier::find()->where(['id_post'=>$id])
-        ]);
         return $this->render('view', [
             'model' => $this->findModel($id),
             'id_anunt'=>$id,
-            'fisiere'=>$fisiere,
         ]);
     }
 
@@ -147,27 +142,6 @@ class PostVacantController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionPosturilemele(){
-
-        $titlu='Posturile mele';
-
-        $searchModel = new PostVacantSearch();
-        $posturi=0;
-        if(!\Yii::$app->user->isGuest)
-        {
-            $posturi=new ActiveDataProvider([
-                'query'=>PostVacant::find()
-                    ->innerJoin(['kip'=>KeyInscrierePostUser::tableName()],'kip.id_post=post_vacant.id')
-                    ->where(['kip.id_user'=>\Yii::$app->user->identity->id])]);
-        }
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'posturi' => $posturi,
-            'titlu'=>$titlu,
-            'posturilemele'=>1,
-
-        ]);
-    }
 
     /**
      * Finds the PostVacant model based on its primary key value.
@@ -184,18 +158,5 @@ class PostVacantController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    public function downloadFileFaraStergere($fullpath){
-        if(!empty($fullpath)){
-            header("Content-type:application/zip");
-            header('Content-Disposition: attachment; filename="'.basename($fullpath).'"');
-            header('Content-Length: ' . filesize($fullpath));
-            readfile($fullpath);
-            \Yii::$app->end();
-        }
-    }
-    public function actionDescarca($id){
-        $fisier=PostFisier::findOne(['id'=>$id]);
-        $cale_completa=\Yii::getAlias('@frontend').$fisier->cale_fisier;
-        $this->downloadFileFaraStergere($cale_completa);
-    }
+
 }

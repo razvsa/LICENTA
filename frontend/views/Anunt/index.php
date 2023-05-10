@@ -45,11 +45,10 @@ $script=<<<JS
 JS;
 $this->registerJs($script,\yii\web\View::POS_READY);
 ?>
-<div >
 
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-
+<div class="container-fluid ">
     <!-- Sidebar -->
     <div class="mysidebar"  >
         <h3 >Filtreaza</h3>
@@ -84,8 +83,10 @@ $this->registerJs($script,\yii\web\View::POS_READY);
             overflow:auto}
 
         .mypgcontent{
-            margin-left:30%
+            margin-left:30%;
+            margin-right: 5%;
 
+        }
 
         }
     }

@@ -42,21 +42,26 @@ class CandidatFisierController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($id_dosar)
     {
         $tip_fisier=0;
         $id_user=0;
         if(!Yii::$app->user->isGuest) {
             $tip_fisier = NomTipFisierDosar::find()
                 ->innerJoin(['c' => CandidatFisier::tableName()], 'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
-                ->where(['c.id_user_adaugare' => Yii::$app->user->identity->id])->asArray()->all();
+                ->where(['c.id_user_adaugare' => Yii::$app->user->identity->id,'c.id_candidat_dosar'=>$id_dosar])
+                ->orderBy('nom_tip_fisier_dosar.id')->asArray()->all();
 
             $id_user = Yii::$app->user->identity->id;
         }
         return $this->render('index', [
             'tip_fisier'=>$tip_fisier,
             'id_user'=>$id_user,
+            'id_dosar'=>$id_dosar,
         ]);
+    }
+    public function actionInvalid(){
+        return $this->render('invalid');
     }
 
     /**
@@ -176,11 +181,11 @@ class CandidatFisierController extends Controller
     public function getTipFisierbyId($id){
         return NomTipFisierDosar::findOne(['id'=>$id])->nume;
     }
-    public function actionDescarcatot($id_user){
+    public function actionDescarcatot($id_user,$id_dosar){
 
         $nume_utilizator=User::findOne(['id'=>$id_user])->username;
-        $file = 'Documente_'.$nume_utilizator.'.zip';
-        $rootfolder='Documente_'.$nume_utilizator;
+        $file = 'Documente_'.$nume_utilizator."_dosar_".$id_dosar.'.zip';
+        $rootfolder='Documente_'.$nume_utilizator."_dosar_".$id_dosar;
 
         $zip = new ZipArchive();
         if ($zip->open($file, ZipArchive::CREATE) !== TRUE) {
@@ -188,11 +193,11 @@ class CandidatFisierController extends Controller
         }
 
         $documente=CandidatFisier::find()
-            ->where(['id_user_adaugare'=>$id_user,'stare'=>3])->asArray()->all();
+            ->where(['id_user_adaugare'=>$id_user,'id_candidat_dosar'=>$id_dosar])->asArray()->all();
 
         $tip_fisier=NomTipFisierDosar::find()
             ->innerJoin(['cf'=>CandidatFisier::tableName()],'cf.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
-            ->where(['id_user_adaugare'=>$id_user,'stare'=>3])
+            ->where(['cf.id_user_adaugare'=>$id_user,'cf.id_candidat_dosar'=>$id_dosar])
             ->distinct()
             ->select(['nom_tip_fisier_dosar.nume'])
             ->asArray()->all();
@@ -210,11 +215,15 @@ class CandidatFisierController extends Controller
         $zip->close();
         $this->downloadFile(\Yii::getAlias('@frontend').'\web\\'.$file);
     }
-    public function actionDescarcapartial($tip_fisier,$nume){
+    public function actionDescarcapartial($tip_fisier,$nume,$id_dosar){
 
         $documente=CandidatFisier::find()
-            ->where(['id_user_adaugare'=>Yii::$app->user->identity->id,'stare'=>3,'id_nom_tip_fisier_dosar'=>$tip_fisier])->asArray()->all();
+            ->where(['id_user_adaugare'=>Yii::$app->user->identity->id,'id_nom_tip_fisier_dosar'=>$tip_fisier,'id_candidat_dosar'=>$id_dosar])->asArray()->all();
         if(count($documente)==1){
+//            echo '<pre>';
+//            print_r(\Yii::getAlias('@frontend') .$documente[0]['cale_fisier']);
+//            die;
+//            echo '</pre>';
              $this->downloadFileFaraStergere(\Yii::getAlias('@frontend') .$documente[0]['cale_fisier']);
         }
         else {
@@ -234,13 +243,13 @@ class CandidatFisierController extends Controller
         }
     }
 
-    public function actionStergedoc($tip_fisier){
+    public function actionStergedoc($tip_fisier,$id_dosar){
         $documente=CandidatFisier::find()
-            ->where(['id_user_adaugare'=>Yii::$app->user->identity->id,'id_nom_tip_fisier_dosar'=>$tip_fisier])->all();
+            ->where(['id_user_adaugare'=>Yii::$app->user->identity->id,'id_nom_tip_fisier_dosar'=>$tip_fisier,'id_candidat_dosar'=>$id_dosar])->all();
         foreach ($documente as $d){
             unlink(Yii::getAlias('@frontend').$documente[0]['cale_fisier']);
             $d->delete();
         }
-        return $this->actionIndex();
+        return $this->actionIndex($id_dosar);
     }
 }

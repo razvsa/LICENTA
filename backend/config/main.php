@@ -17,6 +17,13 @@ return [
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
+        'ckeditor' => [
+            'class' => 'dosamigos\ckeditor\CKEditor',
+            'editorOptions' => [
+                'preset' => 'full',
+                'inline' => false,
+            ],
+        ],
         'modal' => [
             'class' => 'kartik\modal\Module',
         ],

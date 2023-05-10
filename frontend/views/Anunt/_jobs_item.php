@@ -1,27 +1,31 @@
 <?php
 /**@var $model \common\models\Anunt */
 ?>
-<div class="card bg-color">
+<div class="card bg-color mrg">
     <div class="p">
         <div class="col">
             <div class="card-header bg-transparent">
                 <ul id="ul" class="d-flex flex-wrap justify-content-between">
-                    <a href="<?= \yii\helpers\Url::to(['/post-vacant/index','id'=>$model->id])?>">
-                        <li><h3><b>Departament: </b><?=$model->departament?></h3></li>
+                    <a href="<?= \yii\helpers\Url::to(['/anunt/view','id'=>$model->id])?>">
+                        <li><h4> <b><?=$model->titlu?></b></h4></li>
                     </a>
                 </ul>
             </div>
             <div class="card-body">
                 <ul class="d-flex flex-wrap justify-content-between">
-                    <li><h5 class="alert alert-info" role="alert"><b>Data depunere dosar: </b><?php echo $model->data_depunere_dosar?></h5></li>
-                    <li><h5 class="alert alert-info" role="alert"><b>Data limita inscriere: </b><?php echo $model->data_limita_inscriere_concurs?></h5></li>
-                    <li><h5 class="alert alert-info" role="alert"><b>Data concurs: </b><?php echo $model->data_concurs?></h5></li>
-                    <li><?=\yii\helpers\Html::a('Vezi posturi',['/post-vacant/index','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
+                    <li><h6 class="alert alert-info" role="alert"><b>Data depunere dosar: </b><?php echo $model->data_depunere_dosar?></h6></li>
+<!--                    <li><h6 class="alert alert-info" role="alert"><b>Data limita inscriere: </b>--><?php //echo $model->data_limita_inscriere_concurs?><!--</h6></li>-->
+                    <li><h6 class="alert alert-info" role="alert"><b>Data concurs: </b><?php echo $model->data_concurs?></h6></li>
+                </ul>
+                <ul class="d-flex flex-wrap justify-content-between">
+                    <li><h5><b>Structura: </b><?php echo $model->getNumeStructura()?></h5></li>
+
                 </ul>
             </div>
             <div class="card-footer bg-transparent">
                 <ul class="d-flex flex-wrap justify-content-between">
-                    <li><p><b>Postat la: </b><?php echo $model->data_postare?></p></li>
+<!--                    <li><p><b>Postat la: </b>--><?php //echo $model->data_postare?><!--</p></li>-->
+                    <li><?=\yii\helpers\Html::a('Vezi posturi',['/anunt/view','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
                 </ul>
             </div>
         </div>
@@ -38,6 +42,9 @@
     }
     .p{
         margin:1% 1% 1% 1%;
+    }
+    .mrg{
+        margin-right: auto;
     }
     .card-header{height: 60px;}
     .bg-color{

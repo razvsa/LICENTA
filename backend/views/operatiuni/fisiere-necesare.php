@@ -19,13 +19,20 @@ use yii\widgets\ActiveForm;
 
         <?php
         foreach($document as $key=>$d) {
-            if(in_array($d->id,$existente)){
-                echo $form->field($d, "[{$key}]nume")->checkbox(['checked' => true], false)->label(ucfirst($d->nume));
-                echo $form->field($d, "[$key]id")->hiddenInput(['value' => $d->id])->label(false);
+            $struct='';
+            if($d->getNumeStructura()!=0)
+            {
+                $struct=" (".$d->getNumeStructura()." ) ";
             }
-            else{
-                echo $form->field($d, "[{$key}]nume")->checkbox([], false)->label(ucfirst($d->nume));
+
+            if (in_array($d->id, $existente)) {
+                echo $form->field($d, "[{$key}]nume")->checkbox(['checked' => true], false)->label(ucfirst($d->nume).$struct);
                 echo $form->field($d, "[$key]id")->hiddenInput(['value' => $d->id])->label(false);
+            } else {
+                echo $form->field($d, "[{$key}]nume")->checkbox([], false)->label(ucfirst($d->nume).$struct);
+                echo $form->field($d, "[$key]id")->hiddenInput(['value' => $d->id])->label(false);
+
+
             }
         }
         ?>

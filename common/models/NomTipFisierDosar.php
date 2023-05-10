@@ -9,6 +9,10 @@ use Yii;
  *
  * @property int $id
  * @property string $nume
+ * @property int $id_structura
+ *
+ * @property CandidatFisier[] $candidatFisiers
+ * @property KeyTipFisierDosarTipCategorie[] $keyTipFisierDosarTipCategories
  */
 class NomTipFisierDosar extends \yii\db\ActiveRecord
 {
@@ -27,6 +31,7 @@ class NomTipFisierDosar extends \yii\db\ActiveRecord
     {
         return [
             [['nume'], 'required'],
+            [['id_structura'], 'integer'],
             [['nume'], 'string', 'max' => 200],
         ];
     }
@@ -38,7 +43,40 @@ class NomTipFisierDosar extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'nume' => '',
+            'nume' => 'Nume',
+            'id_structura' => 'Id Structura',
         ];
+    }
+
+    /**
+     * Gets query for [[CandidatFisiers]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCandidatFisiers()
+    {
+        return $this->hasMany(CandidatFisier::class, ['id_nom_tip_fisier_dosar' => 'id']);
+    }
+
+    /**
+     * Gets query for [[KeyTipFisierDosarTipCategories]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getKeyTipFisierDosarTipCategories()
+    {
+        return $this->hasMany(KeyTipFisierDosarTipCategorie::class, ['id_tip_fisier' => 'id']);
+    }
+    public function getNumeStructura(){
+        if($this->id_structura==0)
+            return 0;
+        else{
+            $structura=NomStructura::findOne(['id'=>$this->id_structura]);
+            if($structura!==null)
+                return $structura->nume;
+            else
+                return 0;
+
+        }
     }
 }

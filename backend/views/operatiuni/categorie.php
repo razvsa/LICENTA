@@ -9,24 +9,27 @@ use kartik\dialog\Dialog;
 /** @var yii\widgets\ActiveForm $form */
 /** @var \backend\controllers\OperatiuniController $tip_categorie */
 ?>
-<br>
-<h2>Categorie posturi</h2>
-<br>
-<h4>Insereaza o noua categorie:</h4>
-<?php
-Dialog::widget();
-DialogAsset::register($this);
+    <br>
+    <h2>Categorie posturi</h2>
+    <br>
 
-$form = ActiveForm::begin();
-echo  $form->field($model, 'nume')->textInput()->label('');
-echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
-ActiveForm::end();
-echo '<br><br>';
+    <?php
+    Dialog::widget();
+    DialogAsset::register($this);
 
-echo \yii\widgets\ListView::widget([
+    if(Yii::$app->user->getIdentity()->admin==0) {
+        echo "<h4>Insereaza o noua categorie:</h4>";
+        $form = ActiveForm::begin();
+        echo $form->field($model, 'nume')->textInput()->label('');
+        echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
+        ActiveForm::end();
+        echo '<br><br>';
+    }
 
-    'dataProvider'=>$tip_categorie,
-    'itemView'=>'_item_categorie',
-    'summary' =>''
-]);
-?>
+    echo \yii\widgets\ListView::widget([
+
+        'dataProvider'=>$tip_categorie,
+        'itemView'=>'_item_categorie',
+        'summary' =>''
+    ]);
+    ?>

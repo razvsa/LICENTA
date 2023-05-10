@@ -1,14 +1,14 @@
 <?php
 /** @var backend\controllers\CandidatFisierController $useri */
-/** @var backend\controllers\CandidatFisierController $stare */
+/** @var backend\controllers\CandidatFisierController $status */
 
 ?>
 
 <?php
-    if($stare==2)
-        echo '<h3>Documente de aprobat</h3>';
-    else
-        echo '<h3>Documente aprobate</h3>';
+    if($status==2)
+        echo '<h3>Dosare de aprobat</h3>';
+    else if($status==3)
+        echo '<h3>Dosare aprobate</h3>';
     echo '<br>';
 ?>
 
@@ -19,7 +19,7 @@
 
         'dataProvider'=>$useri,
         'itemView'=>'_user_item',
-        'viewParams' => ['stare' => $stare],
+        'viewParams' => ['status' => $status],
         'summary' =>''
     ])?>
 </div>

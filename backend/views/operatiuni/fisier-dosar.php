@@ -1,4 +1,6 @@
 <?php
+
+use common\models\NomStructura;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\dialog\DialogAsset;
@@ -8,17 +10,21 @@ use kartik\dialog\Dialog;
 /** @var yii\web\View $this */
 /** @var yii\widgets\ActiveForm $form */
 /** @var \backend\controllers\OperatiuniController $fisier_dosar */
+/** @var \backend\controllers\OperatiuniController $structura_finala */
 ?>
 <br>
 <h2>Documente dosar</h2>
 <br>
-<h4>Insereaza un nou tip de documenet:</h4>
+<h4>Insereaza un nou tip de document:</h4>
 <?php
 Dialog::widget();
 DialogAsset::register($this);
-
 $form = ActiveForm::begin();
 echo  $form->field($model, 'nume')->textInput()->label('');
+if(\Yii::$app->user->getIdentity()->admin==0)
+    echo  $form->field($model, 'id_structura')->dropDownList($structura_finala,[
+            'prompt'=>'Alege o structura'
+    ])->label('Structura');
 echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
 ActiveForm::end();
 echo '<br><br>';

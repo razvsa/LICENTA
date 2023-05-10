@@ -5,7 +5,6 @@ use yii\helpers\Html;
 use common\models\NomTipFisierDosar;
 use common\models\KeyTipFisierDosarTipCategorie;
 use common\models\Anunt;
-use common\models\KeyAnuntPostVacant;
 
 /** @var \frontend\controllers\DocumenteUserController $id_post */
 /** @var \frontend\controllers\DocumenteUserController $fisiere */
@@ -16,8 +15,8 @@ use common\models\KeyAnuntPostVacant;
         $fis=NomTipFisierDosar::find()
             ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
             ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
-            ->innerJoin(['kk'=>KeyAnuntPostVacant::tableName()],'kk.id_anunt=a.id')
-            ->where(['kk.id_post_vacant'=>$id_post])
+            ->innerJoin(['p'=>\common\models\PostVacant::tableName()],'p.id_anunt=a.id')
+            ->where(['p.id'=>$id_post])
             ->asArray()->all();
         Yii::$app->response->redirect(['/documente-user/create','id_post'=>$id_post,'fisiere'=>$fis]);
     }
@@ -34,8 +33,8 @@ use common\models\KeyAnuntPostVacant;
             NomTipFisierDosar::find()
                 ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
                 ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
-                ->innerJoin(['kk'=>KeyAnuntPostVacant::tableName()],'kk.id_anunt=a.id')
-                ->where(['kk.id_post_vacant'=>$id_post])
+                ->innerJoin(['p'=>\common\models\PostVacant::tableName()],'p.id_anunt=a.id')
+                ->where(['p.id'=>$id_post])
                 ->asArray()->all()
         ], ['class' => 'btn btn-info']);
         echo '<br>';
@@ -55,13 +54,13 @@ use common\models\KeyAnuntPostVacant;
             echo "<h5><li class='bulina'>\t{$fisiere_incarcate[$i]['nume']}</li></h5><br>";
         }
         echo '</ul>';
-
+        //editat
         echo '<h4> Pentru aplicare sunt necesare urmatoarele documente:</h4>';
         $fisiere_necesare=NomTipFisierDosar::find()
             ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
             ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
-            ->innerJoin(['kk'=>KeyAnuntPostVacant::tableName()],'kk.id_anunt=a.id')
-            ->where(['kk.id_post_vacant'=>$id_post])
+            ->innerJoin(['p'=>\common\models\PostVacant::tableName()],'p.id_anunt=a.id')
+            ->where(['p.id'=>$id_post])
             ->asArray()->all();
 
         echo '<br><ul>';

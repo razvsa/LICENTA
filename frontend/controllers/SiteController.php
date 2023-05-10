@@ -149,36 +149,56 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        $connection = new Connection();
-        $query = new Query();
-        $anunturi=Anunt::find()->asArray()->all();
-        $command=$connection->createCommand();
+        $pythonScript ='D:\script.py';
+        $command = escapeshellcmd("python " . $pythonScript ." D:\poza1.jpeg");
+        $output = shell_exec($command);
+        $parts = explode('/', $output);
+        $date = new \DateTime();
+        $date->setDate($parts[2], $parts[1], $parts[0]);
+        $currentDate = new \DateTime();
 
-
-
-        foreach ($anunturi as $anunt){
-            $command->insert('anunt','_doc',$anunt);
+        if ($date < $currentDate) {
+            echo "Data este in trecut";
+        } elseif ($date > $currentDate) {
+            echo "Data este in viitor";
+        } else {
+            echo "Data este identică cu timpul curent.";
         }
+        echo '<pre>';
+        print_r($parts[2]);
+        die;
+        echo '</pre>';
 
-        $query->from('anunt')
-            ->query([
-                'multi_match' => [
-                    'query' => 'ani',
-                    'fields' => ['*'],
-                    'fuzziness' => 2,
-                    'prefix_length' => 2,
-                ]
-            ]);
-        $results = $query ->all();
-        $rezultate = array_column($results, '_source');
-        $lista_id=[];
-        $rezultate_finale=[];
-        foreach ($rezultate as $rezultat){
-            if(!in_array($rezultat['id'],$lista_id)) {
-                array_push($rezultate_finale, $rezultat);
-                array_push($lista_id,$rezultat['id']);
-            }
-        }
+//        $connection = new Connection();
+//        $query = new Query();
+//        $anunturi=Anunt::find()->asArray()->all();
+//        $command=$connection->createCommand();
+//
+//
+//
+//        foreach ($anunturi as $anunt){
+//            $command->insert('anunt','_doc',$anunt);
+//        }
+//
+//        $query->from('anunt')
+//            ->query([
+//                'multi_match' => [
+//                    'query' => 'ani',
+//                    'fields' => ['*'],
+//                    'fuzziness' => 2,
+//                    'prefix_length' => 2,
+//                ]
+//            ]);
+//        $results = $query ->all();
+//        $rezultate = array_column($results, '_source');
+//        $lista_id=[];
+//        $rezultate_finale=[];
+//        foreach ($rezultate as $rezultat){
+//            if(!in_array($rezultat['id'],$lista_id)) {
+//                array_push($rezultate_finale, $rezultat);
+//                array_push($lista_id,$rezultat['id']);
+//            }
+//        }
 
         return $this->render('about');
     }
@@ -293,4 +313,15 @@ class SiteController extends Controller
             'model' => $model
         ]);
     }
+//    public function actionError()
+//    {
+//        return ""
+////        $this->layout = 'error'; // Setarea unei machete personalizate pentru pagina de eroare
+////        $exception = Yii::$app->errorHandler->exception;
+////        if ($exception !== null) {
+////            return $this->render('error', ['exception' => $exception]);
+////        } else {
+////            return $this->render('error');
+////        }
+//    }
 }

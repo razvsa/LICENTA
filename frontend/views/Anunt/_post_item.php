@@ -19,13 +19,13 @@
                     <li><h5 class="alert alert-info" role="alert"><b>Experienta: </b><?php echo $model->getCariera()?></h5></li>
                     <li><h5 class="alert alert-info" role="alert"><b>Studii: </b><?php echo $model->getStudii()?></h5></li>
                     <li><h5 class="alert alert-info" role="alert"><b>Functie: </b><?php echo $model->getFunctie()?></h5></li>
-                    <li><h4><b>Departament: </b><?php echo $model->getDepartament()?></h4></li>
+                    <li><h4><b>Structura: </b><?php echo $model->getStructura()?></h4></li>
                     <li><?=\yii\helpers\Html::a('Vezi detalii',['/post-vacant/view','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
                 </ul>
             </div>
             <div class="card-footer bg-transparent">
                 <ul class="d-flex flex-wrap justify-content-between">
-                    <li><p><b>Postat la: </b><?php echo $model->data_postare?></p></li>
+<!--                    <li><p><b>Postat la: </b>--><?php //echo $model->data_postare?><!--</p></li>-->
 
                     <li><p><b>  Data limita inscriere: </b><?php echo $model->getInscriereConcurs()?></p></li>
                 </ul>

@@ -3,8 +3,7 @@
 namespace common\models;
 
 use Yii;
-use yii\helpers\FileHelper;
-use yii\web\UploadedFile;
+
 /**
  * This is the model class for table "anunt".
  *
@@ -13,17 +12,15 @@ use yii\web\UploadedFile;
  * @property string $data_postare
  * @property string $data_concurs
  * @property string $data_depunere_dosar
- * @property string $departament
  * @property string $titlu
  * @property string $descriere
- * @property string $data_limita_inscriere_concurs
- * @property int $categorie_fisier
+ * @property string|null $data_limita_inscriere_concurs
+ * @property int|null $categorie_fisier
  * @property int $id_structura
+ * @property int $postat
  *
  * @property AnuntFisier[] $anuntFisiers
- * @property KeyAnuntPostVacant[] $keyAnuntPostVacants
- * @property KeyAnuntProbaConcurs[] $keyAnuntProbaConcurs
- * @property KeyAnuntTipIncadrare[] $keyAnuntTipIncadrares
+ * @property NomTipCategorie $categorieFisier
  */
 class Anunt extends \yii\db\ActiveRecord
 {
@@ -47,12 +44,12 @@ class Anunt extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'departament', 'titlu'], 'required'],
-            [['id_user_adaugare','id_nom_judet','id_structura'], 'integer'],
-            [['data_postare', 'data_concurs', 'data_depunere_dosar','data_limita_inscriere_concurs'], 'safe'],
-            [['departament', 'titlu'], 'string', 'max' => 100],
-            [['descriere','cuvant'], 'string'],
-
+            [['id_user_adaugare', 'data_postare', 'data_concurs', 'data_depunere_dosar', 'titlu', 'descriere', 'id_structura', 'postat'], 'required'],
+            [['id_user_adaugare', 'categorie_fisier', 'id_structura', 'postat'], 'integer'],
+            [['data_postare', 'data_concurs', 'data_depunere_dosar', 'data_limita_inscriere_concurs'], 'safe'],
+            [['titlu'], 'string', 'max' => 100],
+            [['descriere'], 'string', 'max' => 2000],
+            [['categorie_fisier'], 'exist', 'skipOnError' => true, 'targetClass' => NomTipCategorie::class, 'targetAttribute' => ['categorie_fisier' => 'id']],
         ];
     }
 
@@ -67,18 +64,17 @@ class Anunt extends \yii\db\ActiveRecord
             'data_postare' => 'Data Postare',
             'data_concurs' => 'Data Concurs',
             'data_depunere_dosar' => 'Data Depunere Dosar',
-            'id_nom_localitate' => 'Id Nom Localitate',
-            'departament' => 'Departament',
-            'Titlu' => 'Titlu',
+            'titlu' => 'Titlu',
+            'descriere' => 'Descriere',
+            'data_limita_inscriere_concurs' => 'Data Limita Inscriere Concurs',
+            'categorie_fisier' => 'Categorie Fisier',
+            'id_structura' => 'Id Structura',
+            'postat' => 'Postat',
             'id_nom_judet'=>'Judet',
             'id_nom_tip_functie'=>'Functie',
             'id_nom_nivel_cariera'=>'Nivel Cariera',
             'id_nom_nivel_studii'=>'Nivel Studii',
-            'oras'=>'Localitate',
-            'descriere'=>'Descriere',
-            'cuvant'=>'Cuvant',
-            'categorie_fisier'=>'Categorie'
-
+            'oras'=>'Oras'
         ];
     }
 
@@ -93,13 +89,23 @@ class Anunt extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[KeyAnuntPostVacants]].
+     * Gets query for [[CategorieFisier]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getKeyAnuntPostVacants()
+    public function getCategorieFisier()
     {
-        return $this->hasMany(KeyAnuntPostVacant::class, ['id_anunt' => 'id']);
+        return $this->hasOne(NomTipCategorie::class, ['id' => 'categorie_fisier']);
+    }
+
+        /**
+     * Gets query for [[KeyAnuntTipIncadrares]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getKeyAnuntTipIncadrares()
+    {
+        return $this->hasMany(KeyAnuntTipIncadrare::class, ['id_anunt' => 'id']);
     }
 
     /**
@@ -111,30 +117,18 @@ class Anunt extends \yii\db\ActiveRecord
     {
         return $this->hasMany(KeyAnuntProbaConcurs::class, ['id_anunt' => 'id']);
     }
-
-    /**
-     * Gets query for [[KeyAnuntTipIncadrares]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getKeyAnuntTipIncadrares()
-    {
-        return $this->hasMany(KeyAnuntTipIncadrare::class, ['id_anunt' => 'id']);
+    public function getNumeStructura(){
+        $structura=NomStructura::find()->where(['id'=>$this->id_structura])->one();
+        if($structura!=null)
+            return $structura['nume'];
+        else
+            return 0;
     }
-//    public function save($runValidation = true, $attributeNames = null)
-//    {
-//       $isInsert=$this->isNewRecord;
-//       $saved= parent::save($runValidation, $attributeNames);
-//        if(!$saved){
-//          return false;
-//       }
-//       if($isInsert){
-//           $imagePath=Yii::getAlias('@frontend/web/storage/image'.$this->id.'.png');
-//          if(!is_dir(dirname($imagePath))){
-//              FileHelper::createDirectory(dirname($imagePath));
-//          }
-//
-//      }
-//     return true;
-//    }
+    public function estePostat(){
+        $anunt=Anunt::findOne(['id'=>$this->id]);
+        if($anunt!=null){
+            return $anunt->postat;
+        }
+        else return -1;
+    }
 }

@@ -2,7 +2,6 @@
 
 namespace common\models\search;
 
-use common\models\KeyAnuntPostVacant;
 use common\models\NomJudet;
 use common\models\NomLocalitate;
 use common\models\NomNivelCariera;
@@ -48,7 +47,7 @@ class AnuntSearch extends Anunt
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search_admin($params)
     {
 
         if(empty($params['AnuntSearch']['cuvant']) &&
@@ -69,18 +68,17 @@ class AnuntSearch extends Anunt
                 if ($params['AnuntSearch']['cuvant'] != "") {
 
                     $connection = new Connection();
-                    //$id_anunturi = array_column($query->asArray()->all(), 'id');
+//                    $id_anunturi = array_column($query->asArray()->all(), 'id');
 //                $posturi = PostVacant::find()
 //                    ->select(['post_vacant.id', 'fct.nume AS tip_functie', 'post_vacant.denumire', 'post_vacant.cerinte','post_vacant.bibliografie','post_vacant.tematica', 'judet.nume AS judet', 'studii.nume AS nivel_studii', 'cariera.nume AS nivel_cariera', 'oras.nume AS oras'])
-//                    ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_post_vacant=post_vacant.id')
-//                    ->innerJoin(['anunt' => Anunt::tableName()], 'anunt.id=kapv.id_anunt')
+//                    ->innerJoin(['anunt' => Anunt::tableName()], 'anunt.id=post_vacant.id_anunt')
 //                    ->innerJoin(['fct' => NomTipIncadrare::tableName()], 'fct.id=post_vacant.id_nom_tip_functie')
 //                    ->innerJoin(['judet' => NomJudet::tableName()], 'judet.id=post_vacant.id_nom_judet')
 //                    ->innerJoin(['studii' => NomNivelStudii::tableName()], 'studii.id=post_vacant.id_nom_nivel_studii')
 //                    ->innerJoin(['cariera' => NomNivelCariera::tableName()], 'cariera.id=post_vacant.id_nom_nivel_cariera')
 //                    ->innerJoin(['oras' => NomLocalitate::tableName()], 'oras.id=post_vacant.oras')
 //                    ->asArray()->all();
-                    //                    foreach($posturi as $post)
+//                                        foreach($posturi as $post)
 //                        $command->insert('post', '_doc', $post);
 
 
@@ -102,7 +100,6 @@ class AnuntSearch extends Anunt
                     $lista_id_posturi = array_column($rezultate,'id');
 
                     $query = Anunt::find()
-                        ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_anunt=anunt.id')
                         ->innerJoin(['post' => PostVacant::tableName()], 'post.id=kapv.id_post_vacant')
                         ->where(['post.id' => $lista_id_posturi]);
 
@@ -112,11 +109,9 @@ class AnuntSearch extends Anunt
 
             if(\Yii::$app->user->getIdentity()->admin==0)
                 $query = Anunt::find()
-                    ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_anunt=anunt.id')
                     ->innerJoin(['post' => PostVacant::tableName()], 'post.id=kapv.id_post_vacant');
             else
                 $query = Anunt::find()
-                    ->innerJoin(['kapv' => KeyAnuntPostVacant::tableName()], 'kapv.id_anunt=anunt.id')
                     ->innerJoin(['post' => PostVacant::tableName()], 'post.id=kapv.id_post_vacant')
                     ->where(['id_structura'=>\Yii::$app->user->getIdentity()->admin]);
 
@@ -138,7 +133,10 @@ class AnuntSearch extends Anunt
         }
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query->orderBy(['data_postare'=> SORT_DESC]),
+            'pagination' => [
+                'pageSize' => 40,
+            ],
         ]);
 
         $this->load($params);
@@ -151,5 +149,98 @@ class AnuntSearch extends Anunt
 
         return $dataProvider;
     }
+    public function search_user($params){
+        if(empty($params['AnuntSearch']['cuvant']) &&
+            empty($params['AnuntSearch']['id_nom_tip_functie']) &&
+            empty($params['AnuntSearch']['id_nom_nivel_studii']) &&
+            empty($params['AnuntSearch']['id_nom_nivel_cariera']) &&
+            empty($params['AnuntSearch']['id_nom_judet'])) {
+            $query = Anunt::find()->where(['postat'=>1]);
+        }
+        else {
+            $lista_id_posturi=-1;
+            if(!empty($params)) {
+                if ($params['AnuntSearch']['cuvant'] != "") {
+
+                    $connection = new Connection();
+//                    $id_anunturi = array_column($query->asArray()->all(), 'id');
+//                $posturi = PostVacant::find()
+//                    ->select(['post_vacant.id', 'fct.nume AS tip_functie', 'post_vacant.denumire', 'post_vacant.cerinte','post_vacant.bibliografie','post_vacant.tematica', 'judet.nume AS judet', 'studii.nume AS nivel_studii', 'cariera.nume AS nivel_cariera', 'oras.nume AS oras'])
+//                    ->innerJoin(['anunt' => Anunt::tableName()], 'anunt.id=post_vacant.id_anunt')
+//                    ->innerJoin(['fct' => NomTipIncadrare::tableName()], 'fct.id=post_vacant.id_nom_tip_functie')
+//                    ->innerJoin(['judet' => NomJudet::tableName()], 'judet.id=post_vacant.id_nom_judet')
+//                    ->innerJoin(['studii' => NomNivelStudii::tableName()], 'studii.id=post_vacant.id_nom_nivel_studii')
+//                    ->innerJoin(['cariera' => NomNivelCariera::tableName()], 'cariera.id=post_vacant.id_nom_nivel_cariera')
+//                    ->innerJoin(['oras' => NomLocalitate::tableName()], 'oras.id=post_vacant.oras')
+//                    ->asArray()->all();
+//                                        foreach($posturi as $post)
+//                        $command->insert('post', '_doc', $post);
+
+
+                    $query_elastic = new Query();
+                    $command = $connection->createCommand();
+
+
+                    $query_elastic->from('post')
+                        ->query([
+                            'multi_match' => [
+                                'query' =>$params['AnuntSearch']['cuvant'] ,
+                                'fields' => ['*'],
+                                'fuzziness' => 2,
+                                'prefix_length' => 2,
+                            ]
+                        ]);
+                    $results = $query_elastic->all();
+                    $rezultate = array_column($results, '_source');
+                    $lista_id_posturi = array_column($rezultate,'id');
+
+                    $query = Anunt::find()
+                        ->innerJoin(['post' => PostVacant::tableName()], 'post.id_anunt=anunt.id')
+                        ->where(['post.id' => $lista_id_posturi]);
+
+
+                }
+            }
+
+            $query = Anunt::find()
+                ->innerJoin(['post' => PostVacant::tableName()], 'post.id_anunt=anunt.id')
+                ->where(['postat'=>1]);
+
+
+            if($lista_id_posturi!=-1)
+                $query->andWhere(['post.id' => $lista_id_posturi]);
+            if ($params['AnuntSearch']['id_nom_tip_functie'] != "")
+                $query->andWhere(['post.id_nom_tip_functie' => $params['AnuntSearch']['id_nom_tip_functie']]);
+            if ($params['AnuntSearch']['id_nom_nivel_studii'] != "")
+                $query->andWhere(['post.id_nom_nivel_studii' => $params['AnuntSearch']['id_nom_nivel_studii']]);
+            if ($params['AnuntSearch']['id_nom_nivel_cariera'] != "")
+                $query->andWhere(['post.id_nom_nivel_cariera' => $params['AnuntSearch']['id_nom_nivel_cariera']]);
+            if ($params['AnuntSearch']['id_nom_judet'] != "") {
+                if ($params['AnuntSearch']['oras'] == "")
+                    $query->andWhere(['post.id_nom_judet' => $params['AnuntSearch']['id_nom_judet']]);
+                else
+                    $query->andWhere(['post.oras' => $params['AnuntSearch']['oras']]);
+            }
+
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query->orderBy(['data_postare'=> SORT_DESC]),
+            'pagination' => [
+                'pageSize' => 40,
+            ],
+        ]);
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to return any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+        return $dataProvider;
+    }
+
 
 }

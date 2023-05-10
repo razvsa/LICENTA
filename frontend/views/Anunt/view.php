@@ -1,22 +1,98 @@
 <?php
 
+use common\models\PostVacant;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
+use yii\helpers\Url;
+use yii\grid\ActionColumn;
+use yii\grid\GridView;
+use yii\base\View;
+
 
 /** @var yii\web\View $this */
 /** @var common\models\Anunt $model */
+/** @var common\models\search\PostVacantSearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var \frontend\controllers\AnuntController $posturi  */
+/** @var \frontend\controllers\AnuntController  $titlu */
+/** @var \frontend\controllers\AnuntController  $model */
+/** @var \frontend\controllers\AnuntController  $posturilemele */
+/** @var \frontend\controllers\AnuntController  $fisiere */
+/** @var \frontend\controllers\AnuntController  $nr_posturi */
 
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Anunturi', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
-
-
+$this->title = 'Anunt';
 ?>
-<div class="anunt-view">
+<div>
+    <div >
+        <?php
+//        if($posturilemele==1 && Yii::$app->user->isGuest)
+//        {
+//            echo '<p class="alert alert-danger" role="alert">Nu aveti acces la aceasta pagina</p>';
+//        }
+//        else{?>
+        <h2 ><?=$model->titlu?></h2>
+        <hr>
+        <br>
+        <div class="row">
 
-    <h1><?= Html::encode('Posturile anuntului'.$this->title) ?></h1>
 
-    <?= Html::a('Adauga post', ['post-vacant/index','id'=>$model->id], ['class' => 'btn btn-success']) ?>
+
+            <div class="col-md-12">
+                <?php
+                $ddata_concurs=strtotime($model->data_concurs);
+                $ddata_limita_inscriere_concurs=strtotime($model->data_limita_inscriere_concurs);
+                $ddata_depunere_dosar=strtotime($model->data_depunere_dosar);
+                $ddata_postare=strtotime($model->data_postare);
+                ?>
+
+                <p style="font-size:17px"><b>Structura:</b> <?=$model->getNumeStructura()?></p>
+                <p style="font-size:17px"><b>Postat la:</b> <?=date('d/M/Y h:i',$ddata_postare)?></p>
+                <p style="font-size:17px"><b>Descriere: </b> <?=$model->descriere?></p>
+                <p style="font-size:17px"><b>Data limita inscriere dosar:</b> <?=date('d/M/Y h:i',$ddata_limita_inscriere_concurs)?></p>
+                <p style="font-size:17px"><b>Data depunere dosar:</b> <?=date('d/M/Y h:i',$ddata_depunere_dosar)?></p>
+                <p style="font-size:17px"><b>Data concurs:</b> <?=date('d/M/Y h:i',$ddata_concurs)?></p>
+
+            </div>
+
+        </div>
+        <br>
+        <br>
+        <h4>Fisierele anuntului:</h4>
+        <hr style='border-top: 1px solid black;'>
+        <br>
+        <?php
+
+        echo \yii\widgets\ListView::widget([
+
+            'dataProvider'=>$fisiere,
+            'itemView'=>'_fisier_item',
+            'emptyText' => 'Nu exista fisiere incarcate',
+            'viewParams'=>['id_anunt'=>$model->id],
+            'summary' =>''
+        ]);?>
+        <br>
+        <br>
+            <?php
+            if($nr_posturi>2)
+                echo \yii\widgets\ListView::widget([
+
+                    'dataProvider'=>$posturi,
+                    'emptyText' => 'Acesta anunt nu are posturi asociate.',
+                    'itemView'=>'_post_item',
+                    'summary' =>''
+                ]);
+            else if($nr_posturi==1){
+                echo "<br><br><h2>Post Vacant:</h2><hr style='border-top: 2px solid black;'><br>";
+                echo $this->renderFile(Yii::getAlias('@frontend').'\views\post-vacant\view.php',[
+                    'model' => PostVacant::find()->where(['id_anunt'=>$model->id])->one(),
+                    'id_anunt'=>$model->id,
+                ]);
+            }
+            else
+                echo "Nu exista posturi in cadrul acestui anunt";
+            ?>
+
+    </div>
+
+
 </div>

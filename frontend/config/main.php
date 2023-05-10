@@ -17,6 +17,17 @@ return [
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.gmail.com',
+                'username' => 'GMAILID',
+                'password' => 'PASSWORD',
+                'port' => '587',
+                'encryption' => 'tls',
+            ],
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,

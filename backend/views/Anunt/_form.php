@@ -50,14 +50,6 @@ use common\models\NomDepartament;
 
     ]);?>
 
-
-    <?= $form->field($model, 'departament')->widget(Select2::className(),[
-        'bsVersion'=>'4.x',
-        'data'=>$departamente_map,
-        'options'=>[
-            'placeholder' => 'Selecteaza Departamentul'
-        ],
-    ]);?>
     <?php
         if(Yii::$app->user->getIdentity()->admin==0)
             echo $form->field($model,'id_structura')->widget(Select2::className(),[

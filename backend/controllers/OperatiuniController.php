@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\models\KeyAnuntPostVacant;
 use common\models\KeyTipFisierDosarTipCategorie;
 use common\models\NomDepartament;
 use common\models\NomNivelCariera;
@@ -30,7 +29,7 @@ class OperatiuniController extends \yii\web\Controller
                     [
                         'allow' => true,
                         'roles' => ['@'],
-                        'actions' => ['fisier-dosar'],
+                        'actions' => ['fisier-dosar','categorie','fisiere-necesare'],
                     ],
                     [
                         'allow' => true,
@@ -152,7 +151,15 @@ class OperatiuniController extends \yii\web\Controller
 
     public function actionFisiereNecesare($id_categorie){
 
-        $fisiere=NomTipFisierDosar::find()->asArray()->all();
+        if(\Yii::$app->user->getIdentity()->admin==0){
+            $fisiere=NomTipFisierDosar::find()->asArray()->all();
+        }
+        else{
+            $array_id = [0, \Yii::$app->user->getIdentity()->admin];
+            $fisiere = NomTipFisierDosar::find()
+                ->where(['id_structura' => $array_id])
+                ->asArray()->all();
+        }
         $existente=KeyTipFisierDosarTipCategorie::find()->where(['id_categorie'=>$id_categorie])->asArray()->all();
         $existente = array_column($existente, 'id_tip_fisier');
         $document=[];
@@ -189,6 +196,8 @@ class OperatiuniController extends \yii\web\Controller
         for($i=0;$i<count($fisiere);$i++){
             $document[$i]->nume = $fisiere[$i]['nume'];
             $document[$i]->id = $fisiere[$i]['id'];
+            $document[$i]->id_structura = $fisiere[$i]['id_structura'];
+
         }
         if (Model::loadMultiple($document,\Yii::$app->request->post())&& Model::validateMultiple($document)) {
 //            echo '<pre>';
@@ -615,6 +624,11 @@ class OperatiuniController extends \yii\web\Controller
     public function actionFisierDosar()
     {
 
+        $structura=\common\models\NomStructura::find()->all();
+        $structura_map=\yii\helpers\ArrayHelper::map($structura,'id','nume');
+        $structura_finala=[];
+        $structura_finala[0]='TOATE STRUCTURILE';
+        $structura_finala=array_merge($structura_finala,$structura_map);
         $model = new NomTipFisierDosar();
 
         $fisier_dosar = new ActiveDataProvider([
@@ -684,13 +698,18 @@ class OperatiuniController extends \yii\web\Controller
                 function() {}
                 );
                 JS;
-                $model->save(false);
+                if(\Yii::$app->user->getIdentity()->admin!=0){
+                    $model->id_structura=\Yii::$app->user->getIdentity()->admin;
+                }
+                $model->save();
                 $this->view->registerJs($js);
                 $model->nume=null;
                 $model->id=null;
+                $model->id_structura=null;
                 return $this->render('fisier-dosar',[
                     'model'=>$model,
                     'fisier_dosar'=>$fisier_dosar,
+                    'structura_finala'=>$structura_finala,
                 ]);
 
             }
@@ -708,6 +727,7 @@ class OperatiuniController extends \yii\web\Controller
         return $this->render('fisier-dosar',[
             'model'=>$model,
             'fisier_dosar'=>$fisier_dosar,
+            'structura_finala'=>$structura_finala,
         ]);
     }
     public function actionActualizeazaFisierDosar($id){

@@ -8,8 +8,10 @@
         <div class="card-body">
             <h5 class="alert alert-info" role="alert"><b>Nume: </b><?php echo $model['nume']?></h5>
             <ul class="d-flex justify-content-between">
-                <li><?=\yii\helpers\Html::a('Editeaza',['/operatiuni/actualizeaza-categorie','id'=>$model->id],['class'=>'btn btn-outline-info',])?></li>
-                <li><?=\yii\helpers\Html::a('Sterge',['/operatiuni/delete-categorie','id'=>$model->id],['class'=>'btn btn-outline-danger','data' => [
+                <li><?php if(Yii::$app->user->getIdentity()->admin==0)
+                    echo \yii\helpers\Html::a('Editeaza',['/operatiuni/actualizeaza-categorie','id'=>$model->id],['class'=>'btn btn-outline-info',])?></li>
+                <li><?php if(Yii::$app->user->getIdentity()->admin==0)
+                    echo \yii\helpers\Html::a('Sterge',['/operatiuni/delete-categorie','id'=>$model->id],['class'=>'btn btn-outline-danger','data' => [
                         'confirm' => 'Sunteți sigur că doriți să ștergeți acest element?',
                         'method' => 'post',
                     ],])?></li>

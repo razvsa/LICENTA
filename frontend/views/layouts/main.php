@@ -44,8 +44,8 @@ AppAsset::register($this);
             $menuItems = [
                 ['label' => 'About', 'url' => ['/site/about']],
                 ['label' => 'Anunturi', 'url' => ['/anunt/index']],
-                ['label' => 'Documentele mele', 'url' => ['/candidat-fisier/index']],
-                ['label' => 'Posturile mele', 'url' => ['/post-vacant/posturilemele']],
+                ['label' => 'Documentele mele', 'url' => ['/candidat-dosar/index']],
+                ['label' => 'Aplicarile mele', 'url' => ['/anunt/anunturilemele']],
             ];
         }
         if (Yii::$app->user->isGuest) {
@@ -70,8 +70,8 @@ AppAsset::register($this);
         ?>
     </header>
 
-    <main role="main" class="flex-shrink-0">
-        <div class="container">
+    <main role="main" class="flex-shrink-0 ">
+        <div class="container ">
             <?= Breadcrumbs::widget([
                 'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
             ]) ?>
@@ -86,3 +86,10 @@ AppAsset::register($this);
     </body>
     </html>
 <?php $this->endPage();
+?>
+<style>
+
+    .margin{
+        margin-right:20px;
+    }
+</style>

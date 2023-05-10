@@ -14,6 +14,13 @@
                         'method' => 'post',
                     ],])?></li>
             </ul>
+            <?php
+            if($model->id_structura!=0){
+                echo '<div class="card-footer bg-transparent"><ul class="d-flex justify-content-between"><li><p ><b>Existent doar la structura: </b>';
+                echo $model->getNumeStructura();
+                echo '</p></li></ul></div>';
+            }
+            ?>
         </div>
     </div>
 </div>

@@ -36,9 +36,7 @@ $this->title = $tip_fisier;
     ?>
     <?php
     if($valid==0) {
-        echo Html::a('Aproba', ['/candidat-fisier/aproba', 'id_user'=>$id_user,'tip_fisier' => $tip_fisier,'stare'=>$stare], ['class' => 'btn btn-success','data' => ['method' => 'post']]);
-        echo "   ";
-        echo Html::a('Respinge', ['/candidat-fisier/respinge', 'id_user'=>$id_user,'tip_fisier' => $tip_fisier,'stare'=>$stare], ['class' => 'btn btn-danger','data' => ['method' => 'post']]);
+
     }
     else{
         echo '<div class="alert alert-success" role="alert"> Document validat </div>';
