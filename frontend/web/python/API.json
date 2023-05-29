@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "mineral-voyage-386110",
+  "private_key_id": "bcae1b247ba1b768afa17708fad20f82c8404db8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCNEDN6bTnGcV7W\nFLNZDehzd2C5QrfMMy+AKdLyVjT89pON6Fl8rkkXWPIdEElZvkrr7jTA6a7M7z9r\nrQdphxHqnRUzmNnGAg0xSxvPqjCBm70ge7heP5WUSMx5d8cDdtDiWXeEJFxpos4S\nxzCfYzgHx5rd2Z1RpSp05Q13XILCcnvLF5mcNsZJknsqhVBUDCw6YcF1l41OZ9DL\nA1oVxYhQSq3GOHom46gjjie6M/6qpFSdiMd3quz8kqAlFR/J+pJOYmaQeXLT5peM\njf5Cspxl9ptcwQ0EVDKuDi6H3Zjl35Cze4LoeeMAlQkXqSA+osYjhIJsRsX8Q4Sj\nJzJQycsRAgMBAAECggEAQouchUomobdUwlBEpSO6/1GXJv5S33lcFK1mTp0dZSJb\nTGwKXxeG8oUqvkwzFit/g5o9d64loJbSx9R59S3bZV7SJCOcxFyuZY0lowsJ0/Ko\nvzyuJoP/Z9MJ5tl64Gb6NnV3PLa8g7biWRhvlxlC0uS2aabhoKT2iOuPNTpGkzyk\nOx3kTUIhPlaal1gYg09OwZYAuOIDwg0H5jPWkrblYAHJdBb2aQd8Fh0c5qUIdoZK\nDqzs5dhS4vDyox9wGLQVYzfb9BGczD1GyKNFWKY5ziPVuSf8df50+FNouu1AozCv\nvLhUh1ruR8Xcno2fcrp+Nq4Tt6Opnst2h1bSIp5tawKBgQDFtkyLgVwa+UZRAVBO\nazdKxjWJE5a3ZrbosMhvuVSedS/l8Z7KDB9qPxDTKtvjBijmEI9TjiCcmRiDaBkk\n9B6gNQewsbbpWnUDLrPIq4ZDlh4DV4DS/2oWEhOvnWtApB/q4E3lyZdWkMz0KK0I\nO4hLlrVN10LpsFw1Btz9KgYaKwKBgQC2poKU9B6CnrwMsykcGNFaSkN+ajxy68VX\nz5wRFoN8UeB6lXzyXkb70poyD9Ga3JI/ajv6BePzg4cMuCGiCzhy9sLUm4O1+F1S\nSjxZMEB11v/IJFZ5mrPxH2KCV1I7ot7aWRqzB2oiZHYMjwNlpmv4bk91+5fg1JIC\nEhVf/Hv9swKBgQCGKcaXhBi0VSNaJMIR9L94hjgd5KUJnzHPhOb+qYy6Wls+dk+C\nW+eVeWY5ZYQA8lUeiW45DOEkYt83jJRDd0SxAktNo8qzXya4GiD1sy9Q/bUwH1jT\n1W5vu6SQLwpwuu7Nu5ggrkN8ApaRuGhyhbNfV82AHOrTGVH4ycd8I+AwMQKBgQCX\nng0TnLme8Cll2WssuaU/cBoq3AEl3HVKeToyLSAkmMrgtyqq/nuqGp6JI/x4stRr\n88GpwC4DPJFki4zPuMS5GgGM/zMMYQkGgD0sRBOePkTBXPizpSnt5IGfdOD8RCz9\nz62MI4GE3yPnNOg6/zTtWpR3ecwPhCVXtq8rqKk8ZQKBgFZgY9l4Pw8nrBLEEs8z\nnhdlpOpEOwN56bkogghtOlT9Z+YtUcC4wkJUYbb84pwbBUFWC9XIYIQVyPw/jQxC\nzWB/YAj5JBfDQHepqHqBb0YuGz+iMgb+aGhWtSuuxC90A0wX/+CIpUqfSUInMQn9\nbgoWfsQsfRJQvC02rtgqkK5J\n-----END PRIVATE KEY-----\n",
+  "client_email": "ocr-api@mineral-voyage-386110.iam.gserviceaccount.com",
+  "client_id": "115065297060601112236",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ocr-api%40mineral-voyage-386110.iam.gserviceaccount.com"
+}
