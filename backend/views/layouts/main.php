@@ -34,29 +34,47 @@ AppAsset::register($this);
             'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Anunturi', 'url' => ['/anunt/index'],'class'=>'mx-auto'],
+    if(\Yii::$app->user->getIdentity()->admin==0)
+        $menuItems = [
+        ['label' => 'Anunțuri', 'url' => ['/anunt/index'],'class'=>'mx-auto'],
         [
-            'label' => 'Dosare',
+            'label' => 'Operațiuni',
             'items' => [
-                ['label' => 'De aprobat', 'url' => ['/candidat-fisier/posturi','status'=>1]],
-                ['label' => 'Aprobate', 'url' => ['/candidat-fisier/posturi','status'=>3]],
-            ],
-        ],
-        [
-            'label' => 'Operatiuni',
-            'items' => [
-                ['label' => 'Nivel Cariera', 'url' => ['/operatiuni/nivel-cariera']],
+                ['label' => 'Nivel Carieră', 'url' => ['/operatiuni/nivel-cariera']],
                 ['label' => 'Categorie Posturi', 'url' => ['/operatiuni/categorie']],
                 ['label' => 'Nivel Studii', 'url' => ['/operatiuni/nivel-studii']],
                 ['label' => 'Documente dosar', 'url' => ['/operatiuni/fisier-dosar']],
-                ['label' => 'Tip Incadrare', 'url' => ['/operatiuni/tip-incadrare']],
-                ['label' => 'Structura', 'url' => ['/operatiuni/tip-structura']],
+                ['label' => 'Tip încadrare', 'url' => ['/operatiuni/tip-incadrare']],
+                ['label' => 'Structură', 'url' => ['/operatiuni/tip-structura']],
             ],
-        ],
 
+        ],
+        ['label' => 'Utilizatori', 'url' => ['/user/index'],'class'=>'mx-auto'],
 
     ];
+    else
+        $menuItems = [
+            ['label' => 'Anunțuri', 'url' => ['/anunt/index'],'class'=>'mx-auto'],
+            [
+                'label' => 'Dosare',
+                'items' => [
+                    ['label' => 'De aprobat', 'url' => ['/candidat-fisier/posturi','status'=>1]],
+                    ['label' => 'Aprobate', 'url' => ['/candidat-fisier/posturi','status'=>3]],
+                    ['label' => 'Incomplete', 'url' => ['/candidat-fisier/posturi','status'=>4]],
+                    ['label' => 'Respinse', 'url' => ['/candidat-fisier/posturi','status'=>2]],
+                ],
+            ],
+            [
+                'label' => 'Operațiuni',
+                'items' => [
+                    ['label' => 'Documente dosar', 'url' => ['/operatiuni/fisier-dosar']],
+                ],
+            ],
+
+
+
+        ];
+
 
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],

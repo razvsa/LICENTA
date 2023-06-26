@@ -15,7 +15,7 @@ use kartik\dialog\Dialog;
 <br>
 <h2>Documente dosar</h2>
 <br>
-<h4>Insereaza un nou tip de document:</h4>
+<h4>Inserează un nou tip de document:</h4>
 <?php
 Dialog::widget();
 DialogAsset::register($this);
@@ -23,9 +23,9 @@ $form = ActiveForm::begin();
 echo  $form->field($model, 'nume')->textInput()->label('');
 if(\Yii::$app->user->getIdentity()->admin==0)
     echo  $form->field($model, 'id_structura')->dropDownList($structura_finala,[
-            'prompt'=>'Alege o structura'
-    ])->label('Structura');
-echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
+            'prompt'=>'Alege o structură'
+    ])->label('Structură');
+echo Html::submitButton('Adaugă', ['class' => 'btn btn-success']);
 ActiveForm::end();
 echo '<br><br>';
 

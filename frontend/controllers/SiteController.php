@@ -20,6 +20,9 @@ use yii\elasticsearch\Connection;
 use yii\elasticsearch\Query;
 use yii\elasticsearch\ActiveRecord;
 use Elasticsearch\ClientBuilder;
+use yii\helpers\Url;
+use Google\Auth\OAuth2;
+
 
 
 /**
@@ -107,6 +110,34 @@ class SiteController extends Controller
         ]);
     }
 
+    public function actionGoogleAuth()
+    {
+        $client = Yii::$app->google;
+        echo '<pre>';
+        print_r($client);
+        die;
+        echo '</pre>';
+        $client->setReturnUrl(Url::to(['site/google-auth'], true));
+
+
+        $client->setViewOptions([
+            'popupWidth' => 500,
+            'popupHeight' => 500,
+        ]);
+
+        $authUrl = $client->buildAuthUrl();
+        $this->redirect($authUrl);
+    }
+
+    public function actionGoogleCallback()
+    {
+        $client = Yii::$app->google;
+        $client->setReturnUrl(Url::to(['site/google-auth'], true));
+        $authData = $client->authenticate();
+        $userAttributes = $client->getUserAttributes();
+        $this->redirect(['site/index']);
+    }
+
     /**
      * Logs out the current user.
      *
@@ -149,25 +180,22 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        $pythonScript ='D:\script.py';
-        $command = escapeshellcmd("python " . $pythonScript ." D:\poza1.jpeg");
-        $output = shell_exec($command);
-        $parts = explode('/', $output);
-        $date = new \DateTime();
-        $date->setDate($parts[2], $parts[1], $parts[0]);
-        $currentDate = new \DateTime();
+//        $pythonScript ='D:\script.py';
+//        $command = escapeshellcmd("python " . $pythonScript ." D:\poza1.jpeg");
+//        $output = shell_exec($command);
+//        $parts = explode('/', $output);
+//        $date = new \DateTime();
+//        $date->setDate($parts[2], $parts[1], $parts[0]);
+//        $currentDate = new \DateTime();
+//
+//        if ($date < $currentDate) {
+//            echo "Data este in trecut";
+//        } elseif ($date > $currentDate) {
+//            echo "Data este in viitor";
+//        } else {
+//            echo "Data este identică cu timpul curent.";
+//        }
 
-        if ($date < $currentDate) {
-            echo "Data este in trecut";
-        } elseif ($date > $currentDate) {
-            echo "Data este in viitor";
-        } else {
-            echo "Data este identică cu timpul curent.";
-        }
-        echo '<pre>';
-        print_r($parts[2]);
-        die;
-        echo '</pre>';
 
 //        $connection = new Connection();
 //        $query = new Query();
@@ -210,6 +238,7 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
+
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
@@ -230,6 +259,7 @@ class SiteController extends Controller
     {
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
             if ($model->sendEmail()) {
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
 
@@ -253,6 +283,7 @@ class SiteController extends Controller
      */
     public function actionResetPassword($token)
     {
+
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidArgumentException $e) {

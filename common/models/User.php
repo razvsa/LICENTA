@@ -233,21 +233,27 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public function getValidareDocumente($id){
-        $validat=1;
-        $fisiere_necesare=NomTipFisierDosar::find()
-            ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
-            ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
-            ->innerJoin(['p'=>PostVacant::tableName()],'p.id_anunt=a.id')
-            ->where(['p.id'=>$id])
-            ->asArray()->all();
-        foreach ($fisiere_necesare as $fn){
-            $documente=CandidatFisier::find()->where(['id_nom_tip_fisier_dosar'=>$fn['id'],'id_user_adaugare'=>$this->id])->asArray()->all();
-            foreach($documente as $doc){
-                if($doc['stare']!=3)
-                    $validat=0;
+        $validat=0;
+//        $fisiere_necesare=NomTipFisierDosar::find()
+//            ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
+//            ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
+//            ->innerJoin(['p'=>PostVacant::tableName()],'p.id_anunt=a.id')
+//            ->where(['p.id'=>$id])
+//            ->asArray()->all();
+//        foreach ($fisiere_necesare as $fn){
+//            $documente=CandidatFisier::find()->where(['id_nom_tip_fisier_dosar'=>$fn['id'],'id_user_adaugare'=>$this->id])->asArray()->all();
+//            foreach($documente as $doc){
+//                if($doc['stare']!=3)
+//                    $validat=0;
+//
+//            }
+//        }
 
-            }
-        }
+        $dosar=CandidatDosar::find()
+            ->where(['id_user'=>$this->id,'id_post_vacant'=>$id])->one();
+        if($dosar!=null)
+            if($dosar['id_status']==3)
+                $validat=1;
         return $validat;
     }
 }

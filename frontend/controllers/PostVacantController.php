@@ -3,11 +3,14 @@
 namespace frontend\controllers;
 
 use common\models\Anunt;
+use common\models\CandidatDosar;
+use common\models\CandidatFisier;
 use common\models\KeyInscrierePostUser;
 use common\models\PostFisier;
 use common\models\PostVacant;
 use common\models\search\PostVacantSearch;
 use yii\data\ActiveDataProvider;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -80,22 +83,22 @@ class PostVacantController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
-    {
-        $model = new PostVacant();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
+//    public function actionCreate()
+////    {
+////        $model = new PostVacant();
+////
+////        if ($this->request->isPost) {
+////            if ($model->load($this->request->post()) && $model->save()) {
+////                return $this->redirect(['view', 'id' => $model->id]);
+////            }
+////        } else {
+////            $model->loadDefaultValues();
+////        }
+////
+////        return $this->render('create', [
+////            'model' => $model,
+////        ]);
+//    }
 
     /**
      * Updates an existing PostVacant model.
@@ -120,11 +123,22 @@ class PostVacantController extends Controller
 
     public function actionRenunta($id_post,$id_user){
 
-        $model=KeyInscrierePostUser::find()
-            ->where(['id_user'=>$id_user,'id_post'=>$id_post])->all();
-        foreach($model as $m){
-            $m->delete();
+        $dosar=CandidatDosar::findOne(['id_post_vacant'=>$id_post]);
+        $fisiere=CandidatFisier::find()
+            ->where(['id_candidat_dosar'=>$dosar['id']])->all();
+        foreach($fisiere as $f){
+            unlink(\Yii::getAlias('@frontend').$f['cale_fisier']);
+            $f->delete();
+
         }
+
+        FileHelper::removeDirectory(\Yii::getAlias('@frontend')."web\storage\user_".\Yii::$app->user->id."\dosar_post_".$dosar['id_post_vacant']);
+        $key=KeyInscrierePostUser::find()
+            ->where(['id_user'=>\Yii::$app->user->id,'id_post'=>$dosar['id_post_vacant']])->one();
+        if($key!=null)
+            $key->delete();
+
+        $dosar->delete();
 
         return $this->redirect('/anunt/index');
     }

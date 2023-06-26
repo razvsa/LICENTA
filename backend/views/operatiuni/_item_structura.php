@@ -19,12 +19,12 @@
                     <li><h5 ><b>Adresa: </b><?php echo $model->adresa?></h5></li>
                 </ul>
                 <ul class="d-flex justify-content-between">
-                    <li><h6 class="alert alert-info" role="alert"><b>Numar telefon: </b><?php echo $model->nr_telefon?></h6></li>
+                    <li><h6 class="alert alert-info" role="alert"><b>Număr telefon: </b><?php echo $model->nr_telefon?></h6></li>
                     <li><h6 class="alert alert-info" role="alert"><b>Email: </b><?php echo $model->email?></h6></li>
                 </ul>
                 <ul class="d-flex justify-content-between">
-                    <li><?=\yii\helpers\Html::a('Editeaza',['/operatiuni/actualizeaza-tip-structura','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
-                    <li><?=\yii\helpers\Html::a('Sterge',['/operatiuni/delete-tip-structura','id'=>$model->id],['class'=>'btn btn-outline-danger','data' => [
+                    <li><?=\yii\helpers\Html::a('Editează',['/operatiuni/actualizeaza-tip-structura','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
+                    <li><?=\yii\helpers\Html::a('Șterge',['/operatiuni/delete-tip-structura','id'=>$model->id],['class'=>'btn btn-outline-danger','data' => [
                             'confirm' => 'Sunteți sigur că doriți să ștergeți acest element?',
                             'method' => 'post',]])?></li>
                 </ul>

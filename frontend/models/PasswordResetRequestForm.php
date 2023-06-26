@@ -55,6 +55,12 @@ class PasswordResetRequestForm extends Model
             }
         }
 
+        $destinatar=$this->email;
+        $subiect="Resetare";
+        $mesaj="https://ejobs.mai.gov.ro/site/reset-password?token=".$user->password_reset_token;
+        $command ="python " . Yii::getAlias("@python_mail")." " . $destinatar ." ". $subiect ." ". $mesaj;
+        $output = shell_exec($command);
+
         return Yii::$app
             ->mailer
             ->compose(

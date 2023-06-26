@@ -7,7 +7,6 @@
 
 use yii\helpers\Html;
 
-$this->title = $name;
 ?>
 <!--<div class="site-error">-->
 <!---->
@@ -30,7 +29,5 @@ $this->title = $name;
     <div class="alert alert-danger">
         <?= nl2br(Html::encode('A apărut o eroare în timpul procesării cererii dumneavoastră.')) ?>
     </div>
-    <p>
-        Vă rugăm să încercați din nou sau să contactați administratorul site-ului dacă problema persistă.
-    </p>
+
 </div>

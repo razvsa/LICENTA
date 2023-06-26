@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /** @var common\models\PostVacant $model */
 
 
-$this->title = 'Creeaza Post Vacant';
+$this->title = 'Adaugă Post Vacant';
 
 ?>
 <br>

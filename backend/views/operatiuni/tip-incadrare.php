@@ -10,16 +10,16 @@ use kartik\dialog\Dialog;
 /** @var \backend\controllers\OperatiuniController $tip_incadrare */
 ?>
 <br>
-<h2>Tip Incadrare</h2>
+<h2>Tip încadrare</h2>
 <br>
-<h4>Insereaza un nou tip de incadrare:</h4>
+<h4>Inserează un nou tip de încadrare:</h4>
 <?php
 Dialog::widget();
 DialogAsset::register($this);
 
 $form = ActiveForm::begin();
 echo  $form->field($model, 'nume')->textInput()->label('');
-echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
+echo Html::submitButton('Adaugă', ['class' => 'btn btn-success']);
 ActiveForm::end();
 echo '<br><br>';
 

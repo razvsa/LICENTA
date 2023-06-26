@@ -9,9 +9,13 @@
         ->where(['id_post_vacant'=>$model->id])
         ->asArray()->all();
     if($status==1)
-        $string="Numar dosare in asteptare: ";
+        $string="Număr dosare în așteptare: ";
     else if($status==3)
-        $string="Numar dosare aprobate: ";
+        $string="Număr dosare aprobate: ";
+    else if($status==4)
+        $string="Număr dosare incomplete: ";
+    else if($status==2)
+        $string="Număr dosare respinse: ";
 ?>
 <div class="card bg-color">
 
@@ -19,20 +23,20 @@
 
         <div class="col-sm-2 p">
             <a href="<?= \yii\helpers\Url::to(['/candidat-fisier/dosare','id_post'=>$model->id,'status'=>$status])?>">
-                <img class="card-img" src="http://studio.ejobs.mai.gov.ro/storage/icon-document.jpg">
+                <img class="card-img" src="https://studio.ejobs.mai.gov.ro/storage/icon-document.jpg">
             </a>
         </div>
         <div class="card-body col-sm-6">
-            <h5 class="card-title">
+            <h4 class="card-title">
                 <b>Denumire post:</b>
                 <?=$model->denumire?>
-            </h5>
+            </h4>
             <h5 class="card-title">
                 <b><?=$string?></b>
                 <?=count($dosare)?>
             </h5>
             <h5 class="card-title">
-                <b>Numar total dosare:</b>
+                <b>Număr total dosare:</b>
                 <?=count($dosare_all)?>
             </h5>
             <?=\yii\helpers\Html::a('Vezi dosarele postului',['/candidat-fisier/dosare','id_post'=>$model->id,'status'=>$status],['class'=>'btn btn-outline-info','data' => ['method' => 'post']])?>

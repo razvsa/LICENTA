@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 ?>
 
     <div class="documente-user-form">
-        <h4>Selecteaza documentele pe care doresti sa le actualizezi:</h4>
+        <h4>Selectează documentele pe care dorești să le actualizezi:</h4>
         <br>
         <?php $form = ActiveForm::begin(); ?>
 
@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
                 echo $form->field($d, "[$key]id")->hiddenInput(['value' => $d->id])->label(false);
             }
         ?>
-        <p>*Posibil sa trebuiasca sa incarci documentele in plus fata de cele selectate, in functie de documentele necesare postului </p>
+        <p>*Posibil să trebuiască să încarci documente în plus fața de cele selectate, în funcție de documentele necesare postului </p>
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app','Save'), ['class' => 'btn btn-success']) ?>
         </div>

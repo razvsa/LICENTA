@@ -16,14 +16,14 @@ use yii\web\JqueryAsset;
 /** @var \frontend\controllers\AnuntController $nivel_studii */
 /** @var \frontend\controllers\AnuntController $nivel_cariera */
 
-$this->title = 'Anunturi';
+$this->title = 'Anunțuri';
 
 ?>
 <?php
 Yii::$app->params['bsDependencyEnabled'] = false;
 $script=<<<JS
         $('body').on('beforeSubmit', 'form#anunt_search', function(event) {
-            console.log("aici");
+           
             var form = $(this);
             if (form.find('.has-error').length) {
                 return false;
@@ -51,7 +51,7 @@ $this->registerJs($script,\yii\web\View::POS_READY);
 <div class="container-fluid ">
     <!-- Sidebar -->
     <div class="mysidebar"  >
-        <h3 >Filtreaza</h3>
+        <h3 >Filtrează</h3>
         <?php echo $this->render('_search', ['model' => $searchModel,'functie'=>$functie,'nivel_studii'=>$nivel_studii,'nivel_cariera'=>$nivel_cariera]); ?>
     </div>
 
@@ -59,7 +59,7 @@ $this->registerJs($script,\yii\web\View::POS_READY);
     <div class="mypgcontent" >
         <?php
         Pjax::begin(['id'=>'anunt_search_pjax']);
-        echo '<br><h5>Au fost gasite <b>'.$dataProvider->count.'</b> anunturi  </h5><br>';
+        echo '<br><h5>Au fost găsite <b>'.$dataProvider->count.'</b> anunțuri  </h5><br>';
         echo \yii\widgets\ListView::widget([
 
             'dataProvider'=>$dataProvider,

@@ -42,7 +42,7 @@ class KeyInscrierePostUser extends \yii\db\ActiveRecord
             'id' => 'ID',
             'id_post' => 'Id Post',
             'id_user' => 'Id User',
-            'data_inscriere'=>'Data Inscriere'
+            'data_inscriere'=>'Data Înscriere'
         ];
     }
 }

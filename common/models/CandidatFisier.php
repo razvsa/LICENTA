@@ -54,14 +54,14 @@ class CandidatFisier extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'cale_fisier' => 'Cale Fisier',
-            'data_adaugare' => 'Data Adaugare',
+            'cale_fisier' => 'Cale Fișier',
+            'data_adaugare' => 'Dată Adăugare',
             'descriere' => 'Descriere',
             'id' => 'ID',
-            'id_user_adaugare' => 'Id User Adaugare',
-            'nume_fisier_afisare' => 'Nume Fisier Afisare',
-            'nume_fisier_adaugare' => 'Nume Fisier Adaugare',
-            'id_nom_tip_fisier_dosar' => 'Tip fisier dosar',
+            'id_user_adaugare' => 'Id User Adăugare',
+            'nume_fisier_afisare' => 'Nume Fișier Afisare',
+            'nume_fisier_adaugare' => 'Nume Fișier Adăugare',
+            'id_nom_tip_fisier_dosar' => 'Tip fișier dosar',
             'stare'=>'Stare',
         ];
     }

@@ -67,7 +67,33 @@ return [
             ],
             'auth' => ['username' => 'razvan', 'password' => 'razvan']
         ],
+        'google' => [
+            'class' => 'yii\authclient\clients\Google',
+            'clientId' => '771207035674-kvglcmgi201cog9bsa9633vvror0utg8.apps.googleusercontent.com',
+            'clientSecret' => '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',
+        ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            // Other configuration options
+        ],
+        'pusher' => [
+            'class' => 'Pusher\Pusher',
+            'appId' => '1603369',
+            'appKey' => '2eb047fb81e4d1cc5937',
+            'appSecret' => '663cb0d47d32f1d742d5',
+            'options' => [
+                'cluster' => 'eu',
+                'encrypted' => true,
+            ],
+        ],
+        'urlUtility' => [
+            'class' => 'app\components\UrlUtility',
+        ],
+
 
     ],
     'params' => $params,
+    'controllerMap' => [
+        'pusher' => 'frontend\controllers\SiteController'
+    ]
 ];

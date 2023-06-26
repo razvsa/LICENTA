@@ -3,7 +3,9 @@
 namespace backend\controllers;
 
 use common\models\Anunt;
+use common\models\CandidatDosar;
 use common\models\KeyInscrierePostUser;
+use yii\elasticsearch\Connection;
 use common\models\NomJudet;
 use common\models\NomLocalitate;
 use common\models\NomNivelCariera;
@@ -15,7 +17,9 @@ use common\models\search\PostVacantSearch;
 use common\models\User;
 use Elasticsearch\Endpoints\License\Post;
 use kartik\dialog\Dialog;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
+use yii\elasticsearch\Exception;
 use yii\web\Controller;
 use yii\web\JsExpression;
 use yii\web\NotFoundHttpException;
@@ -24,7 +28,7 @@ use yii\data\ActiveDataProvider;
 use Yii;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use yii\elasticsearch\Connection;
+
 use yii\elasticsearch\Query;
 use yii\web\UploadedFile;
 use yii\web\View;
@@ -135,10 +139,13 @@ class PostVacantController extends Controller
                     $post['nivel_studii'] = NomNivelStudii::findOne(['id' => $atribute['id_nom_nivel_studii']])['nume'];
                     $post['nivel_cariera'] = NomNivelCariera::findOne(['id' => $atribute['id_nom_nivel_cariera']])['nume'];
                     $post['oras'] = NomLocalitate::findOne(['id' => $atribute['oras']])['nume'];
-
                     $connection = new Connection();
                     $command = $connection->createCommand();
-                    $command->insert('post', '_doc', $post);
+                    try {
+                        $command->insert('post_final', '_doc', $post);
+                    } catch (InvalidConfigException $e) {
+                    } catch (Exception $e) {
+                    }
 
                     return $this->redirect(['view', 'id' => $model->id]);
                 }
@@ -184,8 +191,9 @@ class PostVacantController extends Controller
         $sheet->setCellValue('E1', 'Nota');
 
         $header = User::find()->select(['username','email'])
-            ->innerJoin(['kip'=>KeyInscrierePostUser::tableName()],'kip.id_user=user.id')
-            ->where(['kip.id_post'=>$id_post])
+            ->innerJoin(['dosar'=>CandidatDosar::tableName()],'dosar.id_user=user.id')
+            ->innerJoin(['post'=>PostVacant::tableName()],'dosar.id_post_vacant=post.id')
+            ->where(['dosar.id_status'=>3])
             ->asArray()->all();
         $denumire_fisier='Candidati_post_'.$post->denumire.'.xlsx';
 
@@ -240,8 +248,18 @@ class PostVacantController extends Controller
      */
     public function actionDelete($id)
     {
+        $connection=new Connection();
+        $query_elastic = new Query();
+        $command = $connection->createCommand();
         $this->findModel($id)->delete();
+        $r=$query_elastic->from('post')->query([
+            'multi_match' => [
+                'query' =>$id ,
+                'fields' => ['id'],
 
+            ]
+        ])->all();
+        $command->delete('post_final', '_doc', $r[0]['_id']);
         return $this->redirect(['index']);
     }
 

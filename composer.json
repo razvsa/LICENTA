@@ -38,7 +38,15 @@
         "2amigos/yii2-ckeditor-widget": "^2.0",
         "yiisoft/yii2-swiftmailer": "*",
         "google/cloud-vision": "*",
+        "google/apiclient": "2.1",
+        "google/auth": "0.11.1",
+        "yiisoft/yii2-authclient": "*",
+        "pusher/pusher-php-server": "*",
         "ckeditor/ckeditor4-font-size-plugin": "4.0.0"
+
+
+
+
 
     },
     "require-dev": {

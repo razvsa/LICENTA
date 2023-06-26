@@ -14,5 +14,5 @@ DialogAsset::register($this);
 
 $form = ActiveForm::begin();
 echo  $form->field($model, 'nume')->textInput();
-echo Html::submitButton('Actualizeaza', ['class' => 'btn btn-success']);
+echo Html::submitButton('Actualizează', ['class' => 'btn btn-success']);
 ActiveForm::end();

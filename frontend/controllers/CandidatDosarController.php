@@ -2,8 +2,15 @@
 
 namespace frontend\controllers;
 
+use common\models\Anunt;
 use common\models\CandidatDosar;
+use common\models\CandidatFisier;
+use common\models\KeyInscrierePostUser;
+use common\models\KeyTipFisierDosarTipCategorie;
+use common\models\NomTipFisierDosar;
+use common\models\PostVacant;
 use yii\data\ActiveDataProvider;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -38,14 +45,18 @@ class CandidatDosarController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => CandidatDosar::find()
-                ->where(['id_user'=>\Yii::$app->user->id]),
+        if(!\Yii::$app->user->isGuest) {
+            $dataProvider = new ActiveDataProvider([
+                'query' => CandidatDosar::find()
+                    ->where(['id_user' => \Yii::$app->user->id]),
 
-        ]);
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+            ]);
+            return $this->render('index', [
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+        else
+            return "Nu ai acces la acesta sectiune";
     }
 
     /**
@@ -131,5 +142,31 @@ class CandidatDosarController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionStergedosar($id_dosar){
+
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        $fisiere=CandidatFisier::find()
+            ->where(['id_candidat_dosar'=>$id_dosar])->all();
+        foreach($fisiere as $f){
+            unlink(\Yii::getAlias('@frontend').$f['cale_fisier']);
+            $f->delete();
+
+        }
+
+        FileHelper::removeDirectory(\Yii::getAlias('@frontend')."web\storage\user_".\Yii::$app->user->id."\dosar_post_".$dosar['id_post_vacant']);
+        $key=KeyInscrierePostUser::find()
+            ->where(['id_user'=>\Yii::$app->user->id,'id_post'=>$dosar['id_post_vacant']])->one();
+        if($key!=null)
+            $key->delete();
+
+        $dosar->delete();
+        \Yii::$app->response->redirect('index');
+    }
+    public function actionCompleteazadosar($id_dosar){
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        $fisiere_de_completat=$dosar->getDocumenteLipsa();
+        \Yii::$app->response->redirect(['/documente-user/create', 'id_post' =>$dosar->id_post_vacant , 'fisiere' => $fisiere_de_completat,'validare'=>4]);
     }
 }

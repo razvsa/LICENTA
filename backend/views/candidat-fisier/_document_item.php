@@ -16,9 +16,9 @@
 
         </div>
         <div>
-            <p><b>Data adaugare:</b> <?= $model->data_adaugare?> </p>
+            <p><b>Dată adăugare:</b> <?= $model->data_adaugare?> </p>
 
-            <p><b>Nume fisier: </b><?= $model->nume_fisier_afisare?></p>
+            <p><b>Nume fișier: </b><?= $model->nume_fisier_afisare?></p>
             <p><b>Stare: </b>
                 <?= $stare[0]['nume']?>
             </p>

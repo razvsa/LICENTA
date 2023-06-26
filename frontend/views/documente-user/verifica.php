@@ -18,34 +18,49 @@ use common\models\Anunt;
             ->innerJoin(['p'=>\common\models\PostVacant::tableName()],'p.id_anunt=a.id')
             ->where(['p.id'=>$id_post])
             ->asArray()->all();
-        Yii::$app->response->redirect(['/documente-user/create','id_post'=>$id_post,'fisiere'=>$fis]);
+        $params=[
+            'id_post' => $id_post,
+            'fisiere' => $fis,
+            'validare'=>4
+        ];
+        $security = Yii::$app->getSecurity();
+        $encryptionKey = 'cheia_de_criptare_secreta';
+        $dataToEncrypt = http_build_query($params);
+        $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+        Yii::$app->response->redirect(['/documente-user/create','params'=>$encryptedData]);
     }
     else {
-        echo '<h4>S-au gasit documente inregistrate de dvs</h4><br>';
-        echo Html::a('Foloseste aceleasi documente', ['/documente-user/samedoc','id_post'=>$id_post], ['class' => 'btn btn-info']);
+        echo '<h4>S-au găsit documente înregistrate de dvs</h4><br>';
+        echo Html::a('Folosește aceleași documente', ['/documente-user/samedoc','id_post'=>$id_post], ['class' => 'btn btn-info']);
         echo '<br>';
-        echo "*In caz ca nu exista toate documentele necesare se va deschide un formular unde inregistrati documentele lipsa";
+        echo "*În caz că nu există toate documentele necesare se va deschide un formular unde înregistrați documentele lipsă";
         echo '<br>';
         echo '<br>';
 
-
-        echo Html::a('Incarca toate documentele noi', ['/documente-user/create','id_post'=>$id_post,'fisiere'=>
-            NomTipFisierDosar::find()
+        $params=[
+            'id_post' => $id_post,
+            'fisiere' =>NomTipFisierDosar::find()
                 ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
                 ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')
                 ->innerJoin(['p'=>\common\models\PostVacant::tableName()],'p.id_anunt=a.id')
                 ->where(['p.id'=>$id_post])
-                ->asArray()->all()
-        ], ['class' => 'btn btn-info']);
+                ->asArray()->all(),
+            'validare'=>4
+        ];
+        $security = Yii::$app->getSecurity();
+        $encryptionKey = 'cheia_de_criptare_secreta';
+        $dataToEncrypt = http_build_query($params);
+        $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+        echo Html::a('Încarcă toate documentele noi', ['/documente-user/create','params'=>$encryptedData], ['class' => 'btn btn-info']);
         echo '<br>';
         echo '<br>';
 
 
-        echo Html::a('Actualizeaza doar o parte din documente', ['/documente-user/partial','id_post'=>$id_post], ['class' => 'btn btn-info']);
+        echo Html::a('Actualizează doar o parte din documente', ['/documente-user/partial','id_post'=>$id_post], ['class' => 'btn btn-info']);
         echo '<br>';
         echo '<br>';
 
-        echo '<h4> Aveti incarcate urmatoarele documente:</h4>';
+        echo '<h4> Aveți încărcate următoarele documente:</h4>';
         $fisiere_incarcate = common\models\NomTipFisierDosar::find()->select('nom_tip_fisier_dosar.nume')->distinct()
             ->innerJoin(['c' => CandidatFisier::tableName()], 'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
             ->where(['c.id_user_adaugare' => Yii::$app->user->identity->id])->asArray()->all();
@@ -55,7 +70,7 @@ use common\models\Anunt;
         }
         echo '</ul>';
         //editat
-        echo '<h4> Pentru aplicare sunt necesare urmatoarele documente:</h4>';
+        echo '<h4> Pentru aplicare sunt necesare următoarele documente:</h4>';
         $fisiere_necesare=NomTipFisierDosar::find()
             ->innerJoin(['k'=>KeyTipFisierDosarTipCategorie::tableName()],'k.id_tip_fisier=nom_tip_fisier_dosar.id')
             ->innerJoin(['a'=>Anunt::tableName()],'a.categorie_fisier=k.id_categorie')

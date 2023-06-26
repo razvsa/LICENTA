@@ -10,16 +10,16 @@ use kartik\dialog\Dialog;
 /** @var \backend\controllers\OperatiuniController $departament */
 ?>
 <br>
-<h2>Structura</h2>
+<h2>Structură</h2>
 <br>
-<h4>Insereaza o noua Structura:</h4>
+<h4>Inserează o noua Structură:</h4>
 <?php
 Dialog::widget();
 DialogAsset::register($this);
 
 $form = ActiveForm::begin();
 echo  $form->field($model, 'nume')->textInput()->label('');
-echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
+echo Html::submitButton('Adaugă', ['class' => 'btn btn-success']);
 ActiveForm::end();
 echo '<br><br>';
 

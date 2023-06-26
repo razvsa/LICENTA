@@ -23,7 +23,7 @@ $this->title = $tip_fisier;
 <?php
     echo '<h3>'.ucfirst($tip_fisier).'</h3>';
     echo '<br>';
-    echo \yii\helpers\Html::a("Descarca", ['/candidat-fisier/descarcapartial','tip_fisier'=>$tip_fisier,'id_user'=>$id_user], ['class' => 'btn btn-success']) ;
+    echo \yii\helpers\Html::a("Descarcă", ['/candidat-fisier/descarcapartial','tip_fisier'=>$tip_fisier,'id_user'=>$id_user], ['class' => 'btn btn-success']) ;
     echo '<br>';
     echo '<br>';
     echo \yii\widgets\ListView::widget([

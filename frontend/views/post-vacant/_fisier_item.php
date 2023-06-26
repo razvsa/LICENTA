@@ -6,7 +6,7 @@
 <div class="row2">
     <div class="col-4 margin "><b><?=$model->nume_fisier?></b></div>
     <div class="col-5"><b>Postat la :</b> <?=$model->data_adaugare?></div>
-    <div class="col-2"><?=\yii\helpers\Html::a('Descarca',['/post-vacant/descarca','id'=>$model->id],['class'=>'btn btn-info'])?></div>
+    <div class="col-2"><?=\yii\helpers\Html::a('Descarcă',['/post-vacant/descarca','id'=>$model->id],['class'=>'btn btn-info'])?></div>
 </div>
 <style>
     .row2 {

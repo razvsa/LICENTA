@@ -30,6 +30,7 @@ use common\models\NomDepartament;
             'pluginOptions' =>[
             'startDate' => date('Y-m-d H:i:s'),
             'autoclose'=>true,
+
         ],
 
     ]);?>
@@ -38,6 +39,7 @@ use common\models\NomDepartament;
             'language' => 'ro',
             'pluginOptions' =>['startDate' => date('Y-m-d H:i:s'),
             'autoclose'=>true,
+
         ],
 
     ]);?>
@@ -75,6 +77,14 @@ use common\models\NomDepartament;
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
-
+    <?php ActiveForm::end();
+//    $this->registerJs("
+//    $(document).ready(function() {
+//    $('#" . Html::getInputId($model, 'data_concurs') . "').on('change', function() {
+//    var selectedDate = $(this).val();
+//    $('#" . Html::getInputId($model, 'data_depunere_dosar') . "').datetimepicker('setStartDate', selectedDate);
+//    });
+//    });
+//    ");
+//    ?>
 </div>

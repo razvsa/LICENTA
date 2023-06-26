@@ -15,7 +15,7 @@ detected_text = text_annotations[0].description
 
 ###################################################################
 '''
-0- Documnetul nu este o carte de identitate
+-1- Documnetul nu este o carte de identitate
 1- Eroare de validare
 2- Expirat
 3- Valid
@@ -28,7 +28,7 @@ with open("nume_fisier.txt", "w", encoding="utf-8") as f:
 #verificare existenta carte de identitate
 if not "CARTE DE IDENTITATE" in detected_text:
     #print("Documnetul nu este o carte de identitate")
-    print(0)
+    print(-1)
     sys.exit()
 
 #extragere serie

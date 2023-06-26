@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 ?>
 
     <div class="documente-user-form">
-        <h4>Selecteaza documentele pe care doresti sa le incarci:</h4>
+        <h4>Selectează documentele pe care dorești să le încarci:</h4>
 
         <?php
         $form = ActiveForm::begin(); ?>
@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
 
         ?>
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app','Confirma'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t('app','Confirmă'), ['class' => 'btn btn-success']) ?>
         </div>
     </div>
 <?php ActiveForm::end(); ?>

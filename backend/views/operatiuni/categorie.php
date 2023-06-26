@@ -21,7 +21,7 @@ use kartik\dialog\Dialog;
         echo "<h4>Insereaza o noua categorie:</h4>";
         $form = ActiveForm::begin();
         echo $form->field($model, 'nume')->textInput()->label('');
-        echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
+        echo Html::submitButton('Adaugă', ['class' => 'btn btn-success']);
         ActiveForm::end();
         echo '<br><br>';
     }

@@ -44,7 +44,7 @@ class NomTipFisierDosar extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'nume' => 'Nume',
-            'id_structura' => 'Id Structura',
+            'id_structura' => 'Id Structură',
         ];
     }
 

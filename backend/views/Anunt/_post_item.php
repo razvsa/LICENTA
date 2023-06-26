@@ -17,16 +17,16 @@
             </div>
             <div class="card-body">
                 <ul class="d-flex justify-content-between">
-                    <li><h4 ><b>Structura: </b><?php echo $model->getStructura()?></h4></li>
+                    <li><h4 ><b>Structură: </b><?php echo $model->getStructura()?></h4></li>
                 </ul>
                 <ul class="d-flex justify-content-between">
-                    <li><h5 class="alert alert-info" role="alert"><b>Experienta: </b><?php echo $model->getCariera()?></h5></li>
+                    <li><h5 class="alert alert-info" role="alert"><b>Experiență: </b><?php echo $model->getCariera()?></h5></li>
                     <li><h5 class="alert alert-info" role="alert"><b>Studii: </b><?php echo $model->getStudii()?></h5></li>
-                    <li><h5 class="alert alert-info" role="alert"><b>Functie: </b><?php echo $model->getFunctie()?></h5></li>
+                    <li><h5 class="alert alert-info" role="alert"><b>Funcție: </b><?php echo $model->getFunctie()?></h5></li>
                 </ul>
                 <ul class="d-flex justify-content-between">
-                    <li><?php if($model->estePostat()==1) echo \yii\helpers\Html::a('Editeaza',['/post-vacant/update','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
-                    <li><?php if($model->estePostat()==1) echo \yii\helpers\Html::a('Sterge',['/post-vacant/sterge-post','id'=>$model->id],['class'=>'btn btn-outline-danger'])?></li>
+                    <li><?php if($model->estePostat()==1) echo \yii\helpers\Html::a('Editează',['/post-vacant/update','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
+                    <li><?php if($model->estePostat()==1) echo \yii\helpers\Html::a('Șterge',['/post-vacant/sterge-post','id'=>$model->id],['class'=>'btn btn-outline-danger'])?></li>
                     <li><?=\yii\helpers\Html::a('Vezi detalii',['/post-vacant/view','id'=>$model->id],['class'=>'btn btn-outline-info'])?></li>
                 </ul>
 
@@ -34,7 +34,7 @@
             <div class="card-footer bg-transparent">
                 <ul class="d-flex justify-content-between">
 <!--                    <li><p ><b>Postat la: </b>--><?php //echo $model->data_postare?><!--</p></li>-->
-                    <li><p ><b>Data limita inscriere: </b><?php echo $model->getInscriereConcurs()?></p></li>
+                    <li><p ><b>Dată limită înscriere: </b><?php echo $model->getInscriereConcurs()?></p></li>
 
                 </ul>
             </div>

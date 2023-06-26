@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var \backend\controllers\PostVacantController $posturi */
 
-$this->title = 'Posturi Anuntului';
+$this->title = 'Posturile Anunțului';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="post-vacant-index">
@@ -28,5 +28,5 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
     <br>
-    <?= Html::a('< Inapoi la Anunturi',['anunt/index'],['class'=>'btn btn-outline-primary'])?>
+    <?= Html::a('< Înapoi la Anunțuri',['anunt/index'],['class'=>'btn btn-outline-primary'])?>
 </div>

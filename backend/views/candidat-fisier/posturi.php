@@ -9,7 +9,7 @@
 if($status==1)
     echo '<br><h3>Posturile din cadrul structurii, pentru care trebuie aprobate dosare</h3>';
 else if($status==3)
-    echo '<br><h3>Dosare aprobate in functie de posturi</h3>';
+    echo '<br><h3>Dosare aprobate în funcție de posturi</h3>';
 echo '<br>';
 ?>
 

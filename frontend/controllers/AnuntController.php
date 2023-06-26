@@ -107,12 +107,19 @@ class AnuntController extends Controller
     }
 
     public function actionAnunturilemele(){
-        $anunturi=new ActiveDataProvider([
+        if(!Yii::$app->user->isGuest)
+        {
+            $anunturi=new ActiveDataProvider([
             'query'=>Anunt::find()
                 ->innerJoin(['post'=>PostVacant::tableName()],'anunt.id=post.id_anunt')
                 ->innerJoin(['key'=>KeyInscrierePostUser::tableName()],'post.id=key.id_post')
                 ->where(['key.id_user'=>Yii::$app->user->id])
-        ]);
+             ]);
+        }
+        else{
+            return $this->render('/site/error',[
+            ]);
+        }
 
         return $this->render('anunturilemele',[
             'anunturi'=>$anunturi

@@ -31,7 +31,7 @@ $this->title = 'Anunt';
 //        }
 //        else{?>
         <h2 ><?=$model->titlu?></h2>
-        <hr>
+        <hr style='border-top: 1px solid black;'>
         <br>
         <div class="row">
 
@@ -45,19 +45,19 @@ $this->title = 'Anunt';
                 $ddata_postare=strtotime($model->data_postare);
                 ?>
 
-                <p style="font-size:17px"><b>Structura:</b> <?=$model->getNumeStructura()?></p>
+                <p style="font-size:17px"><b>Structură:</b> <?=$model->getNumeStructura()?></p>
                 <p style="font-size:17px"><b>Postat la:</b> <?=date('d/M/Y h:i',$ddata_postare)?></p>
                 <p style="font-size:17px"><b>Descriere: </b> <?=$model->descriere?></p>
-                <p style="font-size:17px"><b>Data limita inscriere dosar:</b> <?=date('d/M/Y h:i',$ddata_limita_inscriere_concurs)?></p>
-                <p style="font-size:17px"><b>Data depunere dosar:</b> <?=date('d/M/Y h:i',$ddata_depunere_dosar)?></p>
-                <p style="font-size:17px"><b>Data concurs:</b> <?=date('d/M/Y h:i',$ddata_concurs)?></p>
+                <p style="font-size:17px"><b>Dată limită înscriere dosar:</b> <?=date('d/M/Y h:i',$ddata_limita_inscriere_concurs)?></p>
+                <p style="font-size:17px"><b>Dată depunere dosar:</b> <?=date('d/M/Y h:i',$ddata_depunere_dosar)?></p>
+                <p style="font-size:17px"><b>Dată concurs:</b> <?=date('d/M/Y h:i',$ddata_concurs)?></p>
 
             </div>
 
         </div>
         <br>
         <br>
-        <h4>Fisierele anuntului:</h4>
+        <h4>Fișierele anunțului:</h4>
         <hr style='border-top: 1px solid black;'>
         <br>
         <?php
@@ -66,18 +66,18 @@ $this->title = 'Anunt';
 
             'dataProvider'=>$fisiere,
             'itemView'=>'_fisier_item',
-            'emptyText' => 'Nu exista fisiere incarcate',
+            'emptyText' => 'Nu există fisiere încarcate',
             'viewParams'=>['id_anunt'=>$model->id],
             'summary' =>''
         ]);?>
         <br>
         <br>
             <?php
-            if($nr_posturi>2)
+            if($nr_posturi>=2)
                 echo \yii\widgets\ListView::widget([
 
                     'dataProvider'=>$posturi,
-                    'emptyText' => 'Acesta anunt nu are posturi asociate.',
+                    'emptyText' => 'Acest anunț nu are posturi asociate.',
                     'itemView'=>'_post_item',
                     'summary' =>''
                 ]);
@@ -89,7 +89,7 @@ $this->title = 'Anunt';
                 ]);
             }
             else
-                echo "Nu exista posturi in cadrul acestui anunt";
+                echo "Nu există posturi în cadrul acestui anunț";
             ?>
 
     </div>

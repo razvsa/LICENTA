@@ -5,10 +5,10 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Anunt $model */
 
-$this->title = 'Actulizeaza Anunt: ' . $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Anunturi', 'url' => ['index']];
+$this->title = 'Actulizează Anunț: ' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Anunțuri', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Actualizeaza';
+$this->params['breadcrumbs'][] = 'Actualizează';
 ?>
 <div class="anunt-update">
 

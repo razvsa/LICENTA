@@ -8,7 +8,7 @@
         <div class="col-md-7">
 
             <?php
-            $src="http://ejobs.mai.gov.ro".substr($model->cale_fisier, strpos($model->cale_fisier, "\storage"));
+            $src="https://ejobs.mai.gov.ro".substr($model->cale_fisier, strpos($model->cale_fisier, "\storage"));
             $stare=\common\models\NomTipStare::find()->where(['id'=>$model->stare])->asArray()->all();
             $stare_afisare=0;
 
@@ -17,7 +17,7 @@
                 $stare_afisare="<p class='alert alert-success'>Document valid</p>";
             }
             else if($stare[0]['id']==2){
-                $stare_afisare="<p class='alert alert-warning'>Document in curs de validare</p>";
+                $stare_afisare="<p class='alert alert-warning'>Document în curs de validare</p>";
             }
             else{
                 $stare_afisare="<p class='alert alert-danger'>Document respins</p>";
@@ -28,9 +28,9 @@
 
         </div>
         <div>
-            <p><b>Data adaugare:</b> <?= $model->data_adaugare?> </p>
+            <p><b>Dată adăugare:</b> <?= $model->data_adaugare?> </p>
 
-            <p><b>Nume fisier: </b><?= $model->nume_fisier_afisare?></p>
+            <p><b>Nume fișier: </b><?= $model->nume_fisier_afisare?></p>
             <p><?=$stare_afisare?></p>
 
         </div>

@@ -12,30 +12,17 @@ use yii\widgets\ActiveForm;
 ?>
 
     <div class="documente-user-form">
-        <h4>Selecteaza documentele pe care doresti sa le incarci:</h4>
+        <h4>Selectează documentele pe care dorești să le încarci:</h4>
 
         <?php
-        if($nr_existente!=0)
-            echo " <br><h4>Documente deja existente( Pe care le actualizezi )</h4><br>";
-
         $form = ActiveForm::begin(); ?>
 
         <?php
 
-        for($i=0;$i<$nr_existente;$i++) {
-            echo $form->field($documente[$i], "[{$i}]nume")->checkbox([], false)->label($documente[$i]['nume']);
-            echo $form->field($documente[$i], "[$i]id")->hiddenInput(['value' => $documente[$i]['id']])->label(false);
+        foreach($documente as $i=>$d) {
+            echo $form->field($d, "{$i}nume")->checkbox([], false)->label($documente[$i]['nume']);
+            echo $form->field($d, "{$i}id")->hiddenInput(['value' => $documente[$i]['id']])->label(false);
         }
-        if(count($documente)>$nr_existente)
-            echo '<br><h4>Documente inexistente( Pe care le incarci pentru prima data )</h4>';
-
-        echo "<br>";
-        for($i=$nr_existente;$i<count($documente);$i++) {
-            echo $form->field($documente[$i], "[{$i}]nume")->checkbox([], false)->label($documente[$i]['nume']);
-            echo $form->field($documente[$i], "[$i]id")->hiddenInput(['value' => $documente[$i]['id']])->label(false);
-
-        }
-
         ?>
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app','Confirma'), ['class' => 'btn btn-success']) ?>

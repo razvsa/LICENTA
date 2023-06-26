@@ -16,7 +16,7 @@ use yii\web\JqueryAsset;
 /** @var \frontend\controllers\AnuntController $nivel_studii */
 /** @var \frontend\controllers\AnuntController $nivel_cariera */
 
-$this->title = 'Anunturi';
+$this->title = 'Anunțuri';
 
 ?>
 <?php
@@ -51,7 +51,7 @@ $this->registerJs($script,\yii\web\View::POS_READY);
 
     <!-- Sidebar -->
     <div class="mysidebar"  >
-        <h3 >Filtreaza</h3>
+        <h3 >Filtrează</h3>
         <?php echo $this->render('_search', ['model' => $searchModel,'functie'=>$functie,'nivel_studii'=>$nivel_studii,'nivel_cariera'=>$nivel_cariera]); ?>
     </div>
 
@@ -59,9 +59,9 @@ $this->registerJs($script,\yii\web\View::POS_READY);
     <div class="mypgcontent" >
         <?php
 
-        echo Html::a('Creeaza Anunt +', ['create'], ['class' => 'btn btn-success']);
+        echo Html::a('Adaugă Anunț +', ['create'], ['class' => 'btn btn-success']);
         Pjax::begin(['id'=>'anunt_search_pjax']);
-        echo '<br><h5>Au fost gasite <b>'.$dataProvider->count.'</b> anunturi  </h5><br>';
+        echo '<br><h5>Au fost găsite <b>'.$dataProvider->count.'</b> anunturi  </h5><br>';
         echo \yii\widgets\ListView::widget([
 
             'dataProvider'=>$dataProvider,

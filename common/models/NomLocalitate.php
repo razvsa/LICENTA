@@ -46,8 +46,8 @@ class NomLocalitate extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_nom_judet' => 'Id Nom Judet',
-            'judet' => 'Judet',
+            'id_nom_judet' => 'Id Nom Județ',
+            'judet' => 'Județ',
             'cod_siruta' => 'Cod Siruta',
             'nume' => 'Nume',
         ];

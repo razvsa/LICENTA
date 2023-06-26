@@ -7,9 +7,12 @@ use common\models\CandidatDosar;
 use common\models\CandidatFisier;
 use common\models\NomTipCategorie;
 use common\models\NomTipFisierDosar;
+use common\models\Notificare;
 use common\models\PostVacant;
 use common\models\search\CandidatFisierSearch;
 use common\models\User;
+use Elasticsearch\Endpoints\License\Post;
+use Pusher\Pusher;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\web\Controller;
@@ -107,7 +110,7 @@ class CandidatFisierController extends Controller
             'query'=>PostVacant::find()
                 ->innerJoin(['anunt'=>Anunt::tableName()],'post_vacant.id_anunt=anunt.id')
                 ->innerJoin(['cand'=>CandidatDosar::tableName()],'post_vacant.id=cand.id_post_vacant')
-                ->where(['id_status'=>1,'anunt.id_structura'=>Yii::$app->user->getIdentity()->admin])
+                ->where(['id_status'=>$status,'anunt.id_structura'=>Yii::$app->user->getIdentity()->admin])
         ]);
 
         return $this->render('posturi',[
@@ -216,12 +219,58 @@ class CandidatFisierController extends Controller
         $verificare=CandidatFisier::find()
             ->where(['id_candidat_dosar'=>$id_dosar,'stare'=>[1,2]])
             ->asArray()->all();
-        if(empty($verificare)==1){
-            $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+
+        $options = array(
+            'cluster' => 'eu',
+            'useTLS' => true
+        );
+        $pusher = new Pusher(
+            '2eb047fb81e4d1cc5937',
+            '663cb0d47d32f1d742d5',
+            '1603369',
+            $options
+        );
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        $post=PostVacant::findOne(['id'=>$dosar->id_post_vacant]);
+
+        $notificare=new Notificare();
+        $notificare->continut="Documentul ".$tip_fisier." din dosarul aferent postului ".$post->denumire." a fost validat cu succes";
+        $notificare->data_adaugare=date('Y-m-d H:i:s', time());
+        $notificare->stare_notificare=2;
+        $notificare->id_user=$dosar['id_user'];;
+        $notificare->tip=1;
+        $notificare->save();
+        $data['message'] = '';
+        $pusher->trigger('my-channel'.$notificare->id_user, 'my-event', $data);
+
+        if(empty($verificare)==1 && $dosar->id_status!=4){
+
             $dosar->id_status=3;
             $dosar->save();
-        }
+            $options = array(
+                'cluster' => 'eu',
+                'useTLS' => true
+            );
+            $pusher = new Pusher(
+                '2eb047fb81e4d1cc5937',
+                '663cb0d47d32f1d742d5',
+                '1603369',
+                $options
+            );
+            $post=PostVacant::findOne(['id'=>$dosar->id_post_vacant]);
 
+            $notificare=new Notificare();
+            $notificare->continut="DOSARUL aferent postului ".$post->denumire." a fost validat cu succes";
+            $notificare->data_adaugare=date('Y-m-d H:i:s', time());
+            $notificare->stare_notificare=2;
+            $notificare->id_user=$dosar['id_user'];
+            $notificare->tip=1;
+            $notificare->save();
+            $data['message'] = '';
+            $pusher->trigger('my-channel'.$notificare->id_user, 'my-event', $data);
+
+        }
         //return $this->redirect(['categorii','id_user'=>$id_user,'stare'=>$stare]);
     }
     public function actionAprobatot($id_dosar){
@@ -233,6 +282,30 @@ class CandidatFisierController extends Controller
         foreach($fisiere as $f){
             $f->aproba();
         }
+
+        $options = array(
+            'cluster' => 'eu',
+            'useTLS' => true
+        );
+        $pusher = new Pusher(
+            '2eb047fb81e4d1cc5937',
+            '663cb0d47d32f1d742d5',
+            '1603369',
+            $options
+        );
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        $post=PostVacant::findOne(['id'=>$dosar->id_post_vacant]);
+
+        $notificare=new Notificare();
+        $notificare->continut="DOSARUL aferent postului ".$post->denumire." a fost validat cu succes";
+        $notificare->data_adaugare=date('Y-m-d H:i:s', time());
+        $notificare->stare_notificare=2;
+        $notificare->id_user=$dosar['id_user'];;
+        $notificare->tip=1;
+        $notificare->save();
+        $data['message'] = '';
+        $pusher->trigger('my-channel'.$notificare->id_user, 'my-event', $data);
+
         return $this->redirect(['index',
             'id_dosar'=>$id_dosar
         ]);
@@ -252,9 +325,9 @@ class CandidatFisierController extends Controller
             $model->respinge();
         }
         $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
-        if($dosar->id_status==3)
+        if($dosar->id_status!=2 )
         {
-            $dosar->id_status=1;
+            $dosar->id_status=2;
             $dosar->save();
         }
 //        $fisiere=CandidatFisier::find()
@@ -269,6 +342,28 @@ class CandidatFisierController extends Controller
 //            $model->delete();
 //        }
 //
+        $options = array(
+            'cluster' => 'eu',
+            'useTLS' => true
+        );
+        $pusher = new Pusher(
+            '2eb047fb81e4d1cc5937',
+            '663cb0d47d32f1d742d5',
+            '1603369',
+            $options
+        );
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        $post=PostVacant::findOne(['id'=>$dosar->id_post_vacant]);
+
+        $notificare=new Notificare();
+        $notificare->continut="Documentul ".$tip_fisier." din dosarul aferent postului ".$post->denumire." a fost respins";
+        $notificare->data_adaugare=date('Y-m-d H:i:s', time());
+        $notificare->stare_notificare=2;
+        $notificare->id_user=$dosar['id_user'];;
+        $notificare->tip=2;
+        $notificare->save();
+        $data['message'] = '';
+        $pusher->trigger('my-channel'.$notificare->id_user, 'my-event', $data);
 //        return $this->redirect(['categorii','id_user'=>$id_user,'stare'=>$stare]);
     }
 

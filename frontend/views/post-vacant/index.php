@@ -25,7 +25,7 @@ $this->title = $titlu;
         <?php
         if($posturilemele==1 && Yii::$app->user->isGuest)
         {
-            echo '<p class="alert alert-danger" role="alert">Nu aveti acces la aceasta pagina</p>';
+            echo '<p class="alert alert-danger" role="alert">Nu aveți acces la aceasta pagină</p>';
         }
         //$diferanta_date=strtotime($anunt->data_concurs)-time();
         else

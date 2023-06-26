@@ -20,6 +20,9 @@ use kartik\depdrop\DepDrop;
     $functie_map=ArrayHelper::map($functie,'id','nume');
     $nivel_studii_map=ArrayHelper::map($nivel_studii,'id','nume');
     $nivel_cariera_map=ArrayHelper::map($nivel_cariera,'id','nume');
+
+
+
 ?>
 <div class="anunt-search">
 
@@ -30,15 +33,18 @@ use kartik\depdrop\DepDrop;
         'id'=>'anunt_search',
         'options'=>['data-pjax'=>true],
     ]);
-    $model->oras="Tot Judetul";
+    $model->oras="Tot Județul";
+
     ?>
     <div class="form-group">
-        <?= Html::submitButton('Cauta', ['class' => 'btn btn-primary']) ?>
-        <?= Html::button('Reseteaza', ['class' => 'btn btn-outline-secondary', 'id' => 'reset-button']) ?>
+        <?= Html::submitButton('Caută', ['class' => 'btn btn-primary']) ?>
+        <?= Html::button('Resetează', ['class' => 'btn btn-outline-secondary', 'id' => 'reset-button']) ?>
     </div>
     <?php  echo $form->field($model, 'cuvant')->textInput([
         'id'=>'cuvant',
-    ])->label('Cauta...');?>
+    ])->label('Caută...');?>
+
+
 
     <?php  echo $form->field($model, 'id_nom_tip_functie')->dropDownList($functie_map,[
             'id'=>'tip_functie',
@@ -60,7 +66,7 @@ use kartik\depdrop\DepDrop;
     <?php  echo $form->field($model, 'id_nom_judet')->widget(Select2::className(),[
         'options'=>[
             'id'=>'id_judet',
-            'placeholder' => 'Alege Judetul',
+            'placeholder' => 'Alege Județul',
 
         ],
         'bsVersion'=>'4.x',
@@ -76,7 +82,7 @@ use kartik\depdrop\DepDrop;
         'type'=>DepDrop::TYPE_SELECT2,
         'pluginOptions'=>[
             'depends'=>['id_judet'],
-            'placeholder'=>'Tot Judetul',
+            'placeholder'=>'Tot Județul',
 
             'url'=>Url::to(['/anunt/get-localitate'])
         ]

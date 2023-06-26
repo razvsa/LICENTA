@@ -4,12 +4,19 @@ namespace backend\controllers;
 
 use common\models\Anunt;
 use common\models\AnuntFisier;
+use common\models\CandidatDosar;
+use common\models\KeyInscrierePostUser;
 use common\models\NomLocalitate;
+use common\models\Notificare;
 use common\models\PostFisier;
 use common\models\PostVacant;
 use common\models\search\AnuntSearch;
+use common\models\User;
+use Pusher\Pusher;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\elasticsearch\Connection;
+use yii\elasticsearch\Query;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -86,6 +93,13 @@ class AnuntController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
+    public function actionTest(){
+
+
+
+        return $this->render('test');
+
+    }
     public function actionView($id)
     {
 
@@ -137,6 +151,46 @@ class AnuntController extends Controller
                         }
                         $doc->cale_fisier = "\web\storage\anunturi\anunt_" . $id . "\\" . $doc->nume_fisier_afisare;
                         $doc->save();
+
+                        $options = array(
+                            'cluster' => 'eu',
+                            'useTLS' => true
+                        );
+                        $pusher = new Pusher(
+                            '2eb047fb81e4d1cc5937',
+                            '663cb0d47d32f1d742d5',
+                            '1603369',
+                            $options
+                        );
+
+                        $nume_anunt=Anunt::findOne(['id'=>$id])['titlu'];
+
+                        $post_vacant=PostVacant::find()
+                            ->select(['id'])
+                            ->where(['id_anunt'=>$id])->asArray()->all();
+                        $iduri_post=[];
+                        foreach ($post_vacant as $p){
+                            array_push($iduri_post,$p['id']);
+                        }
+                        $useri=KeyInscrierePostUser::find()
+                            ->select(['id_user'])
+                            ->where(['id_post'=>$iduri_post])->asArray()->all();
+                        foreach($useri as $u) {
+                            $notificare = new Notificare();
+                            $notificare->continut = "S-a anexat un fisier nou anutului " . $nume_anunt . " pentru care ai aplicat ";
+                            $notificare->data_adaugare = date('Y-m-d H:i:s', time());
+                            $notificare->stare_notificare = 2;
+                            $notificare->id_user = $u['id_user'];
+                            $notificare->tip = 3;
+//                            echo '<pre>';
+//                            print_r($notificare);
+//                            die;
+//                            echo '</pre>';
+                            $notificare->save();
+                            $data['message'] = '';
+                           $pusher->trigger('my-channel'.$u['id_user'], 'my-event', $data);
+                        }
+
                         $doc->fisiere = UploadedFile::getInstances($doc, "[{$i}]fisiere[{$j}]");
                         $doc->fisiere[0]->saveAs(\Yii::getAlias("@frontend") . $doc->cale_fisier);
 
@@ -238,6 +292,22 @@ class AnuntController extends Controller
      */
     public function actionDelete($id)
     {
+        $posturi =PostVacant::find()
+            ->where(['id_anunt'=>$id]);
+        foreach ($posturi as $p){
+            $connection=new Connection();
+            $query_elastic = new Query();
+            $command = $connection->createCommand();
+            $r=$query_elastic->from('post')->query([
+                'multi_match' => [
+                    'query' =>$p['id'] ,
+                    'fields' => ['id'],
+
+                ]
+            ])->all();
+            $command->delete('post', '_doc', $r[0]['_id']);
+            $p->delete();
+        }
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

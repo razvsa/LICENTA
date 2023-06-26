@@ -80,17 +80,20 @@ class DocumenteUserController extends Controller
     public function actionPartial($id_post){
 
         $post=PostVacant::findOne(['id'=>$id_post]);
+
         if($post==null)
             return "Postul nu exista";
         if(strtotime($post->getDataLimitaInscriere())<time())
             return "Nu mai poti aplica pentru acest post";
         else {
+
             $model = new DocumenteUser();
             $document = [];
             $fisiere_existente = NomTipFisierDosar::find()
                 ->innerJoin(['c' => CandidatFisier::tableName()], 'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
                 ->where(['c.id_user_adaugare' => Yii::$app->user->identity->id])
                 ->asArray()->all();
+
             //editat
             $fisiere_necesare = NomTipFisierDosar::find()
                 ->innerJoin(['k' => KeyTipFisierDosarTipCategorie::tableName()], 'k.id_tip_fisier=nom_tip_fisier_dosar.id')
@@ -98,6 +101,7 @@ class DocumenteUserController extends Controller
                 ->innerJoin(['p' => PostVacant::tableName()], 'p.id_anunt=a.id')
                 ->where(['p.id' => $id_post])
                 ->asArray()->all();
+
             $fisiere_form = array();
             foreach ($fisiere_necesare as $fn) {
                 foreach ($fisiere_existente as $fe) {
@@ -107,16 +111,39 @@ class DocumenteUserController extends Controller
                 }
             }
 
+
             foreach ($fisiere_form as $tf) {
                 $document[] = new NomTipFisierDosar();
             }
             if (Model::loadMultiple($document, Yii::$app->request->post()) && Model::validateMultiple($document)) {
-                $rezultate = array();
 
+                $dosar=CandidatDosar::find()->where(['id_post_vacant'=>$id_post,'id_user'=>Yii::$app->user->id])->one();
+                if($dosar==null) {
+                    $dosar = new CandidatDosar();
+                    $dosar->id_user=Yii::$app->user->id;
+                    $dosar->id_post_vacant=$id_post;
+                    $dosar->id_status=4;
+                    $dosar->save();
+                }
+                $rezultate = array();
+                $fisiere_automate=array();
                 for ($i = 0; $i < count($fisiere_form); $i++) {
                     if ($document[$i]['nume'] == 1) {
                         array_push($rezultate, $fisiere_form[$i]);
                     }
+                }
+
+                $var=0;
+                for($i=0;$i<count($fisiere_form);$i++){
+                    for($j=0;$j<count($rezultate);$j++){
+                        if ($rezultate[$j]['id'] == $fisiere_form[$i]['id'] && $rezultate[$j]['nume'] == $fisiere_form[$i]['nume']){
+                            $var=1;
+                        }
+                    }
+                    if($var==0){
+                        array_push($fisiere_automate,$fisiere_form[$i]);
+                    }
+                    $var=0;
                 }
 
                 $var = 0;
@@ -130,6 +157,40 @@ class DocumenteUserController extends Controller
                     }
                     $var = 0;
                 }
+
+                foreach ($fisiere_automate as $fe){
+                    $id_ultim_fisier=CandidatFisier::find()
+                        ->select('candidat_fisier.id_candidat_dosar')
+                        ->innerJoin(['d'=>CandidatDosar::tableName()],'candidat_fisier.id_candidat_dosar = d.id')
+                        ->where(['candidat_fisier.id_nom_tip_fisier_dosar' => $fe['id']])
+                        ->andWhere([
+                            'candidat_fisier.data_adaugare' => CandidatFisier::find()
+                                ->select('MAX(candidat_fisier.data_adaugare)')
+                                ->innerJoin(['d1'=>CandidatDosar::tableName()],'candidat_fisier.id_candidat_dosar = d1.id')
+                                ->where(['candidat_fisier.id_nom_tip_fisier_dosar' => $fe['id']])
+
+                        ])->one();
+
+                    $fisiere_dosar=CandidatFisier::find()
+                        ->where(['id_candidat_dosar'=>$id_ultim_fisier,'id_nom_tip_fisier_dosar' => $fe['id']])->all();
+                    foreach ($fisiere_dosar as $fd){
+                        if($fd['id_candidat_dosar']!=$dosar->id){
+                            $new_candidat_fisier=new CandidatFisier();
+                            $new_candidat_fisier->attributes=$fd->attributes;
+                            $new_candidat_fisier->id=null;
+                            $new_candidat_fisier->cale_fisier="\web\storage\user_".Yii::$app->user->id."\dosar_post_".$id_post."\\".$fd->getNumeTipFaraSpatii()."\\".$new_candidat_fisier->nume_fisier_adaugare;
+                            $new_candidat_fisier->data_adaugare=date('Y-m-d H:i:s');
+                            $new_candidat_fisier->stare=2;
+                            $new_candidat_fisier->id_candidat_dosar=$dosar->id;
+                            $new_candidat_fisier->save();
+                            if(!file_exists(Yii::getAlias("@frontend")."\web\storage\user_".Yii::$app->user->id."\dosar_post_".$id_post."\\".$fd->getNumeTipFaraSpatii()."\\"))
+                                mkdir(Yii::getAlias("@frontend")."\web\storage\user_".Yii::$app->user->id."\dosar_post_".$id_post."\\".$fd->getNumeTipFaraSpatii()."\\", 0777, true);
+                            copy(Yii::getAlias("@frontend").$fd['cale_fisier'],Yii::getAlias("@frontend").$new_candidat_fisier->cale_fisier);
+                        }
+                    }
+
+
+                }
                 if (empty($rezultate)) {
                     $inscriere = new KeyInscrierePostUser();
                     $inscriere->id_post = $id_post;
@@ -137,7 +198,16 @@ class DocumenteUserController extends Controller
                     $inscriere->save();
                     Yii::$app->response->redirect(['/anunt/index']);
                 } else {
-                    Yii::$app->response->redirect(['/documente-user/create', 'id_post' => $id_post, 'fisiere' => $rezultate]);
+                    $params=[
+                        'id_post' => $id_post,
+                        'fisiere' => $rezultate,
+                        'validare'=>4
+                    ];
+                    $security = Yii::$app->getSecurity();
+                    $encryptionKey = 'cheia_de_criptare_secreta';
+                    $dataToEncrypt = http_build_query($params);
+                    $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+                    Yii::$app->response->redirect(['/documente-user/create','params'=>$encryptedData]);
                 }
             }
 
@@ -157,32 +227,34 @@ class DocumenteUserController extends Controller
     public function actionSamedoc($id_post){
 
         $post=PostVacant::findOne(['id'=>$id_post]);
-        $dosar=CandidatDosar::find()->where(['id_post_vacant'=>$id_post])->one();
-        if($dosar==null) {
-            $dosar = new CandidatDosar();
-            $dosar->id_user=Yii::$app->user->id;
-            $dosar->id_post_vacant=$id_post;
-            $dosar->id_status=1;
-            $dosar->save();
-        }
+
 
         if($post==null)
             return "Postul nu exista";
         if(strtotime($post->getDataLimitaInscriere())<time())
             return "Nu mai poti aplica pentru acest post";
         else {
+            $dosar=CandidatDosar::find()->where(['id_post_vacant'=>$id_post,'id_user'=>Yii::$app->user->id])->one();
+            if($dosar==null) {
+                $dosar = new CandidatDosar();
+                $dosar->id_user=Yii::$app->user->id;
+                $dosar->id_post_vacant=$id_post;
+                $dosar->id_status=4;
+                $dosar->save();
+            }
             $fisiere_necesare = NomTipFisierDosar::find()
                 ->innerJoin(['k' => KeyTipFisierDosarTipCategorie::tableName()], 'k.id_tip_fisier=nom_tip_fisier_dosar.id')
                 ->innerJoin(['a' => Anunt::tableName()], 'a.categorie_fisier=k.id_categorie')
                 ->innerJoin(['p' => PostVacant::tableName()], 'p.id_anunt=a.id')
                 ->where(['p.id' => $id_post])
                 ->asArray()->all();
+
             $fisere_existente = NomTipFisierDosar::find()
                 ->innerJoin(['c' => CandidatFisier::tableName()], 'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
                 ->where(['c.id_user_adaugare' => Yii::$app->user->identity->id])
                 ->asArray()->all();
 
-            foreach ($fisere_existente as $fe){
+            foreach ($fisiere_necesare as $fe){
                 $id_ultim_fisier=CandidatFisier::find()
                     ->select('candidat_fisier.id_candidat_dosar')
                     ->innerJoin(['d'=>CandidatDosar::tableName()],'candidat_fisier.id_candidat_dosar = d.id')
@@ -207,7 +279,7 @@ class DocumenteUserController extends Controller
                         $new_candidat_fisier->stare=2;
                         $new_candidat_fisier->id_candidat_dosar=$dosar->id;
                         $new_candidat_fisier->save();
-                        if(!file_exists(Yii::getAlias("@frontend")."\web\storage\user_".Yii::$app->user->id."\dosar_post_".$id_post."\\".$fd->getNumeTipFaraSpati()."\\"))
+                        if(!file_exists(Yii::getAlias("@frontend")."\web\storage\user_".Yii::$app->user->id."\dosar_post_".$id_post."\\".$fd->getNumeTipFaraSpatii()."\\"))
                             mkdir(Yii::getAlias("@frontend")."\web\storage\user_".Yii::$app->user->id."\dosar_post_".$id_post."\\".$fd->getNumeTipFaraSpatii()."\\", 0777, true);
                         copy(Yii::getAlias("@frontend").$fd['cale_fisier'],Yii::getAlias("@frontend").$new_candidat_fisier->cale_fisier);
                     }
@@ -236,9 +308,20 @@ class DocumenteUserController extends Controller
                 $inscriere->id_user = Yii::$app->user->identity->id;
                 $inscriere->data_inscriere = date('Y-m-d H:i:s');
                 $inscriere->save();
+                $dosar->id_status=1;
+                $dosar->save();
                 Yii::$app->response->redirect(['/anunt/index']);
             } else {
-                Yii::$app->response->redirect(['/documente-user/create', 'id_post' => $id_post, 'fisiere' => $rezultate]);
+                $params=[
+                    'id_post' => $id_post,
+                    'fisiere' => $rezultate,
+                    'validare'=>4
+                ];
+                $security = Yii::$app->getSecurity();
+                $encryptionKey = 'cheia_de_criptare_secreta';
+                $dataToEncrypt = http_build_query($params);
+                $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+                Yii::$app->response->redirect(['/documente-user/create','params'=>$encryptedData]);
             }
             return 0;
         }
@@ -247,9 +330,22 @@ class DocumenteUserController extends Controller
     public function actionActualizeazadoc(){
         $tip_fisier = Yii::$app->request->get('tip_fisier');
         $id_dosar= Yii::$app->request->get('id_dosar');
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        if($dosar['id_status']==3)
+            return "Nu poti actualiza un dosar acceptat";
         $tip_fisier_array=[$tip_fisier];
         $id_post=CandidatDosar::findOne(['id'=>$id_dosar])->id_post_vacant;
-        Yii::$app->response->redirect(['/documente-user/create','id_post'=>$id_post, 'fisiere' => $tip_fisier_array]);
+        $params=[
+            'id_post' => $id_post,
+            'fisiere' => $tip_fisier_array,
+            'validare'=>4
+        ];
+        $security = Yii::$app->getSecurity();
+        $encryptionKey = 'cheia_de_criptare_secreta';
+        $dataToEncrypt = http_build_query($params);
+        $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+        Yii::$app->response->redirect(['/documente-user/create','params'=>$encryptedData]);
+        return 0;
     }
 
     public function actionInregistreazadoc(){
@@ -268,8 +364,16 @@ class DocumenteUserController extends Controller
                     array_push($rezultate,$fisiere[$i]);
                 }
             }
-
-            Yii::$app->response->redirect(['/documente-user/create', 'id_post' => -1, 'fisiere' => $rezultate]);
+            $params=[
+                'id_post' => -1,
+                'fisiere' => $rezultate,
+                'validare'=>4
+            ];
+            $security = Yii::$app->getSecurity();
+            $encryptionKey = 'cheia_de_criptare_secreta';
+            $dataToEncrypt = http_build_query($params);
+            $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+            Yii::$app->response->redirect(['/documente-user/create','params'=>$encryptedData]);
         }
         for($i=0;$i<count($fisiere);$i++) {
             $documente[$i]->nume = $fisiere[$i]['nume'];
@@ -284,78 +388,79 @@ class DocumenteUserController extends Controller
 
 
     }
-    public function actionActualizeazatot($id_dosar){
-        $model=new DocumenteUser();
-        $documente=[];
-
-        $fisiere_existente=NomTipFisierDosar::find()
-            ->innerJoin(['c'=>CandidatFisier::tableName()],'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
-            ->where(['c.id_user_adaugare'=>Yii::$app->user->identity->id])
-            ->asArray()->all();
-        $toate_fisierele=NomTipFisierDosar::find()
-            ->innerJoin(['key'=>KeyTipFisierDosarTipCategorie::tableName()],'nom_tip_fisier_dosar.id=key.id_tip_fisier')
-            ->innerJoin(['cat'=>NomTipCategorie::tableName()],'cat.id=key.id_categorie')
-            ->innerJoin(['anunt'=>Anunt::tableName()],'anunt.categorie_fisier=key.id_categorie')
-            ->innerJoin(['post'=>PostVacant::tableName()],'post.id_anunt=anunt.id')
-            ->innerJoin(['cand'=>CandidatDosar::tableName()],'cand.id_post_vacant=post.id')
-            ->where(['cand.id'=>$id_dosar])
-            ->asArray()->all();
-        $fisier_existent=0;
-        $restul_fisierelor=array();
-        foreach ($toate_fisierele as $tf) {
-            foreach ($fisiere_existente as $fe) {
-                if($tf['id']==$fe['id'] && $tf['nume']==$fe['nume'])
-                    $fisier_existent=1;
-            }
-            if($fisier_existent==0)
-                array_push($restul_fisierelor,$tf);
-            else
-                $fisier_existent=0;
-
-        }
-
-        $total_fisier=array();
-        foreach ($fisiere_existente as $fe)
-            array_push($total_fisier,$fe);
-        foreach ($restul_fisierelor as $rf)
-            array_push($total_fisier,$rf);
-
-
-        foreach($toate_fisierele as $tf){
-            $documente[]=new NomTipFisierDosar();
-        }
-
-        if (Model::loadMultiple($documente,Yii::$app->request->post())&& Model::validateMultiple($documente)) {
-           $rezultate=array();
-
-            for($i=0;$i<count($toate_fisierele);$i++)
-            {
-                if($documente[$i]['nume']==1)
-                {
-                    array_push($rezultate,$total_fisier[$i]);
-                }
-            }
-
-            $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
-            Yii::$app->response->redirect(['/documente-user/create', 'id_post' =>$dosar->id_post_vacant , 'fisiere' => $rezultate]);
-        }
-
-
-
-        for($i=0;$i<count($total_fisier);$i++) {
-            $documente[$i]->nume = $total_fisier[$i]['nume'];
-            $documente[$i]->id = $total_fisier[$i]['id'];
-        }
-        $nr_existente=count($fisiere_existente);
-
-
-        return $this->render('actualizeazatot',[
-            'model'=>$model,
-            'documente'=>$documente,
-            'nr_existente'=>$nr_existente,
-
-        ]);
-    }
+//    public function actionActualizeazatot($id_dosar){
+//        $model=new DocumenteUser();
+//        $documente=[];
+//
+//        $fisiere_existente=NomTipFisierDosar::find()
+//            ->innerJoin(['c'=>CandidatFisier::tableName()],'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
+//            ->where(['c.id_user_adaugare'=>Yii::$app->user->identity->id])
+//            ->asArray()->all();
+////        $toate_fisierele=NomTipFisierDosar::find()
+////            ->innerJoin(['key'=>KeyTipFisierDosarTipCategorie::tableName()],'nom_tip_fisier_dosar.id=key.id_tip_fisier')
+////            ->innerJoin(['cat'=>NomTipCategorie::tableName()],'cat.id=key.id_categorie')
+////            ->innerJoin(['anunt'=>Anunt::tableName()],'anunt.categorie_fisier=key.id_categorie')
+////            ->innerJoin(['post'=>PostVacant::tableName()],'post.id_anunt=anunt.id')
+////            ->innerJoin(['cand'=>CandidatDosar::tableName()],'cand.id_post_vacant=post.id')
+////            ->where(['cand.id'=>$id_dosar])
+////            ->asArray()->all();
+//        $fisier_existent=0;
+//        $restul_fisierelor=array();
+//        foreach ($toate_fisierele as $tf) {
+//            foreach ($fisiere_existente as $fe) {
+//                if($tf['id']==$fe['id'] && $tf['nume']==$fe['nume'])
+//                    $fisier_existent=1;
+//            }
+//            if($fisier_existent==0)
+//                array_push($restul_fisierelor,$tf);
+//            else
+//                $fisier_existent=0;
+//
+//        }
+//
+//        $total_fisier=array();
+//        foreach ($fisiere_existente as $fe)
+//            array_push($total_fisier,$fe);
+//        foreach ($restul_fisierelor as $rf)
+//            array_push($total_fisier,$rf);
+//
+//
+//        foreach($toate_fisierele as $tf){
+//            $documente[]=new NomTipFisierDosar();
+//        }
+//
+//        if (Model::loadMultiple($documente,Yii::$app->request->post())&& Model::validateMultiple($documente)) {
+//           $rezultate=array();
+//
+//            for($i=0;$i<count($toate_fisierele);$i++)
+//            {
+//                if($documente[$i]['nume']==1)
+//                {
+//                    array_push($rezultate,$total_fisier[$i]);
+//                }
+//            }
+//
+//            $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+//            Yii::$app->response->redirect(['/documente-user/create', 'id_post' =>$dosar->id_post_vacant , 'fisiere' => $rezultate,'validare'=>4]);
+//        }
+//
+//
+//
+//        for($i=0;$i<count($total_fisier);$i++) {
+//
+//            $documente[$i]['nume'] = $total_fisier[$i]['nume'];
+//            $documente[$i]['id'] = $total_fisier[$i]['id'];
+//        }
+//        $nr_existente=count($fisiere_existente);
+//
+//
+//        return $this->render('actualizeazatot',[
+//            'model'=>$model,
+//            'documente'=>$documente,
+//            'nr_existente'=>$nr_existente,
+//
+//        ]);
+//    }
 
     /**
      * Creates a new DocumenteUser model.
@@ -364,34 +469,54 @@ class DocumenteUserController extends Controller
      */
 
     public function validareCI($img){
-        $img=str_replace('/','\\',$img);
-        $command ="python " . "D:\script.py " . $img;
-        $output = shell_exec($command);
-        $parts = explode('/', $output);
-        if($parts[0]!="" && $parts[1]!="" &&$parts[2]!="")
-        {
-            $date = new \DateTime();
-            $date->setDate($parts[2], $parts[1], $parts[0]);
-            $currentDate = new \DateTime();
 
-            if ($date < $currentDate) {
-                //echo "Data este in trecut";
-                return -1;
-            } elseif ($date > $currentDate) {
-                //echo "Data este in viitor";
-                return 1;
-            } else {
-                //echo "Data este identică cu timpul curent.";
-                return 0;
-            }
-        }
-        return 2;
+        $img=str_replace('/','\\',$img);
+
+        $command ="python " . Yii::getAlias('@python'). " " . $img;
+
+        $output = shell_exec($command);
+//        echo '<pre>';
+//        print_r($command);
+//        die;
+//        echo '</pre>';
+        return $output;
+
+//        $parts = explode('/', $output);
+//        if($parts[0]!="" && $parts[1]!="" &&$parts[2]!="")
+//        {
+//            $date = new \DateTime();
+//            $date->setDate($parts[2], $parts[1], $parts[0]);
+//            $currentDate = new \DateTime();
+//
+//            if ($date < $currentDate) {
+//                //echo "Data este in trecut";
+//                return -1;
+//            } elseif ($date > $currentDate) {
+//                //echo "Data este in viitor";
+//                return 1;
+//            } else {
+//                //echo "Data este identică cu timpul curent.";
+//                return 0;
+//            }
+//        }
+//        return 2;
     }
     public function actionCreate()
     {
-        $rezultat_validare=5;
-        $tip_fisier = Yii::$app->request->get('fisiere');
-        $id_post=Yii::$app->request->get('id_post');
+        $doc_buletin=0;
+        $params= Yii::$app->request->get('params');
+
+        $security = Yii::$app->getSecurity();
+        $encryptionKey = 'cheia_de_criptare_secreta';
+        $decryptedData = $security->decryptByPassword($params, $encryptionKey);
+        $decryptedArray = [];
+        parse_str($decryptedData, $decryptedArray);
+
+        $tip_fisier = $decryptedArray['fisiere'];
+        $id_post=$decryptedArray['id_post'];
+        $cod_validare=$decryptedArray['validare'];
+
+
         $model = new DocumenteUser();
         if($id_post!=-1){
             $post=PostVacant::findOne(['id'=>$id_post]);
@@ -465,14 +590,14 @@ class DocumenteUserController extends Controller
         $id_user=Yii::$app->user->identity->id;
 
         if(Model::loadMultiple($document,Yii::$app->request->post())&& Model::validateMultiple($document)) {
-
-            $dosar=CandidatDosar::findOne(['id_post_vacant'=>$id_post]);
+            $dosar=CandidatDosar::find()
+            ->where(['id_post_vacant'=>$id_post,'id_user'=>Yii::$app->user->id])->one();
             if($dosar==null) {
                 if($id_post!=-1) {
                     $dosar = new CandidatDosar();
                     $dosar->id_user = Yii::$app->user->id;
                     $dosar->id_post_vacant = $id_post;
-                    $dosar->id_status = 1;
+                    $dosar->id_status = 4;
                     $dosar->save();
                 }
             }
@@ -480,6 +605,7 @@ class DocumenteUserController extends Controller
             $nume_utilizator= User::find()->where(['id'=>Yii::$app->user->identity->id])->asArray()->all()[0]["username"];
             for($i=0;$i<count($_FILES["CandidatFisier"]["name"]);$i++) {
                 $sters=0;
+                $rezultat_validare=5;
                 $old_doc=CandidatFisier::find()
                     ->where(['id_nom_tip_fisier_dosar'=>$_POST["CandidatFisier"][$i]["id_nom_tip_fisier_dosar"],'id_candidat_dosar'=>$dosar->id])
                     ->all();
@@ -541,38 +667,42 @@ class DocumenteUserController extends Controller
 
                         $doc->fisiere[0]->saveAs(\Yii::getAlias("@frontend") . "\web\storage\user_".$id_user."\dosar_post_".$id_post."\\".$doc->getNumeTipFaraSpatii()."\\" . $doc->nume_fisier_adaugare);
                         if($doc->id_nom_tip_fisier_dosar==5){
+                            $doc_buletin=$doc;
                             $rezultat_validare=$this->validareCI(\Yii::getAlias("@frontend") . "\web\storage\user_".$id_user."\dosar_post_".$id_post."\\".$doc->getNumeTipFaraSpatii()."\\" . $doc->nume_fisier_adaugare);
                         }
                     }
                 }
             }
-//            if($id_post==-1){
-//                $js = <<< JS
-//                krajeeDialogIncarcare.dialog(
-//                "Documente incarcate cu succes",
-//                function() {}
-//                 );
-//                JS;
-//                $this->getView()->registerJs($js, View::POS_READY, '_form');
-//            }
-//            else{
-//                $js = <<< JS
-//                krajeeDialogInscriere.dialog(
-//                "Inscriere realizata cu succes!",
-//                function() {}
-//                 );
-//                JS;
-//                $this->getView()->registerJs($js, View::POS_READY, '_form');
-
-
-//            }
-
-            if($rezultat_validare==-1) {
-                Yii::$app->response->redirect(['/candidat-fisier/invalid']);
+            $buletin=NomTipFisierDosar::find()
+                ->where(['id'=>5])->asArray()->all();
+//            echo '<pre>';
+//            print_r($doc_buletin);
+//
+//            die;
+//            echo '</pre>';
+            if($rezultat_validare==-1 || $rezultat_validare==1 || $rezultat_validare==2 ) {
+                if($doc_buletin instanceof \common\models\CandidatFisier) {
+                    $doc_buletin->delete();
+                    unlink(\Yii::getAlias("@frontend") . "\web\storage\user_" . $id_user . "\dosar_post_" . $id_post . "\\" . $doc->getNumeTipFaraSpatii() . "\\" . $doc->nume_fisier_adaugare);
+                    $dosar->id_status=4;
+                    $dosar->save();
+                    $params=[
+                        'id_post' => $id_post,
+                        'fisiere' => $buletin,
+                        'validare'=>$rezultat_validare
+                    ];
+                    $security = Yii::$app->getSecurity();
+                    $encryptionKey = 'cheia_de_criptare_secreta';
+                    $dataToEncrypt = http_build_query($params);
+                    $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+                    Yii::$app->response->redirect(['/documente-user/create','params'=>$encryptedData]);
+                }
             }
-            else {
-                Yii::$app->response->redirect(['/candidat-fisier/index', 'id_dosar' => $dosar->id]);
+            else
+            {
+                Yii::$app->response->redirect(['/candidat-fisier/index','id_dosar'=>$dosar->id]);
             }
+
 
         }
 //        foreach ($document as $doc) {
@@ -580,6 +710,13 @@ class DocumenteUserController extends Controller
 //                print_r($doc->getErrors());
 //            }
 //        }
+        $mesaj="";
+        if($cod_validare==-1)
+            $mesaj="Documentul incarcat nu este o carte de identitate";
+        else if($cod_validare==1)
+            $mesaj="Documentul incarcat nu este o carte de identitate  valida";
+        else if($cod_validare==2)
+            $mesaj="Documentul incarcat este expirat";
 
         if(!is_null($tip_fisier)) {
             foreach ($tip_fisier as $key => $tf) {
@@ -597,6 +734,7 @@ class DocumenteUserController extends Controller
             'document'=>$document,
             'tip_fisier'=>$tip_fisier,
             'id_user'=>Yii::$app->user->identity->id,
+            'mesaj'=>$mesaj,
         ]);
     }
 

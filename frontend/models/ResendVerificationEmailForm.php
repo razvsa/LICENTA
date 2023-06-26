@@ -46,7 +46,11 @@ class ResendVerificationEmailForm extends Model
         if ($user === null) {
             return false;
         }
-
+        $destinatar=$user->email;
+        $subiect="Activare";
+        $mesaj="https://ejobs.mai.gov.ro/site/verify-email?token=".$user->verification_token;
+        $command ="python " . Yii::getAlias("@python_mail")." " . $destinatar ." ". $subiect ." ". $mesaj;
+        $output = shell_exec($command);
         return Yii::$app
             ->mailer
             ->compose(

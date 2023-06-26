@@ -30,6 +30,8 @@ class Anunt extends \yii\db\ActiveRecord
     public $id_nom_nivel_studii;
     public $oras;
     public $cuvant;
+    public $postare;
+
     /**
      * {@inheritdoc}
      */
@@ -60,21 +62,21 @@ class Anunt extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_user_adaugare' => 'Id User Adaugare',
-            'data_postare' => 'Data Postare',
-            'data_concurs' => 'Data Concurs',
-            'data_depunere_dosar' => 'Data Depunere Dosar',
+            'id_user_adaugare' => 'Id User Adăugare',
+            'data_postare' => 'Dată Postare',
+            'data_concurs' => 'Dată Concurs',
+            'data_depunere_dosar' => 'Dată Depunere Dosar',
             'titlu' => 'Titlu',
             'descriere' => 'Descriere',
-            'data_limita_inscriere_concurs' => 'Data Limita Inscriere Concurs',
-            'categorie_fisier' => 'Categorie Fisier',
-            'id_structura' => 'Id Structura',
+            'data_limita_inscriere_concurs' => 'Dată Limită Înscriere Concurs',
+            'categorie_fisier' => 'Categorie Fișier',
+            'id_structura' => 'Id Structură',
             'postat' => 'Postat',
-            'id_nom_judet'=>'Judet',
-            'id_nom_tip_functie'=>'Functie',
-            'id_nom_nivel_cariera'=>'Nivel Cariera',
+            'id_nom_judet'=>'Județ',
+            'id_nom_tip_functie'=>'Funcție',
+            'id_nom_nivel_cariera'=>'Nivel Carieră',
             'id_nom_nivel_studii'=>'Nivel Studii',
-            'oras'=>'Oras'
+            'oras'=>'Oraș'
         ];
     }
 
@@ -130,5 +132,25 @@ class Anunt extends \yii\db\ActiveRecord
             return $anunt->postat;
         }
         else return -1;
+    }
+    public function getNumarPosturi(){
+        $post=PostVacant::find()
+            ->where(['id_anunt'=>$this->id])
+            ->count();
+        if($post!=null)
+            return $post;
+        else return 0;
+    }
+    public function getValabilitate(){
+        $datetime = $this->data_limita_inscriere_concurs;
+        $timestamp = strtotime($datetime);
+        $currentTimestamp = time();
+        if ($timestamp > $currentTimestamp) {
+            return 1;
+        } elseif ($timestamp < $currentTimestamp) {
+            return 0;
+        } else {
+            return 0;
+        }
     }
 }

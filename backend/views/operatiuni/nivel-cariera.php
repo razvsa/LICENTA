@@ -9,16 +9,16 @@ use kartik\dialog\Dialog;
 /** @var yii\widgets\ActiveForm $form */
 /** @var \backend\controllers\OperatiuniController $nivel_cariera */?>
 <br>
-<h2>Nivel cariera</h2>
+<h2>Nivel carieră</h2>
 <br>
-<h4>Insereaza un nou nivel de cariera:</h4>
+<h4>Inserează un nou nivel de carieră:</h4>
 <?php
     Dialog::widget();
     DialogAsset::register($this);
 
     $form = ActiveForm::begin();
     echo  $form->field($model, 'nume')->textInput()->label('');
-    echo Html::submitButton('Adauga', ['class' => 'btn btn-success']);
+    echo Html::submitButton('Adaugă', ['class' => 'btn btn-success']);
     ActiveForm::end();
     echo '<br><br>';
 

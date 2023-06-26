@@ -53,7 +53,7 @@ class NomStructura extends \yii\db\ActiveRecord
             'adresa' => 'Adresa',
             'nr_telefon' => 'Nr Telefon',
             'email' => 'Email',
-            'apartine_de' => 'Apartine De',
+            'apartine_de' => 'Aparține De',
         ];
     }
     public function getApartine(){

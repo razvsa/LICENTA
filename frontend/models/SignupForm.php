@@ -56,7 +56,11 @@ class SignupForm extends Model
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
-
+        $destinatar=$user->email;
+        $subiect="Activare";
+        $mesaj="https://ejobs.mai.gov.ro/site/verify-email?token=".$user->verification_token;
+        $command ="python " . Yii::getAlias("@python_mail")." " . $destinatar ." ". $subiect ." ". $mesaj;
+        $output = shell_exec($command);
         return $user->save() && $this->sendEmail($user);
     }
 

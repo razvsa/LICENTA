@@ -57,13 +57,13 @@ class AnuntFisier extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_anunt' => 'Id Anunt',
+            'id_anunt' => 'Id Anunț',
             'descriere' => 'Descriere',
-            'nume_fisier_afisare' => 'Nume Fisier Afisare',
-            'nume_fisier_salvare' => 'Nume Fisier Salvare',
-            'cale_fisier' => 'Cale Fisier',
-            'data_adaugare' => 'Data Adaugare',
-            'id_user_adaugare' => 'Id User Adaugare',
+            'nume_fisier_afisare' => 'Nume Fișier Afișare',
+            'nume_fisier_salvare' => 'Nume Fișier Salvare',
+            'cale_fisier' => 'Cale Fișier',
+            'data_adaugare' => 'Dată Adăugare',
+            'id_user_adaugare' => 'Id User Adăugare',
         ];
     }
 

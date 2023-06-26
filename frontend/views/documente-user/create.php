@@ -7,7 +7,8 @@ use kartik\dialog\Dialog;
 /** @var common\models\DocumenteUser $model */
 /** @var \frontend\controllers\DocumenteUserController $document */
 /** @var \frontend\controllers\DocumenteUserController $tip_fisier */
-$this->title = 'Inregistreaza documente';
+/** @var \frontend\controllers\DocumenteUserController $mesaj */
+$this->title = 'Înregistrează documente';
 Yii::$app->params['bsDependencyEnabled'] = false;
 ?>
 <div class="documente-user-create">
@@ -18,6 +19,7 @@ Yii::$app->params['bsDependencyEnabled'] = false;
         'model' => $model,
         'document'=>$document,
         'tip_fisier'=>$tip_fisier,
+        'mesaj'=>$mesaj
     ]) ?>
 
 </div>

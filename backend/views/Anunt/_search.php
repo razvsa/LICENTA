@@ -19,6 +19,12 @@ use kartik\depdrop\DepDrop;
     $functie_map=ArrayHelper::map($functie,'id','nume');
     $nivel_studii_map=ArrayHelper::map($nivel_studii,'id','nume');
     $nivel_cariera_map=ArrayHelper::map($nivel_cariera,'id','nume');
+    $postat=[
+              ['id'=>1,'nume'=>'nepostat'],
+            ['id'=>2,'nume'=>'postat'],
+
+    ];
+    $postat_map=ArrayHelper::map($postat,'id','nume');
 ?>
 <div class="anunt-search">
 
@@ -29,12 +35,17 @@ use kartik\depdrop\DepDrop;
         'id'=>'anunt_search',
         'options'=>['data-pjax'=>true],
     ]);
-    $model->oras="Tot Judetul";
+    $model->oras="Tot Județul";
     ?>
 
     <?php  echo $form->field($model, 'id_nom_tip_functie')->dropDownList($functie_map,[
             'id'=>'tip_functie',
             'prompt'=>"",
+    ]);?>
+
+    <?php  echo $form->field($model, 'postare')->dropDownList($postat_map,[
+        'id'=>'postat',
+        'prompt'=>"",
     ]);?>
 
     <?php echo $form->field($model, 'id_nom_nivel_studii')->dropDownList($nivel_studii_map,[
@@ -52,7 +63,7 @@ use kartik\depdrop\DepDrop;
     <?php  echo $form->field($model, 'id_nom_judet')->widget(Select2::className(),[
         'options'=>[
             'id'=>'id_judet',
-            'placeholder' => 'Alege Judetul',
+            'placeholder' => 'Alege Județul',
 
         ],
         'bsVersion'=>'4.x',
@@ -68,7 +79,7 @@ use kartik\depdrop\DepDrop;
         'type'=>DepDrop::TYPE_SELECT2,
         'pluginOptions'=>[
             'depends'=>['id_judet'],
-            'placeholder'=>'Tot Judetul',
+            'placeholder'=>'Tot Județul',
 
             'url'=>Url::to(['/anunt/get-localitate'])
         ]
@@ -95,6 +106,7 @@ $('#reset-button').click(function() {
     $('#nivel_studii').val('').trigger('change');
     $('#nivel_cariera').val('').trigger('change');
     $('#id_judet').val('').trigger('change');
+    $('#postat').val('').trigger('change');
     $('#anunt_search').submit();
     
 });
@@ -105,6 +117,7 @@ $('#reset-button').click(function() {
         $('#tip_functie').val(anuntSearch.AnuntSearch.id_nom_tip_functie);
         $('#nivel_studii').val(anuntSearch.AnuntSearch.id_nom_nivel_studii);
         $('#nivel_cariera').val(anuntSearch.AnuntSearch.id_nom_nivel_cariera);
+        $('#postat').val(anuntSearch.AnuntSearch.postat);
    }
 ");
     ?>

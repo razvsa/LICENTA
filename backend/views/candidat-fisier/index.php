@@ -50,7 +50,7 @@ $this->registerJs($script,\yii\web\View::POS_READY);
     <?php
     if(\Yii::$app->user->isGuest)
     {
-        echo '<p class="alert alert-danger" role="alert">Nu aveti acces la aceasta pagina</p>';
+        echo '<p class="alert alert-danger" role="alert">Nu aveți acces la această pagină</p>';
     }
     else{
         echo "<h1>Detalii dosar:</h1>";
@@ -62,20 +62,23 @@ $this->registerJs($script,\yii\web\View::POS_READY);
            echo "<p class='alert alert-success'>Dosar acceptat</p>";
         }
        else if($dosar->id_status==1){
-           echo \yii\helpers\Html::a('Aproba tot dosarul',['/candidat-fisier/aprobatot','id_dosar'=>$id_dosar],['class'=>'btn btn-outline-success']);
+           echo \yii\helpers\Html::a('Aprobă tot dosarul',['/candidat-fisier/aprobatot','id_dosar'=>$id_dosar],['class'=>'btn btn-outline-success']);
            echo "<br><br>";
-           echo "<p class='alert alert-secondary'>Dosar depus (Se asteapta validarea)</p>";
+           echo "<p class='alert alert-secondary'>Dosar depus (Se așteaptă validarea)</p>";
+       }
+       else if($dosar->id_status==2){
+           echo \yii\helpers\Html::a('Aprobă tot dosarul',['/candidat-fisier/aprobatot','id_dosar'=>$id_dosar],['class'=>'btn btn-outline-success']);
+           echo "<br><br>";
+           echo "<p class='alert alert-danger'>Dosar respins</p>";
        }
        else{
-           echo \yii\helpers\Html::a('Aproba tot dosarul',['/candidat-fisier/aprobatot','id_dosar'=>$id_dosar],['class'=>'btn btn-outline-success']);
-           echo "<br><br>";
-           echo "<p class='alert alert-danger'>Dosar repsins</p>";
+           echo "<p class='alert alert-danger'>Dosar incomplet, nu este permisă validarea întregului dosar</p>";
        }
         \yii\widgets\Pjax::end();
-        echo \yii\helpers\Html::a('Descarcati tot dosarul',['/candidat-fisier/descarcatot','id_dosar'=>$id_dosar],['class'=>'btn btn-outline-info']);
+        echo \yii\helpers\Html::a('Descărcați tot dosarul',['/candidat-fisier/descarcatot','id_dosar'=>$id_dosar],['class'=>'btn btn-outline-info']);
         echo "<br><br>";
 
-        echo "<h2>Continut dosar:</h2>";
+        echo "<h2>Conținut dosar:</h2>";
         echo "<hr>";
         foreach($tip_fisier as $tf){
 
@@ -85,19 +88,19 @@ $this->registerJs($script,\yii\web\View::POS_READY);
             $nume=$tf['nume'];
             echo '<h4>'.ucfirst($nume).'</h4>';
             echo '<br>';
-            echo \yii\helpers\Html::a("Descarca", ['/candidat-fisier/descarcapartial','tip_fisier'=>$nume,'id_dosar'=>$id_dosar], ['class' => 'btn btn-outline-info']) ;
+            echo \yii\helpers\Html::a("Descarcă", ['/candidat-fisier/descarcapartial','tip_fisier'=>$nume,'id_dosar'=>$id_dosar], ['class' => 'btn btn-outline-info']) ;
             echo "<br><br>";
            \yii\widgets\Pjax::begin(['id'=>'validare'.$tf['id']]);
             if($fisiere_array[0]['stare']==2) {
 
-                echo Html::a('Aproba', ['/candidat-fisier/aproba', 'tip_fisier' => $nume, 'id_dosar' => $id_dosar], ['class' => 'btn btn-success btn-aproba', 'data' => ['method' => 'post', 'id' => $tf['id']]]);
+                echo Html::a('Aprobă', ['/candidat-fisier/aproba', 'tip_fisier' => $nume, 'id_dosar' => $id_dosar], ['class' => 'btn btn-success btn-aproba', 'data' => ['method' => 'post', 'id' => $tf['id']]]);
                 echo "   ";
                 echo Html::a('Respinge', ['/candidat-fisier/respinge', 'tip_fisier' => $nume, 'id_dosar' => $id_dosar], ['class' => 'btn btn-danger btn-respinge', 'data' => ['method' => 'post', 'id' => $tf['id']]]);
                 echo "<br>";
             }
             else if($fisiere_array[0]['stare']==1)
             {
-                echo Html::a('Aproba', ['/candidat-fisier/aproba', 'tip_fisier' => $nume, 'id_dosar' => $id_dosar], ['class' => 'btn btn-success btn-aproba', 'data' => ['method' => 'post', 'id' => $tf['id']]]);
+                echo Html::a('Aprobă', ['/candidat-fisier/aproba', 'tip_fisier' => $nume, 'id_dosar' => $id_dosar], ['class' => 'btn btn-success btn-aproba', 'data' => ['method' => 'post', 'id' => $tf['id']]]);
                 echo "   ";
             }
             else{

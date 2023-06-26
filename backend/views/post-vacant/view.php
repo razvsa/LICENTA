@@ -24,8 +24,8 @@ Yii::$app->params['bsDependencyEnabled'] = false;
         <?php
         $anunt=\common\models\Anunt::findOne(['id'=>$model->id_anunt]);
         if($anunt->estePostat()==0) {
-            echo Html::a('Editeaza', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']);
-            echo Html::a('Sterge', ['sterge-post', 'id' => $model->id], [
+            echo Html::a('Editează', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']);
+            echo Html::a('Șterge', ['sterge-post', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
@@ -35,7 +35,7 @@ Yii::$app->params['bsDependencyEnabled'] = false;
             ]);
         }
         else
-            echo Html::a('Descarca lista candidati',['post-vacant/listacandidati','id_post'=>$model->id],['class'=>'btn btn-outline-info']);
+            echo Html::a('Descarcă listă candidați',['post-vacant/listacandidati','id_post'=>$model->id],['class'=>'btn btn-outline-info']);
         ?>
     <br><br>
 
@@ -51,17 +51,17 @@ Yii::$app->params['bsDependencyEnabled'] = false;
             ?>
 
             <p style="font-size:17px"><b>Denumire: </b> <?=$model->denumire?></p>
-            <p style="font-size:17px"><b>Judet:</b> <?= $judet[0]['nume']?></p>
+            <p style="font-size:17px"><b>Județ:</b> <?= $judet[0]['nume']?></p>
             <p style="font-size:17px"><b>Localitate: </b> <?=$localitate[0]['nume']?></p>
-            <p style="font-size:17px"><b>Tip functie: </b> <?=$tip_functie[0]['nume']?></p>
+            <p style="font-size:17px"><b>Tip funcție: </b> <?=$tip_functie[0]['nume']?></p>
             <p style="font-size:17px"><b>Nivel studii: </b> <?=$nivel_studii[0]['nume']?></p>
-            <p style="font-size:17px"><b>Nivel cariera: </b> <?=$nivel_cariera[0]['nume']?></p>
-            <p style="font-size:17px"><b>Data limita inscriere: </b> <?=$model->getInscriereConcurs()?></p><br>
+            <p style="font-size:17px"><b>Nivel carieră: </b> <?=$nivel_cariera[0]['nume']?></p>
+            <p style="font-size:17px"><b>Dată limită înscriere: </b> <?=$model->getInscriereConcurs()?></p><br>
 
 
 
-            <h4><b>Cerinte: </b></h4><hr style='border-top: 1px solid black;'><p> <?=HtmlPurifier::process($model->cerinte)?></p><br>
-            <h4><b>Tematica: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->tematica)?></p><br>
+            <h4><b>Cerințe: </b></h4><hr style='border-top: 1px solid black;'><p> <?=HtmlPurifier::process($model->cerinte)?></p><br>
+            <h4><b>Tematică: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->tematica)?></p><br>
             <h4><b>Bibliografie: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->bibliografie)?></p><br>
         </div>
     </div>

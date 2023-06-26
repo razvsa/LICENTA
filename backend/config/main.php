@@ -58,7 +58,24 @@ return [
             'rules' => [
             ],
         ],
+        'pusher' => [
+            'class' => 'Pusher\Pusher',
+            'appId' => '1603369',
+            'appKey' => '2eb047fb81e4d1cc5937',
+            'appSecret' => '663cb0d47d32f1d742d5',
+            'options' => [
+                'cluster' => 'eu',
+                'encrypted' => true,
+            ],
+        ],
+        'queue' => [
+            'class' => 'yii\queue\file\Queue',
+            'as log' => 'yii\queue\LogBehavior',
+        ],
 
     ],
     'params' => $params,
+    'controllerMap' => [
+        'pusher' => 'frontend\controllers\SiteController'
+    ]
 ];

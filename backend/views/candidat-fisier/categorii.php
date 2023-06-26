@@ -4,7 +4,7 @@
 /** @var \backend\controllers\CandidatFisierController $stare */
 ?>
 <h3>
-    Fisiere incarcate
+    Fișiere încărcate
 </h3>
 <br>
 <div >
@@ -17,12 +17,12 @@
             'viewParams' => ['id_user' => $id_user,'stare'=>$stare],
             'summary' =>''
         ]);
-        echo \yii\helpers\Html::a('< Inapoi la utilizatori',['/candidat-fisier/user','stare'=>$stare],['class'=>'btn btn-outline-info']);
+        echo \yii\helpers\Html::a('< Înapoi la utilizatori',['/candidat-fisier/user','stare'=>$stare],['class'=>'btn btn-outline-info']);
         if($stare==3)
         {
             echo '<br>';
             echo '<br>';
-            echo \yii\helpers\Html::a('Descarcati toate documentele',['/candidat-fisier/descarcatot','id_user'=>$id_user],['class'=>'btn btn-outline-success']);
+            echo \yii\helpers\Html::a('Descărcați toate documentele',['/candidat-fisier/descarcatot','id_user'=>$id_user],['class'=>'btn btn-outline-success']);
         }
         ?>
 

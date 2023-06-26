@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 ?>
 
     <div class="documente-user-form">
-        <h4>Selecteaza documentele pe care doresti sa le adaugi/stergi:</h4>
+        <h4>Selectează documentele pe care dorești să le adaugi/ștergi:</h4>
         <br>
         <?php $form = ActiveForm::begin(); ?>
 
@@ -37,7 +37,7 @@ use yii\widgets\ActiveForm;
         }
         ?>
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app','Confirma'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t('app','Confirmă'), ['class' => 'btn btn-success']) ?>
         </div>
     </div>
     <style>

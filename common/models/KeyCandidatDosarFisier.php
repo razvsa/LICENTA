@@ -40,7 +40,7 @@ class KeyCandidatDosarFisier extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'id_candidat_dosar' => 'Id Candidat Dosar',
-            'id_candidat_fisier' => 'Id Candidat Fisier',
+            'id_candidat_fisier' => 'Id Candidat Fișier',
         ];
     }
 }

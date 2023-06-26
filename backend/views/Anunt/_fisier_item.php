@@ -5,8 +5,8 @@
 <div class="row2">
     <div class="col-5 margin "><b><?=$model->nume_fisier_afisare?></b></div>
     <div class="col-4"><b>Postat la :</b> <?=$model->data_adaugare?></div>
-    <div class="col-1"><?=\yii\helpers\Html::a('Descarca',['/anunt/descarca','id'=>$model->id],['class'=>'btn btn-info'])?></div>
-    <div class="col-1 margin-right"><?=\yii\helpers\Html::a('Sterge',['/anunt/stergefisier','id'=>$model->id,'id_anunt'=>$id_anunt],['class'=>'btn btn-danger','data' => [
+    <div class="col-1"><?=\yii\helpers\Html::a('Descarcă',['/anunt/descarca','id'=>$model->id],['class'=>'btn btn-info'])?></div>
+    <div class="col-1 margin-right"><?=\yii\helpers\Html::a('Șterge',['/anunt/stergefisier','id'=>$model->id,'id_anunt'=>$id_anunt],['class'=>'btn btn-danger','data' => [
             'confirm' => 'Sunteți sigur că doriți să ștergeți acest element?',
             'method' => 'post',
         ]])?></div>

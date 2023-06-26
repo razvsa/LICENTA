@@ -63,18 +63,18 @@ class PostVacant extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_nom_tip_functie' => 'Id Nom Tip Functie',
-            'pozitie_stat_organizare' => 'Pozitie Stat Organizare',
+            'id_nom_tip_functie' => 'Id Nom Tip Funcție',
+            'pozitie_stat_organizare' => 'Poziție Stat Organizare',
             'denumire' => 'Denumire',
-            'cerinte' => 'Cerinte',
-            'tematica' => 'Tematica',
+            'cerinte' => 'Cerințe',
+            'tematica' => 'Tematică',
             'bibliografie' => 'Bibliografie',
-            'id_nom_judet' => 'Id Nom Judet',
+            'id_nom_judet' => 'Id Nom Județ',
             'id_nom_nivel_studii' => 'Id Nom Nivel Studii',
-            'id_nom_nivel_cariera' => 'Id Nom Nivel Cariera',
-            'oras' => 'Oras',
-            'data_postare' => 'Data Postare',
-            'id_anunt' => 'Id Anunt',
+            'id_nom_nivel_cariera' => 'Id Nom Nivel Carieră',
+            'oras' => 'Oraș',
+            'data_postare' => 'Dată Postare',
+            'id_anunt' => 'Id Anunț',
         ];
     }
 

@@ -40,12 +40,12 @@ use yii\widgets\DetailView;
                     $ddata_postare=strtotime($model->data_postare);
                 ?>
 
-                <p style="font-size:17px"><b>Structura:</b> <?=$model->getNumeStructura()?></p>
+                <p style="font-size:17px"><b>Structură:</b> <?=$model->getNumeStructura()?></p>
                 <p style="font-size:17px"><b>Postat la:</b> <?=date('d/M/Y h:i',$ddata_postare)?></p>
                 <p style="font-size:17px"><b>Descriere: </b> <?=$model->descriere?></p>
-                <p style="font-size:17px"><b>Data limita inscriere dosar:</b> <?=date('d/M/Y h:i',$ddata_limita_inscriere_concurs)?></p>
-                <p style="font-size:17px"><b>Data depunere dosar:</b> <?=date('d/M/Y h:i',$ddata_depunere_dosar)?></p>
-                <p style="font-size:17px"><b>Data concurs:</b> <?=date('d/M/Y h:i',$ddata_concurs)?></p>
+                <p style="font-size:17px"><b>Dată limită înscriere dosar:</b> <?=date('d/M/Y h:i',$ddata_limita_inscriere_concurs)?></p>
+                <p style="font-size:17px"><b>Dată depunere dosar:</b> <?=date('d/M/Y h:i',$ddata_depunere_dosar)?></p>
+                <p style="font-size:17px"><b>Dată concurs:</b> <?=date('d/M/Y h:i',$ddata_concurs)?></p>
 
             </div>
 
@@ -54,32 +54,32 @@ use yii\widgets\DetailView;
       <?php
         if($model->estePostat()==0) {
             echo '<p>';
-            echo Html::a('Actualizeaza anunt', ['update', 'id' => $model->id], ['class' => 'btn btn-outline-primary']);
-            echo Html::a('Sterge anunt', ['sterge-anunt', 'id' => $model->id], [
+            echo Html::a('Actualizează anunț', ['update', 'id' => $model->id], ['class' => 'btn btn-outline-primary']);
+            echo Html::a('Șterge anunț', ['sterge-anunt', 'id' => $model->id], [
                 'class' => 'btn btn-outline-danger',
                 'data' => [
-                    'confirm' => 'Are you sure you want to delete this item?',
+                    'confirm' => 'Ești sigur că vrei să ștergi acest anunț?',
                     'method' => 'post',
                 ],
             ]);
-            echo Html::a('Posteaza anunt', ['posteaza-anunt', 'id' => $model->id], [
+            echo Html::a('Postează anunț', ['posteaza-anunt', 'id' => $model->id], [
                 'class' => 'btn btn-outline-info',
                 'data' => [
-                    'confirm' => 'Esti sigur ca vrei sa postezi anuntul? Odata postat anuntul nu mai poate fi modificat',
+                    'confirm' => 'Ești sigur că vrei să postezi anunțul? Odată postat anunțul nu mai poate fi modificat',
                     'method' => 'post',
                 ],
             ]);
             echo '</p>';
 
-            echo Html::a('Adauga post vacant', ['post-vacant/create', 'id' => $model->id], ['class' => 'btn btn-outline-primary']);
+            echo Html::a('Adaugă post vacant', ['post-vacant/create', 'id' => $model->id], ['class' => 'btn btn-outline-primary']);
         }
         else
-            echo '<h5 class="alert alert-warning">Anunt postat, nu se pot efectua modificari</h5>';
+            echo '<h5 class="alert alert-warning">Anunț postat, nu se pot efectua modificări</h5>';
       ?>
 
     <br>
     <br>
-    <h3>Incarca document nou:</h3>
+    <h3>Încarcă document nou:</h3>
     <?php
 $form = \yii\widgets\ActiveForm::begin(); ?>
 
@@ -104,7 +104,7 @@ foreach($document as $key=>$d){
 
             ],
 
-        ])->label('')->hint("Pentru incarcare multipla se selecteaza toate fisierele odata prin mentinerea tastei Ctrl");
+        ])->label('')->hint("Pentru încarcare multiplă se selectează toate fișierele odată prin menținerea tastei Ctrl. Extensii acceptate: .pdf, .png, .jpg, .jpeg");
     //echo $form->field($d, "[$key]id_nom_tip_fisier_dosar")->hiddenInput(['value' => $d->id_nom_tip_fisier_dosar])->label(false);
 }
 
@@ -118,7 +118,7 @@ foreach($document as $key=>$d){
 
     <br>
     <br>
-    <h4>Fisierele anuntului:</h4>
+    <h4>Fișierele anunțului:</h4>
     <br>
 <?php
 
@@ -132,12 +132,12 @@ echo \yii\widgets\ListView::widget([
 
         <div >
             <?php
-            if($nr_posturi>2){
-                echo "<br><br><h1>Posturile anuntului</h1><br>";
+            if($nr_posturi>=2){
+                echo "<br><br><h1>Posturile anunțului</h1><br>";
                 echo \yii\widgets\ListView::widget([
 
                 'dataProvider'=>$posturi,
-                'emptyText' => 'Acesta anunt nu are posturi asociate.',
+                'emptyText' => 'Acest anunț nu are posturi asociate.',
                 'itemView'=>'_post_item',
                 'summary' =>''
                 ]);
@@ -149,12 +149,12 @@ echo \yii\widgets\ListView::widget([
                 ]);
             }
             else
-                echo "Nu exista posturi in cadrul acestui anunt";
+                echo "Nu există posturi în cadrul acestui anunț";
             ?>
         </div>
         <br>
 
-        <?= Html::a('< Inapoi la Anunturi',['anunt/index'],['class'=>'btn btn-outline-primary'])?>
+        <?= Html::a('< Înapoi la Anunțuri',['anunt/index'],['class'=>'btn btn-outline-primary'])?>
 
 
 

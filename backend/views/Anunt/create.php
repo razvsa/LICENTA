@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var common\models\Anunt $model */
 
-$this->title = 'Creeaza Anunt';
+$this->title = 'Adaugă Anunț';
 ?>
 <div class="anunt-create">
 

@@ -15,6 +15,7 @@ $this->title = $model->denumire;
 <div class="post-vacant-view">
 
     <h2><?= Html::encode($this->title) ?></h2>
+    <hr style='border-top: 1px solid black;'>
     <br>
     <!-- Portfolio Item Row -->
     <div class="row">
@@ -32,20 +33,20 @@ $this->title = $model->denumire;
             ?>
 
             <p style="font-size:17px"><b>Denumire: </b> <?=$model->denumire?></p>
-            <p style="font-size:17px"><b>Judet:</b> <?= $judet[0]['nume']?></p>
+            <p style="font-size:17px"><b>Județ:</b> <?= $judet[0]['nume']?></p>
             <p style="font-size:17px"><b>Localitate: </b> <?=$localitate[0]['nume']?></p>
-            <p style="font-size:17px"><b>Tip functie: </b> <?=$tip_functie[0]['nume']?></p>
+            <p style="font-size:17px"><b>Tip funcție: </b> <?=$tip_functie[0]['nume']?></p>
             <p style="font-size:17px"><b>Nivel studii: </b> <?=$nivel_studii[0]['nume']?></p>
-            <p style="font-size:17px"><b>Nivel cariera: </b> <?=$nivel_cariera[0]['nume']?></p>
-            <p style="font-size:17px"><b>Data limita inscriere: </b> <?=$model->getInscriereConcurs()?></p>
+            <p style="font-size:17px"><b>Nivel carieră: </b> <?=$nivel_cariera[0]['nume']?></p>
+            <p style="font-size:17px"><b>Dată limită înscriere: </b> <?=$model->getInscriereConcurs()?></p>
         </div>
 
     </div>
 
     <?php
     if (Yii::$app->user->isGuest) {
-        echo "<p>Trebuie sa fii autentificat pentru a aplica pentru acest post</p>";
-        echo Html::a("Conecteaza-te",['site/login'],['class'=>'btn btn-primary']);
+        echo "<p>Trebuie să fii autentificat pentru a aplica pentru acest post</p>";
+        echo Html::a("Conectează-te",['site/login'],['class'=>'btn btn-primary']);
     }
     else {
         $verificare=\common\models\KeyInscrierePostUser::find()->where(['id_user'=>Yii::$app->user->identity->id,'id_post'=>$model->id])->asArray()->all();
@@ -68,7 +69,7 @@ $this->title = $model->denumire;
                     echo '<p class="alert alert-danger" role="alert">Nu mai poti aplica pentru acest post deoarce a expirat timpul</p>';
 
                 else {
-                    echo Html::a("Aplica pentru acest post", ['/documente-user/verifica', 'id_post' => $model->id], ['class' => 'btn btn-outline-info']);
+                    echo Html::a("Aplică pentru acest post", ['/documente-user/verifica', 'id_post' => $model->id], ['class' => 'btn btn-outline-info']);
                     echo '<br>';
                     echo '<br>';
                     echo '<div class="container"><h1 id="headline">Au mai ramas :</h1><div id="countdown"><ul id="ul" class="d-flex justify-content-around"><li><span id="days"></span>ZILE</li><li><span id="hours"></span>ORE</li><li><span id="minutes"></span>MINUTE</li><li><span id="seconds"></span>SECUNDE</li></ul></div></div>';
@@ -78,7 +79,10 @@ $this->title = $model->denumire;
         }
        else{
            echo '<p class="alert alert-success" role="alert">Ai aplicat deja pentru acest post</p>';
-           echo Html::a('Renunta la acest post',['/post-vacant/renunta','id_post'=>$model->id,'id_user'=>Yii::$app->user->identity->id],['class'=>'btn btn-outline-danger']);
+           echo Html::a('Renunta la acest post',['/post-vacant/renunta','id_post'=>$model->id,'id_user'=>Yii::$app->user->identity->id],['class'=>'btn btn-outline-danger','data' => [
+               'confirm' => 'Esti sigur ca vrei sa renunti la acest post? Renuntarea implica stergerea completa a dosarului si imposibilitatea de a reveni',
+               'method' => 'post',
+           ],]);
        }
     }?>
     <br>
@@ -96,27 +100,26 @@ $this->title = $model->denumire;
     $data_inscriere='';
     $data_concurs='';
 
-    $user=\common\models\User::findOne(['id'=>Yii::$app->user->identity->id]);
-    if($user->getInscrierePost($model->id)!=0)
-    {
-        $class_inner_inscriere='inner-circle';
-        $class_step_inscriere='timeline-step mb-0';
-        $data_inscriere=$user->getInscrierePost($model->id);
-    }
-    if($user->getValidareDocumente($model->id)==1 && $user->getInscrierePost($model->id)!=0)
-    {
-        $class_inner_validare='inner-circle';
-        $class_step_validare='timeline-step mb-0';
-        $data_validare="Toate diocumentele necesare postului sunt validate";
-    }
-    $data_concurs=$model->getDataConcurs();
-    $data_concurs_time=strtotime($data_concurs);
-    if(time()-$data_concurs_time>=0 &&$user->getValidareDocumente($model->id)==1 && $user->getInscrierePost($model->id)!=0)
-    {
-        $class_inner_sustinere='inner-circle';
-        $class_step_sustinere='timeline-step mb-0';
-    }
+    if(!Yii::$app->user->isGuest) {
+        $user=\common\models\User::findOne(['id'=>Yii::$app->user->identity->id]);
 
+        if ($user->getInscrierePost($model->id) != 0) {
+            $class_inner_inscriere = 'inner-circle';
+            $class_step_inscriere = 'timeline-step mb-0';
+            $data_inscriere = $user->getInscrierePost($model->id);
+        }
+        if ($user->getValidareDocumente($model->id) == 1 && $user->getInscrierePost($model->id) != 0) {
+            $class_inner_validare = 'inner-circle';
+            $class_step_validare = 'timeline-step mb-0';
+            $data_validare = "Toate diocumentele necesare postului sunt validate";
+        }
+        $data_concurs = $model->getDataConcurs();
+        $data_concurs_time = strtotime($data_concurs);
+        if (time() - $data_concurs_time >= 0 && $user->getValidareDocumente($model->id) == 1 && $user->getInscrierePost($model->id) != 0) {
+            $class_inner_sustinere = 'inner-circle';
+            $class_step_sustinere = 'timeline-step mb-0';
+        }
+    }
     ?>
     <style>
         body{margin-top:20px;}
@@ -231,7 +234,7 @@ $this->title = $model->denumire;
     <div class="container">
         <div class="row text-center justify-content-center mb-5">
             <div class="col-xl-6 col-lg-8">
-                <h2 class="font-weight-bold">Evolutie</h2>
+                <h2 class="font-weight-bold">Evoluție</h2>
 
             </div>
         </div>
@@ -250,7 +253,7 @@ $this->title = $model->denumire;
                         <div class="timeline-content" data-toggle="popover" data-trigger="hover" data-placement="top" title="" data-content="And here's some amazing content. It's very engaging. Right?" data-original-title="2004">
                             <div class=<?=$class_inner_inscriere?>></div>
                             <p class="h6 mt-3 mb-1"><?=$data_inscriere?></p>
-                            <p class="h6 text-muted mb-0 mb-lg-0">Inscriere si incarcare documente</p>
+                            <p class="h6 text-muted mb-0 mb-lg-0">Înscriere și încărcare documente</p>
                         </div>
                     </div>
                     <div class=<?=$class_step_validare?>>
@@ -264,7 +267,7 @@ $this->title = $model->denumire;
                         <div class="timeline-content" data-toggle="popover" data-trigger="hover" data-placement="top" title="" data-content="And here's some amazing content. It's very engaging. Right?" data-original-title="2020">
                             <div class=<?=$class_inner_sustinere?>></div>
                             <p class="h6 mt-3 mb-1"><?=$data_concurs?></p>
-                            <p class="h6 text-muted mb-0 mb-lg-0">Sustinere examen concurs</p>
+                            <p class="h6 text-muted mb-0 mb-lg-0">Susținere examen concurs</p>
                         </div>
                     </div>
                 </div>
@@ -273,8 +276,8 @@ $this->title = $model->denumire;
     </div>
     <div>
 
-        <h4><b>Cerinte: </b></h4><hr style='border-top: 1px solid black;'><p> <?=HTMLPurifier::process($model->cerinte)?></p><br>
-        <h4><b>Tematica: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->tematica)?></p><br>
+        <h4><b>Cerințe: </b></h4><hr style='border-top: 1px solid black;'><p> <?=HTMLPurifier::process($model->cerinte)?></p><br>
+        <h4><b>Tematică: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->tematica)?></p><br>
         <h4><b>Bibliografie: </b></h4><hr  style='border-top: 1px solid black;'><p><?=HtmlPurifier::process($model->bibliografie)?></p><br>
     </div>
 </div>

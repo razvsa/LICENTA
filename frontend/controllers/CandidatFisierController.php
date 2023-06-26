@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\CandidatDosar;
 use common\models\CandidatFisier;
 use common\models\KeyInscrierePostUser;
 use common\models\NomTipFisierDosar;
@@ -47,6 +48,9 @@ class CandidatFisierController extends Controller
         $tip_fisier=0;
         $id_user=0;
         if(!Yii::$app->user->isGuest) {
+            $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+            if($dosar['id_user']!=Yii::$app->user->identity->id)
+                return "Acest dosar nu iti apartine";
             $tip_fisier = NomTipFisierDosar::find()
                 ->innerJoin(['c' => CandidatFisier::tableName()], 'c.id_nom_tip_fisier_dosar=nom_tip_fisier_dosar.id')
                 ->where(['c.id_user_adaugare' => Yii::$app->user->identity->id,'c.id_candidat_dosar'=>$id_dosar])
@@ -244,12 +248,17 @@ class CandidatFisierController extends Controller
     }
 
     public function actionStergedoc($tip_fisier,$id_dosar){
+        $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
+        if($dosar['id_status']==3)
+            return "Nu poti sterge document dintr-un dosar acceptat";
         $documente=CandidatFisier::find()
             ->where(['id_user_adaugare'=>Yii::$app->user->identity->id,'id_nom_tip_fisier_dosar'=>$tip_fisier,'id_candidat_dosar'=>$id_dosar])->all();
         foreach ($documente as $d){
             unlink(Yii::getAlias('@frontend').$documente[0]['cale_fisier']);
             $d->delete();
         }
+        $dosar->id_status=4;
+        $dosar->save();
         return $this->actionIndex($id_dosar);
     }
 }

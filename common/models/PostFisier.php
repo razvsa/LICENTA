@@ -50,10 +50,10 @@ class PostFisier extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'cale_fisier' => 'Cale Fisier',
-            'data_adaugare' => 'Data Adaugare',
-            'id_user_adaugare' => 'Id User Adaugare',
-            'nume_fisier' => 'Nume Fisier',
+            'cale_fisier' => 'Cale Fișier',
+            'data_adaugare' => 'Dată Adăugare',
+            'id_user_adaugare' => 'Id User Adăugare',
+            'nume_fisier' => 'Nume Fișier',
             'id_post' => 'Id Post',
         ];
     }

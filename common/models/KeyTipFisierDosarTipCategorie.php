@@ -39,7 +39,7 @@ class KeyTipFisierDosarTipCategorie extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_tip_fisier' => 'Id Tip Fisier',
+            'id_tip_fisier' => 'Id Tip Fișier',
             'id_categorie' => 'Id Categorie',
         ];
     }
