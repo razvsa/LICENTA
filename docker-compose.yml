@@ -3,9 +3,10 @@ version: '3.2'
 services:
 
   frontend:
+    restart: always
     build: frontend
     ports:
-      - 20080:80
+      - 2500:80
     volumes:
       # Re-use local composer cache via host-volume
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
@@ -13,9 +14,10 @@ services:
       - ./:/app
 
   backend:
+    restart: always
     build: backend
     ports:
-      - 21080:80
+      - 2501:80
     volumes:
       # Re-use local composer cache via host-volume
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
@@ -23,12 +25,11 @@ services:
       - ./:/app
 
   mysql:
+    restart: always
     image: mysql:5.7
     environment:
-      - MYSQL_ROOT_PASSWORD=verysecret
-      - MYSQL_DATABASE=yii2advanced
-      - MYSQL_USER=yii2advanced
-      - MYSQL_PASSWORD=secret
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      - MYSQL_DATABASE=ejobs
 
   #pgsql:
   #  image: postgres:9.5

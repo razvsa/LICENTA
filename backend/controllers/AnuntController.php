@@ -333,14 +333,19 @@ class AnuntController extends Controller
         if($anunt->estePostat()==1)
             return "Anunt postat, nu se pot efectua modificari";
         else {
-            $anunt->delete();
+
             $posturi = PostVacant::find()->select('post_vacant.id')
                 ->innerJoin(['anunt' => Anunt::tableName()], 'anunt.id=post_vacant.id_anunt')
                 ->where(['anunt.id' => $id])->all();
-
+            $anunt_fisier=AnuntFisier::find()
+                ->where(['id_anunt'=>$id])->all();
+            foreach ($anunt_fisier as $an) {
+                $an->delete();
+            }
             foreach ($posturi as $post) {
                 $post->delete();
             }
+            $anunt->delete();
             return $this->redirect(['index']);
         }
     }

@@ -21,41 +21,39 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'username',
-            'email:email',
-            //'verification_token',
-            [
-                'attribute' => 'admin',
-                'format' => 'raw',
-                'filter' => false,
-                'value' => function ($model) {
-
-                    if ($model->admin == -1) {
-                        return Html::a('Vezi Dosare', ['/user/admin','id'=>$model->id], ['class' => 'btn btn-outline-info']) . ' ' .
-                            Html::a('Transformă în admin', ['/user/admin','id'=>$model->id], ['class' => 'btn btn-outline-info']);
-                    } else if ($model->admin > 0) {
-                        return \common\models\NomStructura::findOne(['id' => $model->admin])['nume'];
-                    }
-                    return "Administrator";
-
-                },
-            ],
-            //'status',
-            //'created_at',
-            //'updated_at',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, User $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
+        'id',
+        'username',
+        'email:email',
+        //'verification_token',
+        [
+            'attribute' => 'admin',
+            'format' => 'raw',
+            'filter' => false,
+            'value' => function ($model) {
+                if ($model->admin == -1) {
+                    return Html::a('Transformă în admin', ['/user/admin', 'id' => $model->id], ['class' => 'btn btn-outline-info']);
+                } else if ($model->admin > 0) {
+                    return \common\models\NomStructura::findOne(['id' => $model->admin])['nume'];
                 }
-            ],
+                return "Administrator";
+            },
         ],
+        //'status',
+        //'created_at',
+        //'updated_at',
+        [
+            'class' => ActionColumn::className(),
+            'template' => '{view}', // Eliminați 'delete' și 'update' din șablonul de butoane
+            'urlCreator' => function ($action, $model, $key, $index) {
+                return Url::toRoute([$action, 'id' => $model->id]);
+            }
+        ],
+    ],
     ]); ?>
 
 

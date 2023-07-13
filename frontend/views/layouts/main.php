@@ -90,7 +90,6 @@ JS);
             }
             else{
                 $menuItems = [
-                    ['label' => 'About', 'url' => ['/site/about']],
                     ['label' => 'Anunțuri', 'url' => ['/anunt/index']],
                     ['label' => 'Documentele mele', 'url' => ['/candidat-dosar/index']],
                     ['label' => 'Aplicările mele', 'url' => ['/anunt/anunturilemele']],

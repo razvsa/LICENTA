@@ -280,7 +280,7 @@ class PostVacantController extends Controller
     }
     public function actionStergePost($id){
         $post=PostVacant::findOne(['id'=>$id]);
-        $id_anunt=$post->id_anunt();
+        $id_anunt=$post['id_anunt'];
         $post->delete();
         $this->redirect(['/anunt/view','id'=>$id_anunt]);
     }

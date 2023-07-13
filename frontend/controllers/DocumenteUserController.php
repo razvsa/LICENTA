@@ -669,6 +669,10 @@ class DocumenteUserController extends Controller
                         if($doc->id_nom_tip_fisier_dosar==5){
                             $doc_buletin=$doc;
                             $rezultat_validare=$this->validareCI(\Yii::getAlias("@frontend") . "\web\storage\user_".$id_user."\dosar_post_".$id_post."\\".$doc->getNumeTipFaraSpatii()."\\" . $doc->nume_fisier_adaugare);
+//                            echo '<pre>';
+//                            print_r($rezultat_validare);
+//                            die;
+//                            echo '</pre>';
                         }
                     }
                 }
@@ -712,11 +716,11 @@ class DocumenteUserController extends Controller
 //        }
         $mesaj="";
         if($cod_validare==-1)
-            $mesaj="Documentul incarcat nu este o carte de identitate";
+            $mesaj="Documentul încărcat nu este o carte de identitate";
         else if($cod_validare==1)
-            $mesaj="Documentul incarcat nu este o carte de identitate  valida";
+            $mesaj="Documentul încărcat nu este o carte de identitate  validă";
         else if($cod_validare==2)
-            $mesaj="Documentul incarcat este expirat";
+            $mesaj="Documentul încărcat este expirat";
 
         if(!is_null($tip_fisier)) {
             foreach ($tip_fisier as $key => $tf) {

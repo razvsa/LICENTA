@@ -167,6 +167,15 @@ class CandidatDosarController extends Controller
     public function actionCompleteazadosar($id_dosar){
         $dosar=CandidatDosar::findOne(['id'=>$id_dosar]);
         $fisiere_de_completat=$dosar->getDocumenteLipsa();
-        \Yii::$app->response->redirect(['/documente-user/create', 'id_post' =>$dosar->id_post_vacant , 'fisiere' => $fisiere_de_completat,'validare'=>4]);
+        $params=[
+            'id_post' => $dosar->id_post_vacant,
+            'fisiere' => $fisiere_de_completat,
+            'validare'=>4
+        ];
+        $security = \Yii::$app->getSecurity();
+        $encryptionKey = 'cheia_de_criptare_secreta';
+        $dataToEncrypt = http_build_query($params);
+        $encryptedData = $security->encryptByPassword($dataToEncrypt, $encryptionKey);
+        \Yii::$app->response->redirect(['/documente-user/create','params'=>$encryptedData]);
     }
 }

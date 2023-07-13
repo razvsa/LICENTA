@@ -8,6 +8,7 @@ use common\models\NomNivelCariera;
 use common\models\NomNivelStudii;
 use common\models\NomTipIncadrare;
 use common\models\PostVacant;
+use mysql_xdevapi\Expression;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Anunt;
@@ -158,7 +159,12 @@ class AnuntSearch extends Anunt
             empty($params['AnuntSearch']['id_nom_nivel_studii']) &&
             empty($params['AnuntSearch']['id_nom_nivel_cariera']) &&
             empty($params['AnuntSearch']['id_nom_judet'])) {
-            $query = Anunt::find()->where(['postat'=>1]);
+            $currentTime = date('Y-m-d H:i:s'); // Get the current time
+            $modifiedTime = date('Y-m-d H:i:s', strtotime('-5.184.000 seconds', strtotime($currentTime))); // Subtract 200 seconds
+
+            $query = Anunt::find()
+                ->where(['postat' => 1])
+                ->andWhere(['>', 'data_limita_inscriere_concurs', $modifiedTime]);
         }
         else {
             $lista_id_posturi=-1;
@@ -214,9 +220,12 @@ class AnuntSearch extends Anunt
                 }
             }
 
+            $currentTime = date('Y-m-d H:i:s'); // Get the current time
+            $modifiedTime = date('Y-m-d H:i:s', strtotime('-5.184.000 seconds', strtotime($currentTime))); // Subtract 200 seconds
+
             $query = Anunt::find()
-                ->innerJoin(['post' => PostVacant::tableName()], 'post.id_anunt=anunt.id')
-                ->where(['postat'=>1]);
+                ->where(['postat' => 1])
+                ->andWhere(['>', 'data_limita_inscriere_concurs', $modifiedTime]);
 
 
             if($lista_id_posturi!=-1)

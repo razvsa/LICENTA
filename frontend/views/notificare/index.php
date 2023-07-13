@@ -9,7 +9,7 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var common\models\NotificareSearch $notificari */
 
-$this->title = 'Notificari';
+$this->title = 'Notificări';
 $canal='my-channel'.Yii::$app->user->id;
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('https://js.pusher.com/7.2/pusher.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
